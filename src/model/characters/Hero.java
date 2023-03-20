@@ -5,11 +5,15 @@ public class Hero extends Character {
 	private int maxActions;
 	private boolean specialAction;
 	private ArrayList<Vaccine> vaccineInventory;
+
+	public Hero(String name, int maxHp, int attackDmg, int maxActions) {
+		super(name,maxHp,attackDmg,maxActions);
+		this.maxActions=maxActions;
+	}
+
 	public ArrayList<Vaccine> getVaccineInventory() {
 		return vaccineInventory;
 	}
-
-	
 
 	public ArrayList<Supply> getSupplyInventory() {
 		return supplyInventory;
@@ -33,18 +37,12 @@ public class Hero extends Character {
 		return maxActions;
 	}
 
-
 	public boolean isSpecialAction() {
 		return specialAction;
 	}
 
 	public void setSpecialAction(boolean specialAction) {
 		this.specialAction = specialAction;
-	}
-
-	public Hero(String name, int maxHp, int attackDmg, int maxActions) {
-		super(name,maxHp,attackDmg,maxActions);
-		this.maxActions=maxActions;
 	}
 
  }
