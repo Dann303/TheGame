@@ -1,4 +1,7 @@
 package model.collectibles;
+
+import java.awt.Point;
+
 public abstract class Character {
 private String name;
 private java.awt.Point location;
@@ -6,9 +9,11 @@ private int maxHp;
 private int currentHp;
 private int attackDmg;
 private Character target;
-Character(String name, int maxHp, int attackDmg)
-{
-	
+public Character(String name,int maxHp,int attackDmg) {
+	super();
+	this.name = name;
+	this.maxHp = maxHp;
+	this.attackDmg = attackDmg;
 }
 public String getName() {
 	return name;
