@@ -10,7 +10,6 @@ private int currentHp;
 private int attackDmg;
 private Character target;
 public Character(String name,int maxHp,int attackDmg) {
-	super();
 	this.name = name;
 	this.maxHp = maxHp;
 	this.attackDmg = attackDmg;
