@@ -1,7 +1,6 @@
 package engine;
 
-import model.characters.Hero;
-import model.characters.Zombie;
+import model.characters.*;
 import model.world.Cell;
 
 import java.util.ArrayList;
