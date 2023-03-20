@@ -6,6 +6,6 @@ public class Main {
     	System.out.println("hi ana rubina");
         System.out.println("hi w ana daniel");
         System.out.println("hi w ana Mahmoud");
-        
+        System.out.println(2+3);
     }
 }
