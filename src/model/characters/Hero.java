@@ -1,5 +1,11 @@
 package model.characters;
 
+import model.collectibles.Character;
+import model.collectibles.Supply;
+import model.collectibles.Vaccine;
+
+import java.util.ArrayList;
+
 public class Hero extends Character {
 	private int actionsAvailable;
 	private int maxActions;
@@ -7,7 +13,7 @@ public class Hero extends Character {
 	private ArrayList<Vaccine> vaccineInventory;
 
 	public Hero(String name, int maxHp, int attackDmg, int maxActions) {
-		super(name,maxHp,attackDmg,maxActions);
+		super(name,maxHp,attackDmg);
 		this.maxActions=maxActions;
 	}
 
