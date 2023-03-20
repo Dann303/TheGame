@@ -36,9 +36,6 @@ public int getMaxHp() {
 	return maxHp;
 }
 
-public void setMaxHp(int maxHp) {
-	this.maxHp = maxHp;
-}
 
 public int getCurrentHp() {
 	return currentHp;
@@ -52,9 +49,6 @@ public int getAttackDmg() {
 	return attackDmg;
 }
 
-public void setAttackDmg(int attackDmg) {
-	this.attackDmg = attackDmg;
-}
 
 public Character getTarget() {
 	return target;
