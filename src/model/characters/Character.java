@@ -10,11 +10,12 @@ private int currentHp;
 private int attackDmg;
 private Character target;
 
-public Character(String name,int maxHp,int attackDmg) {
+public Character(String name, int maxHp, int attackDmg) {
 	this.name = name;
 	this.maxHp = maxHp;
 	this.attackDmg = attackDmg;
-	setCurrentHp(maxHp);
+
+	this.currentHp = maxHp;
 }
 
 public String getName() {
@@ -42,7 +43,12 @@ public int getCurrentHp() {
 }
 
 public void setCurrentHp(int currentHp) {
-	this.currentHp = currentHp;
+	// validate whether currentHp has a higher value than maxHp or not if it is higher than currentHp should get the highest possible value for its hp which is maxHp
+	if (currentHp > this.maxHp) {
+		this.currentHp = this.maxHp;
+	} else {
+		this.currentHp = currentHp;
+	}
 }
 
 public int getAttackDmg() {
