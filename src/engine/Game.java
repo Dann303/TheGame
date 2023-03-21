@@ -15,7 +15,6 @@ public class Game {
 
     public static void loadHeroes(String filePath) throws Exception {
         availableHeroes = getHeroesFromCSVFile(filePath);
-        System.out.println(availableHeroes);
     }
 
     private static ArrayList<Hero> getHeroesFromCSVFile(String filePath) throws Exception {
@@ -62,14 +61,6 @@ public class Game {
         sc.close();
 
         return result;
-    }
-
-    public static void main(String[] args) {
-        try {
-            loadHeroes("src/shared files/Heros.csv");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
 }
