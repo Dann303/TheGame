@@ -1,4 +1,4 @@
-package model.collectibles;
+package model.characters;
 
 import java.awt.Point;
 
@@ -25,7 +25,7 @@ public void setName(String name) {
 }
 
 public Point getLocation() {
-	return location;
+	return this.location;
 }
 
 public void setLocation(Point location) {

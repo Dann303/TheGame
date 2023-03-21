@@ -1,6 +1,5 @@
 package model.characters;
 
-import model.collectibles.Character;
 import model.collectibles.Supply;
 import model.collectibles.Vaccine;
 
