@@ -27,20 +27,21 @@ public class Game {
 
         while (sc.hasNext()) {
 
+            // extract one line that contains all the hero's data
             String line = sc.next();
+
+            // split the string containing the hero's data into an array of strings by using the seperator , >>>> eg: "name,age,gender" --> ["name", "age", "gender]
             String[] heroes = line.split(",");
 
+            // assign each value to its corresponding variable
             String name = heroes[0];
-            System.out.println(name);
             String type = heroes[1];
-            System.out.println(type);
             int maxHp = Integer.parseInt(heroes[2]);
-            System.out.println(maxHp);
             int maxActions = Integer.parseInt(heroes[3]);
-            System.out.println(maxActions);
-            int attackDmg = Integer.parseInt(heroes[4]);
-            System.out.println(attackDmg);
+            int attackDmg = Integer.parseInt(heroes[4].trim());
 
+
+            // According to 'type' create an appropriate object (Fighter / Medic / Explorer)
             Hero h = null;
             switch (type) {
                 case "FIGH":
@@ -54,6 +55,7 @@ public class Game {
                     break;
             }
 
+            // add the created object to the result array
             result.add(h);
         }
 
