@@ -1,6 +1,10 @@
 package model.characters;
 
+<<<<<<< Updated upstream
 public class Zombie extends Character{
+=======
+public class Zombie extends Character {
+>>>>>>> Stashed changes
     private static int ZOMBIES_COUNT;
     public Zombie() {
 <<<<<<< Updated upstream
