@@ -9,8 +9,8 @@ import java.util.Scanner;
 
 public class Game {
     public static ArrayList<Hero> availableHeroes;
-    public static ArrayList<Hero> heroes;
-    public static ArrayList<Zombie> zombies;
+    public static ArrayList<Hero> heroes = new ArrayList<Hero>();
+    public static ArrayList<Zombie> zombies = new ArrayList<Zombie>();
     public static Cell[][] map;
 
     public static void loadHeroes(String filePath) throws Exception {
@@ -20,6 +20,8 @@ public class Game {
     private static ArrayList<Hero> getHeroesFromCSVFile(String filePath) throws Exception {
         Scanner sc = new Scanner(new File(filePath));
 //        sc.useDelimiter(",");
+
+        // set delemiter to \n so that it would return all stream of data right until a new line starts, so returns line by line
         sc.useDelimiter("\n");
 
         ArrayList<Hero> result = new ArrayList<Hero>();
@@ -37,7 +39,7 @@ public class Game {
             String type = heroes[1];
             int maxHp = Integer.parseInt(heroes[2]);
             int maxActions = Integer.parseInt(heroes[3]);
-            int attackDmg = Integer.parseInt(heroes[4].trim());
+            int attackDmg = Integer.parseInt(heroes[4].trim()); //here trim was used to remove white spaces and the new line that was causing the error when converting the string into an int, since this word was the last word in the line it had \n attached to it when extracted so had to be dealt with
 
 
             // According to 'type' create an appropriate object (Fighter / Medic / Explorer)

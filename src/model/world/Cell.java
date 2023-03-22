@@ -8,11 +8,11 @@ public abstract class Cell {
 	}
 	
 	public boolean isVisible() {
-		return isVisible;
+		return this.isVisible;
 	}
+
 	public void setVisible(boolean isVisible) {
 		this.isVisible = isVisible;
 	}
-	
 
 }

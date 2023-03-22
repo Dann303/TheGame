@@ -6,13 +6,14 @@ public class NotEnoughActionsException extends GameActionException {
 		super();
 	}
 
+	public NotEnoughActionsException(String message) {
+		super(message);
+	}
+
+	// wala bardo fahem el constructor dah
 	public NotEnoughActionsException(String message, Throwable cause, boolean enableSuppression,
 			boolean writableStackTrace) {
 		super(message, cause, enableSuppression, writableStackTrace);
-	}
-
-	public NotEnoughActionsException(String message) {
-		super(message);
 	}
 
 }

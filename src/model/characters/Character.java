@@ -43,9 +43,13 @@ public int getCurrentHp() {
 }
 
 public void setCurrentHp(int currentHp) {
-	// validate whether currentHp has a higher value than maxHp or not if it is higher than currentHp should get the highest possible value for its hp which is maxHp
+	// validate currentHp against maxHp and 0
+	// if it is higher than currentHp should get the highest possible value for its hp which is maxHp
 	if (currentHp > this.maxHp) {
 		this.currentHp = this.maxHp;
+	} else if (currentHp < 0) {
+		// if its lower than 0 then currentHp should be set to 0
+		this.currentHp = 0;
 	} else {
 		this.currentHp = currentHp;
 	}
