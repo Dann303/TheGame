@@ -3,6 +3,7 @@ package model.world;
 import model.collectibles.*;
 
 public class CollectibleCell extends Cell{
+
 	private Collectible collectible;
 	
 	public CollectibleCell(Collectible collectible) {
@@ -10,7 +11,7 @@ public class CollectibleCell extends Cell{
 	}
 
 	public Collectible getCollectible() {
-		return collectible;
+		return this.collectible;
 	}
 
 }
