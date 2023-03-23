@@ -6,6 +6,7 @@ import model.collectibles.Vaccine;
 import java.util.ArrayList;
 
 public abstract class Hero extends Character {
+
 	private int actionsAvailable;
 	private int maxActions;
 	private boolean specialAction;
@@ -17,19 +18,14 @@ public abstract class Hero extends Character {
 		this.maxActions=maxActions;
 		this.vaccineInventory = new ArrayList<>();
 		this.supplyInventory = new ArrayList<>();
-		setActionsAvailable(maxActions);
+
+		// initially actionsAvailable are equal to maxActions
+		this.actionsAvailable = maxActions;
 	}
 
-	public ArrayList<Vaccine> getVaccineInventory() {
-		return vaccineInventory;
-	}
-
-	public ArrayList<Supply> getSupplyInventory() {
-		return supplyInventory;
-	}
 
 	public int getActionsAvailable() {
-		return actionsAvailable;
+		return this.actionsAvailable;
 	}
 
 	public void setActionsAvailable(int actionsAvailable) {
@@ -37,17 +33,25 @@ public abstract class Hero extends Character {
 	}
 
 	public int getMaxActions() {
-		return maxActions;
+		return this.maxActions;
 	}
 
 	public boolean isSpecialAction() {
-		return specialAction;
+		return this.specialAction;
 	}
 
 	public void setSpecialAction(boolean specialAction) {
 		this.specialAction = specialAction;
 	}
 
- }
+	public ArrayList<Vaccine> getVaccineInventory() {
+		// thought for later, if you just wanna return a copy of this array (array slicing) not the actual array for security purposes then return new ArrayList<Hero>(this.vaccineInverntory);
+		return this.vaccineInventory;
+	}
 
+	public ArrayList<Supply> getSupplyInventory() {
+		// thought for later, if you just wanna return a copy of this array (array slicing) not the actual array for security purposes then return new ArrayList<Hero>(this.supplyInventory);
+		return this.supplyInventory;
+	}
 
+}

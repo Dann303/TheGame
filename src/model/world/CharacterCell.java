@@ -3,6 +3,7 @@ package model.world;
 import model.characters.Character;
 
 public class CharacterCell extends Cell {
+
 	private Character character;
 	private boolean isSafe;
 
@@ -12,7 +13,7 @@ public class CharacterCell extends Cell {
 	}
 
 	public Character getCharacter() {
-		return character;
+		return this.character;
 	}
 
 	public void setCharacter(Character character) {
@@ -20,7 +21,7 @@ public class CharacterCell extends Cell {
 	}
 
 	public boolean isSafe() {
-		return isSafe;
+		return this.isSafe;
 	}
 
 	public void setSafe(boolean isSafe) {
