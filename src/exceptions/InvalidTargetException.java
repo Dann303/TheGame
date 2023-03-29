@@ -10,7 +10,6 @@ public class InvalidTargetException extends GameActionException{
 		super(message);
 	}
 
-	// w mesh fahem el constructor dah
 	public InvalidTargetException(String message, Throwable cause, boolean enableSuppression,
 			boolean writableStackTrace) {
 		super(message, cause, enableSuppression, writableStackTrace);

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 Hero_0,FIGH,52,5,46
 Hero_1,EXP,56,5,200
@@ -13,3 +14,11 @@ Hero_3,EXP,101,8,10
 Hero_4,FIGH,24,9,66
 Hero_5,EXP,30,6,17
 >>>>>>> Stashed changes
+=======
+Hero_0,FIGH,72,8,158
+Hero_1,EXP,11,7,151
+Hero_2,MED,60,8,155
+Hero_3,EXP,46,8,177
+Hero_4,FIGH,19,7,41
+Hero_5,EXP,28,5,44
+>>>>>>> main
