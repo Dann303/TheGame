@@ -54,4 +54,16 @@ public abstract class Hero extends Character {
 		return this.supplyInventory;
 	}
 
+	public void attack(){
+		if(this.isAdjacent()) {
+			Character target = this.getTarget();
+			target.setCurrentHp(target.getCurrentHp() - this.getAttackDmg());
+
+			// target died, al baka2 lelah
+			if (target.getCurrentHp() <= 0) {
+				// bye bye canboora.
+			}
+		}
+	}
+
 }

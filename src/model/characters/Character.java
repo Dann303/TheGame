@@ -65,6 +65,8 @@ public abstract class Character {
 		this.target = target;
 	}
 
+	public abstract void attack();
+
 	public boolean isAdjacent() {
 		int x1 = this.location.x;
 		int y1 = this.location.y;
@@ -112,14 +114,18 @@ public abstract class Character {
 	}
 
 	public static void main(String[] args) {
-		Fighter f1 = new Fighter("rubina", 50, 5, 3);
-		Fighter f2 = new Fighter("mahmoud", 60, 4, 3);
+		Fighter rubina = new Fighter("rubina", 50, 5, 3);
+		Fighter mahmoud = new Fighter("mahmoud", 60, 4, 3);
 
-		f1.setLocation(new Point(2,2));
-		f2.setLocation(new Point(2,3));
+		rubina.setLocation(new Point(2,2));
+		mahmoud.setLocation(new Point(2,4));
 
-		f1.setTarget(f2);
+		rubina.setTarget(mahmoud);
+		rubina.attack();
+		rubina.attack();
+		rubina.attack();
+		rubina.attack();
 
-		System.out.println(((Character)f1).isAdjacent());
+		System.out.println(mahmoud.getCurrentHp());
 	}
 }
