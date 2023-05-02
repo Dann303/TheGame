@@ -1,5 +1,8 @@
 package model.characters;
 
+import exceptions.InvalidTargetException;
+import exceptions.NotEnoughActionsException;
+
 import java.awt.Point;
 
 public abstract class Character {
@@ -65,9 +68,9 @@ public abstract class Character {
 		this.target = target;
 	}
 
-	public abstract void attack();
+	public abstract void attack() throws NotEnoughActionsException, InvalidTargetException;
 
-	public boolean isAdjacent() {
+	public boolean isAdjacent() throws InvalidTargetException{
 		int x1 = this.location.x;
 		int y1 = this.location.y;
 
@@ -76,8 +79,7 @@ public abstract class Character {
 
 
 		if (x1 == x2 && y1 == y2) {
-			System.out.println("Target overlapping character!");
-			return false;
+			throw new InvalidTargetException("Target overlapping character!");
 		}
 
 		// this checks whether the character exists outside the board for some reason...
@@ -88,8 +90,7 @@ public abstract class Character {
 
 		// this checks whether the target exists outside the board for some reason...
 		if (x2 < 0 || x2 > 14 || y2 < 0 || y2 > 14) {
-			System.out.println("Target out of board!");
-			return false;
+			throw new InvalidTargetException("Target out of board!");
 		}
 
 		//      Demorgan's       gowa el box                      not overlapping
@@ -121,10 +122,18 @@ public abstract class Character {
 		mahmoud.setLocation(new Point(2,4));
 
 		rubina.setTarget(mahmoud);
-		rubina.attack();
-		rubina.attack();
-		rubina.attack();
-		rubina.attack();
+
+		try {
+			rubina.attack();
+			rubina.attack();
+			rubina.attack();
+			rubina.attack();
+
+		} catch (NotEnoughActionsException e) {
+			System.out.println(e);
+		} catch (InvalidTargetException e) {
+			System.out.println(e);
+		}
 
 		System.out.println(mahmoud.getCurrentHp());
 	}

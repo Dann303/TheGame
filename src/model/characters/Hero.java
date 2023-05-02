@@ -1,5 +1,7 @@
 package model.characters;
 
+import exceptions.InvalidTargetException;
+import exceptions.NotEnoughActionsException;
 import model.collectibles.Supply;
 import model.collectibles.Vaccine;
 
@@ -54,7 +56,7 @@ public abstract class Hero extends Character {
 		return this.supplyInventory;
 	}
 
-	public void attack(){
+	public void attack() throws NotEnoughActionsException, InvalidTargetException {
 		if(this.isAdjacent()) {
 			Character target = this.getTarget();
 			target.setCurrentHp(target.getCurrentHp() - this.getAttackDmg());

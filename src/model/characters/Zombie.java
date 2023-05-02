@@ -1,5 +1,7 @@
 package model.characters;
 
+import exceptions.InvalidTargetException;
+
 public class Zombie extends Character{
 
     private static int ZOMBIES_COUNT = 0;
@@ -9,7 +11,7 @@ public class Zombie extends Character{
     }
 
     @Override
-    public void attack() {
+    public void attack() throws InvalidTargetException {
         if(this.isAdjacent()) {
             Character target = this.getTarget();
             target.setCurrentHp(target.getCurrentHp() - this.getAttackDmg());
