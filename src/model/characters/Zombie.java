@@ -1,6 +1,7 @@
 package model.characters;
 
 import exceptions.InvalidTargetException;
+import exceptions.NotEnoughActionsException;
 
 public class Zombie extends Character{
 
@@ -11,15 +12,7 @@ public class Zombie extends Character{
     }
 
     @Override
-    public void attack() throws InvalidTargetException {
-        if(this.isAdjacent()) {
-            Character target = this.getTarget();
-            target.setCurrentHp(target.getCurrentHp() - this.getAttackDmg());
-
-            // target died, al baka2 lelah
-            if (target.getCurrentHp() <= 0) {
-                // bye bye canboora.
-            }
-        }
+    public void attack() throws InvalidTargetException, NotEnoughActionsException {
+        super.attack();
     }
 }

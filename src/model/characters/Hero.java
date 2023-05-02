@@ -57,15 +57,7 @@ public abstract class Hero extends Character {
 	}
 
 	public void attack() throws NotEnoughActionsException, InvalidTargetException {
-		if(this.isAdjacent()) {
-			Character target = this.getTarget();
-			target.setCurrentHp(target.getCurrentHp() - this.getAttackDmg());
-
-			// target died, al baka2 lelah
-			if (target.getCurrentHp() <= 0) {
-				// bye bye canboora.
-			}
-		}
+		super.attack();
 	}
 
 }

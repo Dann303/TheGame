@@ -1,5 +1,6 @@
 package model.characters;
 
+import engine.Game;
 import exceptions.InvalidTargetException;
 import exceptions.NotEnoughActionsException;
 
@@ -68,7 +69,44 @@ public abstract class Character {
 		this.target = target;
 	}
 
-	public abstract void attack() throws NotEnoughActionsException, InvalidTargetException;
+	public void attack() throws NotEnoughActionsException, InvalidTargetException {
+		if(this.isAdjacent()) {
+			Character target = this.getTarget();
+			target.setCurrentHp(target.getCurrentHp() - this.getAttackDmg());
+
+			// target died, al baka2 lelah
+			if (target.getCurrentHp() <= 0) {
+				// character dies
+				this.onCharacterDeath();
+			} else {
+				// if target didn't die, defend
+				target.defend(this); // f1 attacks f2, f1 is this, f2 is the target of this...
+			}
+		}
+	}
+
+	public void defend(Character c){
+		int defendingDmg = this.getAttackDmg() / 2;
+		c.setCurrentHp(c.currentHp - defendingDmg);
+
+		//check if the character that was defended against died or not
+		if (c.currentHp <= 0) {
+			// character dies
+			this.onCharacterDeath();
+		} else {
+			// if target didn't die then do nothing, until now...
+		}
+	}
+
+	public void onCharacterDeath(){
+		if (this instanceof Hero) {
+			int index = Game.heroes.indexOf(this);
+			Game.heroes.remove(index);
+		} else if (this instanceof  Zombie) {
+			int index = Game.zombies.indexOf(this);
+			Game.zombies.remove(index);
+		}
+	}
 
 	public boolean isAdjacent() throws InvalidTargetException{
 		int x1 = this.location.x;
