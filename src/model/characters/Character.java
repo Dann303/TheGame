@@ -65,4 +65,61 @@ public abstract class Character {
 		this.target = target;
 	}
 
+	public boolean isAdjacent() {
+		int x1 = this.location.x;
+		int y1 = this.location.y;
+
+		int x2 = this.target.location.x;
+		int y2 = this.target.location.y;
+
+
+		if (x1 == x2 && y1 == y2) {
+			System.out.println("Target overlapping character!");
+			return false;
+		}
+
+		// this checks whether the character exists outside the board for some reason...
+		if (x1 < 0 || x1 > 14 || y1 < 0 || y1 > 14) {
+			System.out.println("Character out of board!");
+			return false;
+		}
+
+		// this checks whether the target exists outside the board for some reason...
+		if (x2 < 0 || x2 > 14 || y2 < 0 || y2 > 14) {
+			System.out.println("Target out of board!");
+			return false;
+		}
+
+		//      Demorgan's       gowa el box                      not overlapping
+		return (Math.abs(x2-x1) <= 1) && (Math.abs(y2-y1) <= 1) && (x2 != x1 || y2 != y1);
+
+//		boolean adjacentRow = (y1 == y2) && ( (x2 == (x1+1)) || (x2 == (x1-1)) );
+//		boolean adjacentColumn = (x1 == x2) && ( (y2 == (y1+1)) || (y2 == (y1-1)) );
+//		boolean adjacentDiagonals = false;
+//
+//		if (x2 == x1+1) {
+//			if (y2 == y1+1 || y2 == y1-1) {
+//				adjacentDiagonals = true;
+//			}
+//		} else if(x2 == x1-1) {
+//			if (y2 == y1+1 || y2 == y1-1) {
+//				adjacentDiagonals = true;
+//			}
+//		}
+//
+//		return adjacentRow || adjacentColumn || adjacentDiagonals;
+
+	}
+
+	public static void main(String[] args) {
+		Fighter f1 = new Fighter("rubina", 50, 5, 3);
+		Fighter f2 = new Fighter("mahmoud", 60, 4, 3);
+
+		f1.setLocation(new Point(2,2));
+		f2.setLocation(new Point(2,3));
+
+		f1.setTarget(f2);
+
+		System.out.println(((Character)f1).isAdjacent());
+	}
 }
