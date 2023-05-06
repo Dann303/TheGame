@@ -12,7 +12,7 @@ public class Game {
     public static ArrayList<Hero> availableHeroes;
     public static ArrayList<Hero> heroes = new ArrayList<Hero>();
     public static ArrayList<Zombie> zombies = new ArrayList<Zombie>(10); // maktoob "an arraylist representing te 10 zombies generated in the game" so initialize el size to 10?
-    public static Cell[][] map;
+    public static Cell[][] map = new Cell[15][15];
 
     // note that there's no constructor
 

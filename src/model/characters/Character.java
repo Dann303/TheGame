@@ -2,7 +2,10 @@ package model.characters;
 
 import engine.Game;
 import exceptions.InvalidTargetException;
+import exceptions.MovementException;
 import exceptions.NotEnoughActionsException;
+import model.world.Cell;
+import model.world.EmptyCell;
 
 import java.awt.Point;
 
@@ -70,7 +73,7 @@ public abstract class Character {
 	}
 
 	public void attack() throws NotEnoughActionsException, InvalidTargetException {
-		if(this.isAdjacent()) {
+		if(this.isTargetAdjacent() && !this.isSameCharacterType()) {
 			Character target = this.getTarget();
 			target.setCurrentHp(target.getCurrentHp() - this.getAttackDmg());
 
@@ -82,6 +85,9 @@ public abstract class Character {
 				// if target didn't die, defend
 				target.defend(this); // f1 attacks f2, f1 is this, f2 is the target of this...
 			}
+		} else {
+			// attack failed
+			throw new InvalidTargetException("Invalid Target");
 		}
 	}
 
@@ -108,7 +114,7 @@ public abstract class Character {
 		}
 	}
 
-	public boolean isAdjacent() throws InvalidTargetException{
+	public boolean isTargetAdjacent() {
 		int x1 = this.location.x;
 		int y1 = this.location.y;
 
@@ -116,23 +122,26 @@ public abstract class Character {
 		int y2 = this.target.location.y;
 
 
+		// overlapping walla la2
 		if (x1 == x2 && y1 == y2) {
-			throw new InvalidTargetException("Target overlapping character!");
+			System.out.println("Target overlapping character!");
+			return false;
 		}
 
 		// this checks whether the character exists outside the board for some reason...
-		if (x1 < 0 || x1 > 14 || y1 < 0 || y1 > 14) {
+		if (this.isOutGrid(this.getLocation())) {
 			System.out.println("Character out of board!");
 			return false;
 		}
 
 		// this checks whether the target exists outside the board for some reason...
-		if (x2 < 0 || x2 > 14 || y2 < 0 || y2 > 14) {
-			throw new InvalidTargetException("Target out of board!");
+		if (this.isOutGrid(this.getTarget().getLocation())) {
+			System.out.println("Target out of board!");
+			return false;
 		}
 
-		//      Demorgan's       gowa el box                      not overlapping
-		return (Math.abs(x2-x1) <= 1) && (Math.abs(y2-y1) <= 1) && (x2 != x1 || y2 != y1);
+		//      Demorgan's       gowa el box             rip Demorgan's
+		return (Math.abs(x2-x1) <= 1) && (Math.abs(y2-y1) <= 1);
 
 //		boolean adjacentRow = (y1 == y2) && ( (x2 == (x1+1)) || (x2 == (x1-1)) );
 //		boolean adjacentColumn = (x1 == x2) && ( (y2 == (y1+1)) || (y2 == (y1-1)) );
@@ -152,27 +161,61 @@ public abstract class Character {
 
 	}
 
+	// checks if the character and its target are the same type or not ie: hero and hero aw zombie w zombie
+	public boolean isSameCharacterType() {
+		Character target = this.target;
+		if (this instanceof Zombie && target instanceof Zombie)
+			return true;
+		if (this instanceof Hero && target instanceof Hero)
+			return true;
+		return false;
+	}
+
+	public boolean isOutGrid(Point p){
+		int x = p.x;
+		int y = p.y;
+
+		if (x < 0 || x > 14 || y < 0 || y > 14)
+			return true;
+		return false;
+	}
+
 	public static void main(String[] args) {
+
+		initializeGrid();
+
 		Fighter rubina = new Fighter("rubina", 50, 5, 3);
 		Fighter mahmoud = new Fighter("mahmoud", 60, 4, 3);
 
 		rubina.setLocation(new Point(2,2));
-		mahmoud.setLocation(new Point(2,4));
-
-		rubina.setTarget(mahmoud);
+		mahmoud.setLocation(new Point(2,3));
 
 		try {
-			rubina.attack();
-			rubina.attack();
-			rubina.attack();
-			rubina.attack();
-
-		} catch (NotEnoughActionsException e) {
-			System.out.println(e);
-		} catch (InvalidTargetException e) {
-			System.out.println(e);
+			rubina.move(Direction.LEFT);
+		} catch (MovementException e) {
+			e.printStackTrace();
 		}
 
-		System.out.println(mahmoud.getCurrentHp());
+
+		displayVisibility();
+
+	}
+
+	private static void initializeGrid() {
+		for (int i = 0; i <= 14; i++) {
+			for (int j = 0; j <= 14; j++) {
+				Game.map[i][j] = new EmptyCell();
+			}
+		}
+	}
+
+	private static void displayVisibility() {
+		for (int i = 0; i <= 14; i++) {
+			for (int j = 0; j <= 14; j++) {
+				System.out.print(Game.map[i][j].isVisible() + " ");
+
+			}
+			System.out.println();
+		}
 	}
 }

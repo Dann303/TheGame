@@ -1,10 +1,17 @@
 package model.characters;
 
+import engine.Game;
 import exceptions.InvalidTargetException;
+import exceptions.MovementException;
 import exceptions.NotEnoughActionsException;
 import model.collectibles.Supply;
 import model.collectibles.Vaccine;
+import model.world.CharacterCell;
+import model.world.CollectibleCell;
+import model.world.EmptyCell;
+import model.world.TrapCell;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 public abstract class Hero extends Character {
@@ -60,4 +67,76 @@ public abstract class Hero extends Character {
 		super.attack();
 	}
 
+	public void move(Direction d) throws MovementException {
+		Point oldPosition = this.getLocation();
+		int x = oldPosition.x;
+		int y = oldPosition.y;
+
+		switch (d) {
+			case UP:
+				y++;
+				break;
+			case DOWN:
+				y--;
+				break;
+			case RIGHT:
+				x++;
+				break;
+			case LEFT:
+				x--;
+				break;
+			default:
+				throw new MovementException("Invalid Direction");
+		}
+
+		Point newPosition = new Point(x,y);
+
+		if (this.isOutGrid(newPosition))
+			throw new MovementException("Out of bounds!");
+
+		if (Game.map[x][y] instanceof CharacterCell)
+			throw new MovementException("A character already stands there!");
+
+		// Position is valid, character can move, will move later
+
+		// check if there is a collectible or a trap.
+
+		if (Game.map[x][y] instanceof CollectibleCell) {
+			CollectibleCell cell = (CollectibleCell) Game.map[x][y];
+			cell.getCollectible().pickUp(this);
+		}
+
+		if (Game.map[x][y] instanceof TrapCell) {
+			int trapDamage = ((TrapCell) Game.map[x][y]).getTrapDamage();
+
+			this.setCurrentHp(this.getCurrentHp() - trapDamage);
+
+			// mat walla lesa yakhwana? check if died
+
+			if (this.getCurrentHp() <= 0) {
+				this.onCharacterDeath();
+			}
+		}
+
+		// ba3d ma shofna el cell dy kan feeha eh abl manet7arek feeha, move ba2a to it fel map w ka location fel character
+		this.setLocation(newPosition);
+		Game.map[x][y] = new CharacterCell(this);
+
+		// erase el old position
+		Game.map[oldPosition.x][oldPosition.y] = new EmptyCell();
+
+		//visibility
+		this.setSquareVisible();
+	}
+
+	private void setSquareVisible() {
+		int x = this.getLocation().x;
+		int y = this.getLocation().y;
+
+		for (int i = x-1; i <= x+1; i++) {
+			for (int j=y-1; j<= y+1 && !this.isOutGrid( new Point(i,j) ); j++) {
+				Game.map[i][j].setVisible(true);
+			}
+		}
+	}
 }
