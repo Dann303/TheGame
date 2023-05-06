@@ -129,6 +129,54 @@ public abstract class Hero extends Character {
 		this.setSquareVisible();
 	}
 
+	public void useSpecial() throws InvalidTargetException {
+		this.setSpecialAction(true);
+
+		if (this instanceof Explorer) {
+			this.observeMap();
+		}
+		if (this instanceof Medic) {
+			this.healTarget();
+		}
+	}
+
+	public void cure() throws InvalidTargetException {
+		if(!this.isSameCharacterType() && this.isTargetAdjacent()) {
+			Zombie target = (Zombie) this.getTarget();
+			Point targetLocation = target.getLocation();
+
+			Hero newHero = Game.availableHeroes.get(0);
+			Game.availableHeroes.remove(0);
+
+			newHero.setLocation(targetLocation);
+			Game.map[targetLocation.x][targetLocation.y] = new CharacterCell(newHero);
+
+			Game.zombies.remove(target);
+			Game.heroes.add(newHero);
+			newHero.setSquareVisible();
+		} else {
+			throw new InvalidTargetException("Cannot cure!");
+		}
+	}
+
+	private void observeMap() {
+		for (int i=0; i < 15; i++) {
+			for (int j=0; j < 15; j++) {
+				Game.map[i][j].setVisible(true);
+			}
+		}
+	}
+
+	private void healTarget() throws InvalidTargetException{
+		if (!this.isSameCharacterType()) {
+			throw new InvalidTargetException("Not a Hero!");
+		}
+
+		int maxHealth = this.getTarget().getMaxHp();
+
+		this.getTarget().setCurrentHp(maxHealth);
+	}
+
 	private void setSquareVisible() {
 		int x = this.getLocation().x;
 		int y = this.getLocation().y;
@@ -139,4 +187,6 @@ public abstract class Hero extends Character {
 			}
 		}
 	}
+
+
 }

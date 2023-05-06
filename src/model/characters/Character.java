@@ -106,11 +106,9 @@ public abstract class Character {
 
 	public void onCharacterDeath(){
 		if (this instanceof Hero) {
-			int index = Game.heroes.indexOf(this);
-			Game.heroes.remove(index);
+			Game.heroes.remove(this);
 		} else if (this instanceof  Zombie) {
-			int index = Game.zombies.indexOf(this);
-			Game.zombies.remove(index);
+			Game.zombies.remove(this);
 		}
 	}
 

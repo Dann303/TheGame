@@ -1,5 +1,6 @@
 package model.collectibles;
 
+import exceptions.InvalidTargetException;
 import model.characters.Hero;
 
 public class Supply implements Collectible{
@@ -14,8 +15,9 @@ public class Supply implements Collectible{
     }
 
     @Override
-    public void use(Hero h) {
-        h.setSpecialAction(true);
-        h.getSupplyInventory().remove(0);
+    public void use(Hero h) throws InvalidTargetException {
+        h.useSpecial();
+
+        h.getSupplyInventory().remove(this);
     }
 }
