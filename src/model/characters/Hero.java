@@ -177,7 +177,7 @@ public abstract class Hero extends Character {
 		this.getTarget().setCurrentHp(maxHealth);
 	}
 
-	private void setSquareVisible() {
+	public void setSquareVisible() {
 		int x = this.getLocation().x;
 		int y = this.getLocation().y;
 

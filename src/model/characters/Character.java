@@ -169,7 +169,7 @@ public abstract class Character {
 		return false;
 	}
 
-	public boolean isOutGrid(Point p){
+	public static boolean isOutGrid(Point p){
 		int x = p.x;
 		int y = p.y;
 
@@ -180,7 +180,6 @@ public abstract class Character {
 
 	public static void main(String[] args) {
 
-		initializeGrid();
 
 		Fighter rubina = new Fighter("rubina", 50, 5, 3);
 		Fighter mahmoud = new Fighter("mahmoud", 60, 4, 3);
@@ -197,14 +196,6 @@ public abstract class Character {
 
 		displayVisibility();
 
-	}
-
-	private static void initializeGrid() {
-		for (int i = 0; i <= 14; i++) {
-			for (int j = 0; j <= 14; j++) {
-				Game.map[i][j] = new EmptyCell();
-			}
-		}
 	}
 
 	private static void displayVisibility() {

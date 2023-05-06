@@ -1,5 +1,6 @@
 package model.collectibles;
 
+import engine.Game;
 import exceptions.InvalidTargetException;
 import model.characters.Hero;
 
@@ -17,6 +18,7 @@ public class Vaccine implements Collectible{
     @Override
     public void use(Hero h) throws InvalidTargetException {
         h.cure();
+        Game.vaccinesUsed++;
 
         h.getVaccineInventory().remove(this);
     }
