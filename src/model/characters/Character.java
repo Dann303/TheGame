@@ -141,22 +141,6 @@ public abstract class Character {
 		//      Demorgan's       gowa el box             rip Demorgan's
 		return (Math.abs(x2-x1) <= 1) && (Math.abs(y2-y1) <= 1);
 
-//		boolean adjacentRow = (y1 == y2) && ( (x2 == (x1+1)) || (x2 == (x1-1)) );
-//		boolean adjacentColumn = (x1 == x2) && ( (y2 == (y1+1)) || (y2 == (y1-1)) );
-//		boolean adjacentDiagonals = false;
-//
-//		if (x2 == x1+1) {
-//			if (y2 == y1+1 || y2 == y1-1) {
-//				adjacentDiagonals = true;
-//			}
-//		} else if(x2 == x1-1) {
-//			if (y2 == y1+1 || y2 == y1-1) {
-//				adjacentDiagonals = true;
-//			}
-//		}
-//
-//		return adjacentRow || adjacentColumn || adjacentDiagonals;
-
 	}
 
 	// checks if the character and its target are the same type or not ie: hero and hero aw zombie w zombie
@@ -178,33 +162,4 @@ public abstract class Character {
 		return false;
 	}
 
-	public static void main(String[] args) {
-
-
-		Fighter rubina = new Fighter("rubina", 50, 5, 3);
-		Fighter mahmoud = new Fighter("mahmoud", 60, 4, 3);
-
-		rubina.setLocation(new Point(2,2));
-		mahmoud.setLocation(new Point(2,3));
-
-		try {
-			rubina.move(Direction.LEFT);
-		} catch (MovementException e) {
-			e.printStackTrace();
-		}
-
-
-		displayVisibility();
-
-	}
-
-	private static void displayVisibility() {
-		for (int i = 0; i <= 14; i++) {
-			for (int j = 0; j <= 14; j++) {
-				System.out.print(Game.map[i][j].isVisible() + " ");
-
-			}
-			System.out.println();
-		}
-	}
 }
