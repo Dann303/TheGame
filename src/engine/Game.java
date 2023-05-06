@@ -9,6 +9,7 @@ import model.collectibles.Vaccine;
 import model.world.*;
 
 import java.awt.*;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.io. * ;
 import java.util.Scanner;
@@ -55,8 +56,14 @@ public class Game {
         // zombies attack
         zombiesAttack();
 
+        // reset heroes action points, target and special action
         resetHeroes();
 
+        // visibility
+        resetVisibility();
+
+        // spawn zombie
+        spawnZombie();
     }
 
     private static void zombiesAttack() throws InvalidTargetException, NotEnoughActionsException {
@@ -75,7 +82,40 @@ public class Game {
     }
 
     private static void resetHeroes() {
-        
+        for (int i = 0; i < heroes.size(); i++) {
+            Hero currentHero = heroes.get(i);
+            currentHero.setActionsAvailable(currentHero.getMaxActions());
+            currentHero.setSpecialAction(false);
+            currentHero.setTarget(null);
+        }
+    }
+
+    private static void resetVisibility() {
+        // tafy el noor
+        for (int i = 0; i <= 14; i++) {
+            for (int j = 0; j <= 14; j++) {
+                Game.map[i][j].setVisible(false);
+            }
+        }
+
+        for (int i = 0; i < heroes.size(); i++) {
+            Hero currentHero = heroes.get(i);
+            Point currentLocation = currentHero.getLocation();
+            ArrayList<Cell> surroundingCells = getAdjacentCells(currentLocation);
+
+            for (int j = 0; j < surroundingCells.size(); j++) {
+                surroundingCells.get(j).setVisible(true);
+            }
+
+        }
+    }
+
+    private static void spawnZombie() {
+        Zombie newZombie = new Zombie();
+        zombies.add(newZombie);
+        Point newLocation = getRandomLocation();
+        newZombie.setLocation(newLocation);
+        map[newLocation.x][newLocation.y] = new CharacterCell(newZombie);
     }
 
     private static ArrayList<Cell> getAdjacentCells(Point location) {
@@ -107,36 +147,6 @@ public class Game {
             location = getRandomLocation();
             map[location.x][location.y] = new CharacterCell(new Zombie());
         }
-
-//        switch (type) {
-//            case "Vaccine":
-//                for (int i = 0; i < number; i++) {
-//                    Point location = getRandomLocation();
-//                    map[location.x][location.y] = new CollectibleCell(new Vaccine());
-//                }
-//                break;
-//
-//            case "Supply":
-//                for (int i = 0; i < number; i++) {
-//                    Point location = getRandomLocation();
-//                    map[location.x][location.y] = new CollectibleCell(new Supply());
-//                }
-//                break;
-//
-//            case "Traps":
-//                for (int i = 0; i < number; i++) {
-//                    Point location = getRandomLocation();
-//                    map[location.x][location.y] = new TrapCell();
-//                }
-//                break;
-//
-//            case "Zombies":
-//                for (int i = 0; i < number; i++) {
-//                    Point location = getRandomLocation();
-//                    map[location.x][location.y] = new CharacterCell(new Zombie());
-//                }
-//                break;
-//        }
     }
 
     private static Point getRandomLocation(){
