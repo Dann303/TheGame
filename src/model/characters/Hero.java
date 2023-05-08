@@ -8,7 +8,6 @@ import model.collectibles.Supply;
 import model.collectibles.Vaccine;
 import model.world.CharacterCell;
 import model.world.CollectibleCell;
-import model.world.EmptyCell;
 import model.world.TrapCell;
 
 import java.awt.*;
@@ -74,16 +73,16 @@ public abstract class Hero extends Character {
 
 		switch (d) {
 			case UP:
-				y++;
-				break;
-			case DOWN:
-				y--;
-				break;
-			case RIGHT:
 				x++;
 				break;
-			case LEFT:
+			case DOWN:
 				x--;
+				break;
+			case RIGHT:
+				y++;
+				break;
+			case LEFT:
+				y--;
 				break;
 			default:
 				throw new MovementException("Invalid Direction");
@@ -123,20 +122,23 @@ public abstract class Hero extends Character {
 		Game.map[x][y] = new CharacterCell(this);
 
 		// erase el old position
-		Game.map[oldPosition.x][oldPosition.y] = new EmptyCell();
+		Game.map[oldPosition.x][oldPosition.y] = new CharacterCell(null);
 
 		//visibility
 		this.setSquareVisible();
 	}
 
 	public void useSpecial() throws InvalidTargetException {
-		this.setSpecialAction(true);
+		if (!this.isSpecialAction()) {
+			return;
+		}
 
 		if (this instanceof Explorer) {
 			this.observeMap();
 		}
 		if (this instanceof Medic) {
 			this.healTarget();
+			this.setSpecialAction(false);
 		}
 	}
 
@@ -145,8 +147,10 @@ public abstract class Hero extends Character {
 			Zombie target = (Zombie) this.getTarget();
 			Point targetLocation = target.getLocation();
 
-			Hero newHero = Game.availableHeroes.get(0);
-			Game.availableHeroes.remove(0);
+			int index = (int)(Math.random()*Game.availableHeroes.size());
+
+			Hero newHero = Game.availableHeroes.get(index);
+			Game.availableHeroes.remove(index);
 
 			newHero.setLocation(targetLocation);
 			Game.map[targetLocation.x][targetLocation.y] = new CharacterCell(newHero);

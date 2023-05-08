@@ -71,9 +71,11 @@ public class Game {
             Zombie currentZombie = zombies.get(i);
             ArrayList<Cell> surroundingCells = getAdjacentCells(currentZombie.getLocation());
             for (int j = 0; j<surroundingCells.size(); j++) {
-                if (surroundingCells.get(j) instanceof CharacterCell && !currentZombie.isSameCharacterType()) {
+                Character target = ((CharacterCell) surroundingCells.get(j)).getCharacter();
+                boolean attackedOnce = false;
+                if (!attackedOnce && surroundingCells.get(j) instanceof CharacterCell && target != null && !currentZombie.isSameCharacterType()) {
                     // attack !!!!!!!!!!
-                    Character target = ((CharacterCell) surroundingCells.get(j)).getCharacter();
+                    attackedOnce = true;
                     currentZombie.setTarget(target);
                     currentZombie.attack();
                 }
@@ -110,7 +112,7 @@ public class Game {
         }
     }
 
-    private static void spawnZombie() {
+    public static void spawnZombie() {
         Zombie newZombie = new Zombie();
         zombies.add(newZombie);
         Point newLocation = getRandomLocation();
@@ -153,7 +155,7 @@ public class Game {
         int x = (int)(Math.random()*15);
         int y = (int)(Math.random()*15);
 
-        if (map[x][y] instanceof EmptyCell) {
+        if (map[x][y] instanceof CharacterCell && ((CharacterCell)map[x][y]).getCharacter() == null) {
            return new Point(x,y);
         } else {
             return getRandomLocation();
@@ -164,7 +166,7 @@ public class Game {
     private static void initializeGrid() {
         for (int i = 0; i <= 14; i++) {
             for (int j = 0; j <= 14; j++) {
-                Game.map[i][j] = new EmptyCell();
+                Game.map[i][j] = new CharacterCell(null);
             }
         }
     }

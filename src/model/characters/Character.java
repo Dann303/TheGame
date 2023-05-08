@@ -5,7 +5,6 @@ import exceptions.InvalidTargetException;
 import exceptions.MovementException;
 import exceptions.NotEnoughActionsException;
 import model.world.Cell;
-import model.world.EmptyCell;
 
 import java.awt.Point;
 
@@ -77,13 +76,16 @@ public abstract class Character {
 			Character target = this.getTarget();
 			target.setCurrentHp(target.getCurrentHp() - this.getAttackDmg());
 
+			// mat aw mamamtsh haye3mel defend
+			target.defend(this); // f1 attacks f2, f1 is this, f2 is the target of this...
+
 			// target died, al baka2 lelah
 			if (target.getCurrentHp() <= 0) {
 				// character dies
 				this.onCharacterDeath();
 			} else {
+				// ignore: --------
 				// if target didn't die, defend
-				target.defend(this); // f1 attacks f2, f1 is this, f2 is the target of this...
 			}
 		} else {
 			// attack failed
@@ -107,8 +109,9 @@ public abstract class Character {
 	public void onCharacterDeath(){
 		if (this instanceof Hero) {
 			Game.heroes.remove(this);
-		} else if (this instanceof  Zombie) {
+		} else if (this instanceof Zombie) {
 			Game.zombies.remove(this);
+			Game.spawnZombie();
 		}
 	}
 
@@ -120,11 +123,11 @@ public abstract class Character {
 		int y2 = this.target.location.y;
 
 
-		// overlapping walla la2
-		if (x1 == x2 && y1 == y2) {
-			System.out.println("Target overlapping character!");
-			return false;
-		}
+		// overlapping walla la2 ---------- shelnah 3ashan target mmken yeb2a self when medic heals himself
+//		if (x1 == x2 && y1 == y2) {
+//			System.out.println("Target overlapping character!");
+//			return false;
+//		}
 
 		// this checks whether the character exists outside the board for some reason...
 		if (this.isOutGrid(this.getLocation())) {

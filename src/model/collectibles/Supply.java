@@ -16,6 +16,7 @@ public class Supply implements Collectible{
 
     @Override
     public void use(Hero h) throws InvalidTargetException {
+        h.setSpecialAction(true);
         h.useSpecial();
 
         h.getSupplyInventory().remove(this);
