@@ -93,7 +93,7 @@ public abstract class Hero extends Character {
 		if (this.isOutGrid(newPosition))
 			throw new MovementException("Out of bounds!");
 
-		if (Game.map[x][y] instanceof CharacterCell)
+		if (Game.map[x][y] instanceof CharacterCell && ((CharacterCell)Game.map[x][y]).getCharacter() != null)
 			throw new MovementException("A character already stands there!");
 
 		// Position is valid, character can move, will move later
@@ -190,6 +190,29 @@ public abstract class Hero extends Character {
 				Game.map[i][j].setVisible(true);
 			}
 		}
+	}
+
+	public static void main(String[] args) {
+		Fighter f1 = new Fighter("Rubina", 300, 1, 2);
+		Zombie z = new Zombie();
+
+		f1.setTarget(z);
+		f1.setSpecialAction(true);
+
+		f1.setLocation(new Point(3,4));
+		z.setLocation(new Point(3,3));
+
+		for (int i = 0; i<35; i++) {
+			try {
+				f1.attack();
+			} catch (NotEnoughActionsException e) {
+				e.printStackTrace();
+			} catch (InvalidTargetException e) {
+				e.printStackTrace();
+			}
+			System.out.println(z.getCurrentHp());
+		}
+
 	}
 
 

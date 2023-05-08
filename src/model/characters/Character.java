@@ -72,7 +72,7 @@ public abstract class Character {
 	}
 
 	public void attack() throws NotEnoughActionsException, InvalidTargetException {
-		if(this.isTargetAdjacent() && !this.isSameCharacterType()) {
+		if(this.getTarget() != null && this.isTargetAdjacent() && !this.isSameCharacterType()) {
 			Character target = this.getTarget();
 			target.setCurrentHp(target.getCurrentHp() - this.getAttackDmg());
 

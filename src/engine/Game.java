@@ -59,6 +59,9 @@ public class Game {
         // reset heroes action points, target and special action
         resetHeroes();
 
+        // reset zombies
+        resetZombies();
+
         // visibility
         resetVisibility();
 
@@ -70,10 +73,10 @@ public class Game {
         for (int i = 0; i<zombies.size(); i++) {
             Zombie currentZombie = zombies.get(i);
             ArrayList<Cell> surroundingCells = getAdjacentCells(currentZombie.getLocation());
-            for (int j = 0; j<surroundingCells.size(); j++) {
+            boolean attackedOnce = false;
+            for (int j = 0; j<surroundingCells.size() && (surroundingCells.get(j) instanceof CharacterCell); j++) {
                 Character target = ((CharacterCell) surroundingCells.get(j)).getCharacter();
-                boolean attackedOnce = false;
-                if (!attackedOnce && surroundingCells.get(j) instanceof CharacterCell && target != null && !currentZombie.isSameCharacterType()) {
+                if (target != null && !attackedOnce && !currentZombie.isSameCharacterType()) {
                     // attack !!!!!!!!!!
                     attackedOnce = true;
                     currentZombie.setTarget(target);
@@ -89,6 +92,13 @@ public class Game {
             currentHero.setActionsAvailable(currentHero.getMaxActions());
             currentHero.setSpecialAction(false);
             currentHero.setTarget(null);
+        }
+    }
+
+    private static void resetZombies() {
+        for (int i = 0; i < zombies.size(); i++) {
+            Zombie currentZombie = zombies.get(i);
+            currentZombie.setTarget(null);
         }
     }
 
