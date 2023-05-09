@@ -17,10 +17,12 @@ public class Vaccine implements Collectible{
 
     @Override
     public void use(Hero h) throws InvalidTargetException {
-        h.cure();
+        //shelna cure 3shan kda hateb2a habal cuz we call vaccine.use inside el cure nafsaha.
+//        h.cure();
         Game.vaccinesUsed++;
 
-        h.getVaccineInventory().remove(this);
+        // keda keda ben3mel remove fel hero zat nafso
+//        h.getVaccineInventory().remove(this);
     }
 
 }

@@ -3,6 +3,7 @@ package model.characters;
 import engine.Game;
 import exceptions.InvalidTargetException;
 import exceptions.MovementException;
+import exceptions.NoAvailableResourcesException;
 import exceptions.NotEnoughActionsException;
 import model.collectibles.Supply;
 import model.collectibles.Vaccine;
@@ -128,10 +129,25 @@ public abstract class Hero extends Character {
 		this.setSquareVisible();
 	}
 
-	public void useSpecial() throws InvalidTargetException {
-		if (!this.isSpecialAction()) {
+	public void useSpecial() throws InvalidTargetException, NoAvailableResourcesException {
+		if (this.supplyInventory.size()<=0) {
+			// no supplies yeb2a error
+			throw new NoAvailableResourcesException("No enough supplies");
+		}
+
+		if (this.isSpecialAction()) {
+			// matkamelsh el method 3shan mafrood mate2darsh testakhdem beta3 w howa already activated
+			// 7eta fel gui disable button
 			return;
 		}
+
+		this.setSpecialAction(true);
+
+		//get random supply from inventory
+		int index = (int)(Math.random()*this.supplyInventory.size());
+		Supply supplyUsed = this.supplyInventory.get(index);
+		this.supplyInventory.remove(index);
+		supplyUsed.use(this);
 
 		if (this instanceof Explorer) {
 			this.observeMap();
@@ -142,7 +158,11 @@ public abstract class Hero extends Character {
 		}
 	}
 
-	public void cure() throws InvalidTargetException {
+	public void cure() throws InvalidTargetException, NoAvailableResourcesException {
+		if(this.getVaccineInventory().size() <= 0) {
+			// empty
+			throw new NoAvailableResourcesException("Vaccines Inventory is empty!");
+		}
 		if(!this.isSameCharacterType() && this.isTargetAdjacent()) {
 			Zombie target = (Zombie) this.getTarget();
 			Point targetLocation = target.getLocation();
@@ -154,6 +174,14 @@ public abstract class Hero extends Character {
 
 			newHero.setLocation(targetLocation);
 			Game.map[targetLocation.x][targetLocation.y] = new CharacterCell(newHero);
+
+			// use el vaccine
+			// first get random vaccine item from the vaccine inventory
+			// ne3melo random bardo
+			index = (int)(Math.random()*this.getVaccineInventory().size());
+			Vaccine vaccineUsed = this.getVaccineInventory().get(index);
+			this.getVaccineInventory().remove(index);
+			vaccineUsed.use(this);
 
 			Game.zombies.remove(target);
 			Game.heroes.add(newHero);

@@ -30,6 +30,7 @@ public class Game {
     }
 
     public static void startGame(Hero h) {
+        System.out.println("hi");
         initializeGrid();
         spreadCells();
 
@@ -76,10 +77,10 @@ public class Game {
             boolean attackedOnce = false;
             for (int j = 0; j<surroundingCells.size() && (surroundingCells.get(j) instanceof CharacterCell); j++) {
                 Character target = ((CharacterCell) surroundingCells.get(j)).getCharacter();
+                currentZombie.setTarget(target);
                 if (target != null && !attackedOnce && !currentZombie.isSameCharacterType()) {
                     // attack !!!!!!!!!!
                     attackedOnce = true;
-                    currentZombie.setTarget(target);
                     currentZombie.attack();
                 }
             }
@@ -173,7 +174,7 @@ public class Game {
     }
 
 
-    private static void initializeGrid() {
+    public static void initializeGrid() {
         for (int i = 0; i <= 14; i++) {
             for (int j = 0; j <= 14; j++) {
                 Game.map[i][j] = new CharacterCell(null);
