@@ -5,6 +5,7 @@ import exceptions.InvalidTargetException;
 import exceptions.MovementException;
 import exceptions.NotEnoughActionsException;
 import model.world.Cell;
+import model.world.CharacterCell;
 
 import java.awt.Point;
 
@@ -82,7 +83,7 @@ public abstract class Character {
 			// target died, al baka2 lelah
 			if (target.getCurrentHp() <= 0) {
 				// character dies
-				this.onCharacterDeath();
+				target.onCharacterDeath();
 			} else {
 				// ignore: --------
 				// if target didn't die, defend
@@ -100,13 +101,15 @@ public abstract class Character {
 		//check if the character that was defended against died or not
 		if (c.currentHp <= 0) {
 			// character dies
-			this.onCharacterDeath();
+			c.onCharacterDeath();
 		} else {
 			// if target didn't die then do nothing, until now...
 		}
 	}
 
 	public void onCharacterDeath(){
+		Point location = this.getLocation();
+		Game.map[location.x][location.y] = new CharacterCell(null);
 		if (this instanceof Hero) {
 			Game.heroes.remove(this);
 		} else if (this instanceof Zombie) {
@@ -130,13 +133,13 @@ public abstract class Character {
 //		}
 
 		// this checks whether the character exists outside the board for some reason...
-		if (this.isOutGrid(this.getLocation())) {
+		if (isOutGrid(this.getLocation())) {
 			System.out.println("Character out of board!");
 			return false;
 		}
 
 		// this checks whether the target exists outside the board for some reason...
-		if (this.isOutGrid(this.getTarget().getLocation())) {
+		if (isOutGrid(this.getTarget().getLocation())) {
 			System.out.println("Target out of board!");
 			return false;
 		}

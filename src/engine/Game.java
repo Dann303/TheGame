@@ -16,10 +16,10 @@ import java.util.Scanner;
 
 public class Game {
 
-    public static ArrayList<Hero> availableHeroes;
+    public static ArrayList<Hero> availableHeroes = null;
     public static ArrayList<Hero> heroes = new ArrayList<Hero>();
     public static ArrayList<Zombie> zombies = new ArrayList<Zombie>(10); // maktoob "an arraylist representing te 10 zombies generated in the game" so initialize el size to 10?
-    public static Cell[][] map = new Cell[15][15];
+    public static Cell[][] map;
 
     public static int vaccinesUsed = 0;
 
@@ -30,13 +30,16 @@ public class Game {
     }
 
     public static void startGame(Hero h) {
-        System.out.println("hi");
+
+        map = new Cell[15][15];
+
         initializeGrid();
         spreadCells();
 
         availableHeroes.remove(h);
         heroes.add(h);
         h.setLocation(new Point(0,0));
+        map[0][0] = new CharacterCell(h);
     }
 
     public static boolean checkWin() {
@@ -47,7 +50,7 @@ public class Game {
     }
 
     public static boolean checkGameOver() {
-        if (vaccinesUsed >= 5 && heroes.size() < 5) {
+        if (vaccinesUsed >= 5 || heroes.size() <= 0) {
             return true;
         }
         return false;
@@ -73,17 +76,7 @@ public class Game {
     private static void zombiesAttack() throws InvalidTargetException, NotEnoughActionsException {
         for (int i = 0; i<zombies.size(); i++) {
             Zombie currentZombie = zombies.get(i);
-            ArrayList<Cell> surroundingCells = getAdjacentCells(currentZombie.getLocation());
-            boolean attackedOnce = false;
-            for (int j = 0; j<surroundingCells.size() && (surroundingCells.get(j) instanceof CharacterCell); j++) {
-                Character target = ((CharacterCell) surroundingCells.get(j)).getCharacter();
-                currentZombie.setTarget(target);
-                if (target != null && !attackedOnce && !currentZombie.isSameCharacterType()) {
-                    // attack !!!!!!!!!!
-                    attackedOnce = true;
-                    currentZombie.attack();
-                }
-            }
+            currentZombie.attack();
         }
     }
 
@@ -131,7 +124,7 @@ public class Game {
         map[newLocation.x][newLocation.y] = new CharacterCell(newZombie);
     }
 
-    private static ArrayList<Cell> getAdjacentCells(Point location) {
+    public static ArrayList<Cell> getAdjacentCells(Point location) {
         int x = location.x;
         int y = location.y;
 
