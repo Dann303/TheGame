@@ -1,6 +1,7 @@
 package model.characters;
 
 import exceptions.InvalidTargetException;
+import exceptions.NoAvailableResourcesException;
 import exceptions.NotEnoughActionsException;
 
 public class Explorer extends Hero{
@@ -18,5 +19,9 @@ public class Explorer extends Hero{
 			// erza3 exception !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 			 throw new NotEnoughActionsException("Not enough actions are available!");
 		}
+	}
+
+	public void useSpecial() throws InvalidTargetException, NoAvailableResourcesException {
+		super.useSpecial();
 	}
 }

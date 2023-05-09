@@ -40,6 +40,7 @@ public class Game {
         heroes.add(h);
         h.setLocation(new Point(0,0));
         map[0][0] = new CharacterCell(h);
+        h.setSquareVisible();
     }
 
     public static boolean checkWin() {
@@ -143,15 +144,25 @@ public class Game {
         for (int i = 0; i < 5; i++) {
             Point location = getRandomLocation();
             map[location.x][location.y] = new CollectibleCell(new Vaccine());
+
             location = getRandomLocation();
             map[location.x][location.y] = new CollectibleCell(new Supply());
+
             location = getRandomLocation();
             map[location.x][location.y] = new TrapCell();
-            location = getRandomLocation();
 
-            map[location.x][location.y] = new CharacterCell(new Zombie());
+            Zombie zombie1 = new Zombie();
             location = getRandomLocation();
-            map[location.x][location.y] = new CharacterCell(new Zombie());
+            map[location.x][location.y] = new CharacterCell(zombie1);
+            zombie1.setLocation(location);
+            zombies.add(zombie1);
+
+            Zombie zombie2 = new Zombie();
+            location = getRandomLocation();
+            map[location.x][location.y] = new CharacterCell(zombie2);
+            zombie2.setLocation(location);
+            zombies.add(zombie2);
+
         }
     }
 

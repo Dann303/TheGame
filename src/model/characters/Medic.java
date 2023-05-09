@@ -1,6 +1,7 @@
 package model.characters;
 
 import exceptions.InvalidTargetException;
+import exceptions.NoAvailableResourcesException;
 import exceptions.NotEnoughActionsException;
 
 public class Medic extends Hero{
@@ -19,5 +20,13 @@ public class Medic extends Hero{
 			 throw new NotEnoughActionsException("Not enough actions are available!");
 		}
 	}
+
+	public void useSpecial() throws InvalidTargetException, NoAvailableResourcesException {
+		if (!this.isSameCharacterType() || !this.isTargetAdjacent()) {
+			throw new InvalidTargetException("Not a Hero OR Target not close!");
+		}
+		super.useSpecial();
+	}
+
 
 }

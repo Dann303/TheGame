@@ -154,8 +154,7 @@ public abstract class Hero extends Character {
 
 		//get random supply from inventory
 		int index = (int)(Math.random()*this.supplyInventory.size());
-		Supply supplyUsed = this.supplyInventory.get(index);
-		this.supplyInventory.remove(index);
+		Supply supplyUsed = this.supplyInventory.remove(index);
 		supplyUsed.use(this);
 
 
@@ -182,8 +181,7 @@ public abstract class Hero extends Character {
 			// first get random vaccine item from the vaccine inventory
 			// ne3melo random bardo
 			index = (int)(Math.random()*this.getVaccineInventory().size());
-			Vaccine vaccineUsed = this.getVaccineInventory().get(index);
-			this.getVaccineInventory().remove(index);
+			Vaccine vaccineUsed = this.getVaccineInventory().remove(index);
 			vaccineUsed.use(this);
 
 			Game.zombies.remove(target);
@@ -202,11 +200,7 @@ public abstract class Hero extends Character {
 		}
 	}
 
-	private void healTarget() throws InvalidTargetException{
-		if (!this.isSameCharacterType()) {
-			throw new InvalidTargetException("Not a Hero!");
-		}
-
+	private void healTarget(){
 		int maxHealth = this.getTarget().getMaxHp();
 
 		this.getTarget().setCurrentHp(maxHealth);
@@ -217,8 +211,9 @@ public abstract class Hero extends Character {
 		int y = this.getLocation().y;
 
 		for (int i = x-1; i <= x+1; i++) {
-			for (int j=y-1; j<= y+1 && !this.isOutGrid( new Point(i,j) ); j++) {
-				Game.map[i][j].setVisible(true);
+			for (int j=y-1; j<= y+1; j++) {
+				if (!isOutGrid( new Point(i,j) ))
+					Game.map[i][j].setVisible(true);
 			}
 		}
 	}
