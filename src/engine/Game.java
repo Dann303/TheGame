@@ -132,7 +132,6 @@ public class Game {
             ArrayList<Cell> surroundingCells = getAdjacentCells(currentLocation);
 
             for (int j = 0; j < surroundingCells.size(); j++) {
-                System.out.println(surroundingCells.get(j));
                 surroundingCells.get(j).setVisible(true);
             }
 

@@ -68,7 +68,11 @@ public abstract class Hero extends Character {
 		super.attack();
 	}
 
-	public void move(Direction d) throws MovementException {
+	public void move(Direction d) throws MovementException, NotEnoughActionsException {
+		if (this.getActionsAvailable() <= 0) {
+			throw new NotEnoughActionsException("Not enough action points to move");
+		}
+
 		Point oldPosition = this.getLocation();
 		int x = oldPosition.x;
 		int y = oldPosition.y;
@@ -171,27 +175,13 @@ public abstract class Hero extends Character {
 			throw new NoAvailableResourcesException("Vaccines Inventory is empty!");
 		}
 		if(this.getTarget()!=null && !this.isSameCharacterType() && this.isTargetAdjacent()) {
-			Zombie target = (Zombie) this.getTarget();
-			Point targetLocation = target.getLocation();
-
-			int index = (int)(Math.random()*Game.availableHeroes.size());
-
-			Hero newHero = Game.availableHeroes.get(index);
-			Game.availableHeroes.remove(index);
-
-			newHero.setLocation(targetLocation);
-			Game.map[targetLocation.x][targetLocation.y] = new CharacterCell(newHero);
 
 			// use el vaccine
 			// first get random vaccine item from the vaccine inventory
 			// ne3melo random bardo
-			index = (int)(Math.random()*this.getVaccineInventory().size());
+			int index = (int)(Math.random()*this.getVaccineInventory().size());
 			Vaccine vaccineUsed = this.getVaccineInventory().get(index);
 			vaccineUsed.use(this);
-
-			Game.zombies.remove(target);
-			Game.heroes.add(newHero);
-//			newHero.setSquareVisible();
 		} else {
 			throw new InvalidTargetException("Cannot cure!");
 		}
