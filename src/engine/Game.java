@@ -19,7 +19,7 @@ public class Game {
     public static ArrayList<Hero> availableHeroes = null;
     public static ArrayList<Hero> heroes = new ArrayList<Hero>();
     public static ArrayList<Zombie> zombies = new ArrayList<Zombie>(10); // maktoob "an arraylist representing te 10 zombies generated in the game" so initialize el size to 10?
-    public static Cell[][] map;
+    public static Cell[][] map = new Cell[15][15];
 
     public static int vaccinesUsed = 0;
 
@@ -30,8 +30,6 @@ public class Game {
     }
 
     public static void startGame(Hero h) {
-
-        map = new Cell[15][15];
 
         initializeGrid();
         spreadCells();
@@ -51,10 +49,30 @@ public class Game {
     }
 
     public static boolean checkGameOver() {
-        if (vaccinesUsed >= 5 || heroes.size() <= 0) {
+        if (heroes.size() <= 0 || (countOfVaccinesOnMap() <= 0 && vaccinesWithHeroes() <= 0))
             return true;
-        }
         return false;
+    }
+
+    private static int vaccinesWithHeroes() {
+        int result = 0;
+        for (int i = 0; i < heroes.size(); i++){
+            Hero currentHero = heroes.get(i);
+            result += currentHero.getVaccineInventory().size();
+        }
+        return result;
+    }
+
+    private static int countOfVaccinesOnMap() {
+        int result = 0;
+        for (int i = 0; i < 15; i++){
+            for (int j = 0; j < 15; j++) {
+                Cell cell = map[i][j];
+                if (cell instanceof CollectibleCell && ((CollectibleCell) cell).getCollectible() instanceof Vaccine)
+                    result++;
+            }
+        }
+        return result;
     }
 
     public static void endTurn() throws InvalidTargetException, NotEnoughActionsException{

@@ -154,7 +154,9 @@ public abstract class Hero extends Character {
 
 		//get random supply from inventory
 		int index = (int)(Math.random()*this.supplyInventory.size());
-		Supply supplyUsed = this.supplyInventory.remove(index);
+		System.out.println(this.getSupplyInventory());
+		Supply supplyUsed = this.getSupplyInventory().remove(index);
+		System.out.println(this.getSupplyInventory());
 		supplyUsed.use(this);
 
 
@@ -165,7 +167,7 @@ public abstract class Hero extends Character {
 			// empty
 			throw new NoAvailableResourcesException("Vaccines Inventory is empty!");
 		}
-		if(!this.isSameCharacterType() && this.isTargetAdjacent()) {
+		if(this.getTarget()!=null && !this.isSameCharacterType() && this.isTargetAdjacent()) {
 			Zombie target = (Zombie) this.getTarget();
 			Point targetLocation = target.getLocation();
 
@@ -186,7 +188,7 @@ public abstract class Hero extends Character {
 
 			Game.zombies.remove(target);
 			Game.heroes.add(newHero);
-			newHero.setSquareVisible();
+//			newHero.setSquareVisible();
 		} else {
 			throw new InvalidTargetException("Cannot cure!");
 		}
