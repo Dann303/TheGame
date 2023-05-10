@@ -32,12 +32,14 @@ public class Game {
     public static void startGame(Hero h) {
 
         initializeGrid();
-        spreadCells();
 
         availableHeroes.remove(h);
         heroes.add(h);
         h.setLocation(new Point(0,0));
         map[0][0] = new CharacterCell(h);
+    
+        spreadCells();
+
         h.setSquareVisible();
     }
 
@@ -66,7 +68,7 @@ public class Game {
         return result;
     }
 
-    private static int countOfVaccinesOnMap() {
+    public static int countOfVaccinesOnMap() {
         int result = 0;
         for (int i = 0; i < 15; i++){
             for (int j = 0; j < 15; j++) {
@@ -87,12 +89,13 @@ public class Game {
 
         // reset zombies
         resetZombies();
-
+ 
+        // spawn zombie
+        spawnZombie();
+        
         // visibility
         resetVisibility();
 
-        // spawn zombie
-        spawnZombie();
     }
 
     private static void zombiesAttack() throws InvalidTargetException, NotEnoughActionsException {
@@ -154,8 +157,9 @@ public class Game {
 
         for (int i = x-1; i <= x+1; i++) {
             for (int j = y-1; j<= y+1; j++) {
-                 if (!Character.isOutGrid( new Point(i,j) ))
-                    cells.add(map[i][j]);
+                 if (!Character.isOutGrid( new Point(i,j) )) {
+                	 cells.add(map[i][j]);
+                 }                    
             }
         }
 

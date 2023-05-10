@@ -213,36 +213,66 @@ public abstract class Hero extends Character {
 		}
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InvalidTargetException, NotEnoughActionsException {
 
-		Medic rubina = new Medic("Rubina", 2, 20, 3);
-		Zombie z = new Zombie();
-
-		Game.heroes.add(rubina);
-
-		Game.map = new Cell[15][15];
-
-		Game.map[2][2] = new CharacterCell(rubina);
-		Game.map[2][3] = new CharacterCell(z);
-
+		Game.initializeGrid();
+		Fighter rubina = new Fighter("rubina", 100, 10, 3);
 		rubina.setLocation(new Point(2,2));
-		z.setLocation(new Point(2,3));
-
-		rubina.setTarget(z);
-
-		System.out.println(Game.heroes.size());
-		System.out.println(rubina.getCurrentHp());
-
-		try {
-			rubina.attack();
-		} catch (InvalidTargetException e) {
-			e.printStackTrace();
-		} catch (NotEnoughActionsException e) {
-			e.printStackTrace();
+		Game.heroes.add(rubina);
+		
+		
+		Game.endTurn();
+		
+		Fighter danny = new Fighter("danny", 100, 10, 3);
+		danny.setLocation(new Point(5,0));
+		Game.heroes.add(danny);
+		
+		
+		for(int i=1; i<=3; i++) {
+			for (int j=1; j<=3; j++) {
+				new Zombie().setLocation(new Point(i,j));
+			}
 		}
 
-		System.out.println(Game.heroes.size());
-		System.out.println(rubina.getCurrentHp());
+		Game.endTurn();
+		
+		Game.showVisibility();
+		
+//		for (int i=-1; i<=15; i++) {
+//			for (int j=-1; j<=15; j++) {
+//				System.out.print(Character.isOutGrid(new Point(i, j)));
+//			}
+//			System.out.println();
+//		}
+		
+//		Medic rubina = new Medic("Rubina", 2, 20, 3);
+//		Zombie z = new Zombie();
+//
+//		Game.heroes.add(rubina);
+//
+//		Game.map = new Cell[15][15];
+//
+//		Game.map[2][2] = new CharacterCell(rubina);
+//		Game.map[2][3] = new CharacterCell(z);
+//
+//		rubina.setLocation(new Point(2,2));
+//		z.setLocation(new Point(2,3));
+//
+//		rubina.setTarget(z);
+//
+//		System.out.println(Game.heroes.size());
+//		System.out.println(rubina.getCurrentHp());
+//
+//		try {
+//			rubina.attack();
+//		} catch (InvalidTargetException e) {
+//			e.printStackTrace();
+//		} catch (NotEnoughActionsException e) {
+//			e.printStackTrace();
+//		}
+//
+//		System.out.println(Game.heroes.size());
+//		System.out.println(rubina.getCurrentHp());
 
 //		try {
 //			Game.loadHeroes("src/shared files/Heros.csv");

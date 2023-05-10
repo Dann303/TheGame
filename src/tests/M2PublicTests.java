@@ -1877,12 +1877,13 @@ public class M2PublicTests {
 				}
 			}
 		}
-
+		
 		for (int i = 0; i < 8; i++) {
 
 			try {
 				Method endTurn = gameClass.getMethod("endTurn");
 				endTurn.invoke(gameClass);
+				System.out.println(heroList.size());
 			} catch (Exception e) {
 				fail(e.getCause().getClass() + " ccuered while trying to end turn, check the Zombies attack!");
 			}
@@ -1890,6 +1891,7 @@ public class M2PublicTests {
 
 		boolean isAllDead = heroList.size() <= 1;
 
+		System.out.println(heroList.size() + ".");
 		assertEquals("All 8 heros around Zombie should be dead after attacking all of them", isAllDead, true);
 	}
 
@@ -3944,7 +3946,7 @@ public class M2PublicTests {
 				}
 			}
 		}
-
+		System.out.println(Game.countOfVaccinesOnMap());
 		assertTrue("The game map should be initalized with the correct number of vaccines", count == 5);
 	}
 
@@ -4696,7 +4698,6 @@ public class M2PublicTests {
 		for (int i = 0; i < map.length; i++) {
 			for (int j = 0; j < map[i].length; j++) {
 				if ((i <= x + 1 && j <= y + 1) && (i >= x - 1 && j >= y - 1)) {
-					Game.showVisibility();
 					assertTrue(
 							"End turn should update the cells' visibility, heros' cells and their adjacent cells should be visible",
 							(boolean) fd.get(map[i][j]));

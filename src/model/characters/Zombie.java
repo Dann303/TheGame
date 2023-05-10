@@ -20,14 +20,18 @@ public class Zombie extends Character{
     public void attack() throws InvalidTargetException, NotEnoughActionsException {
         ArrayList<Cell> surroundingCells = Game.getAdjacentCells(this.getLocation());
         boolean attackedOnce = false;
-        for (int j = 0; j<surroundingCells.size() && (surroundingCells.get(j) instanceof CharacterCell); j++) {
-            Character target = ((CharacterCell) surroundingCells.get(j)).getCharacter();
+        
+        int index = (int)(Math.random()*surroundingCells.size());
+        while (surroundingCells.size()>0 && (surroundingCells.get(index) instanceof CharacterCell)) {
+            Character target = ((CharacterCell) surroundingCells.get(index)).getCharacter();
             this.setTarget(target);
             if (target != null && !attackedOnce && !this.isSameCharacterType()) {
                 // attack !!!!!!!!!!
                 attackedOnce = true;
                 super.attack();
             }
+            surroundingCells.remove(index);
+            index = (int)(Math.random()*surroundingCells.size());
         }
     }
 }
