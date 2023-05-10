@@ -4696,7 +4696,7 @@ public class M2PublicTests {
 		for (int i = 0; i < map.length; i++) {
 			for (int j = 0; j < map[i].length; j++) {
 				if ((i <= x + 1 && j <= y + 1) && (i >= x - 1 && j >= y - 1)) {
-
+					Game.showVisibility();
 					assertTrue(
 							"End turn should update the cells' visibility, heros' cells and their adjacent cells should be visible",
 							(boolean) fd.get(map[i][j]));

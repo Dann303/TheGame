@@ -42,9 +42,12 @@ public class Game {
     }
 
     public static boolean checkWin() {
-        if (vaccinesUsed >= 5 && heroes.size() >= 5) {
+//        if (vaccinesUsed >= 5 && heroes.size() >= 5) {
+//            return true;
+//        }
+//        return false;
+        if (heroes.size()>=5 && (countOfVaccinesOnMap()<=0 && vaccinesWithHeroes()<=0))
             return true;
-        }
         return false;
     }
 
@@ -129,6 +132,7 @@ public class Game {
             ArrayList<Cell> surroundingCells = getAdjacentCells(currentLocation);
 
             for (int j = 0; j < surroundingCells.size(); j++) {
+                System.out.println(surroundingCells.get(j));
                 surroundingCells.get(j).setVisible(true);
             }
 
@@ -150,8 +154,9 @@ public class Game {
         ArrayList<Cell> cells = new ArrayList<Cell>();
 
         for (int i = x-1; i <= x+1; i++) {
-            for (int j = y-1; j<= y+1 && !Character.isOutGrid( new Point(i,j) ); j++) {
-                cells.add(map[i][j]);
+            for (int j = y-1; j<= y+1; j++) {
+                 if (!Character.isOutGrid( new Point(i,j) ))
+                    cells.add(map[i][j]);
             }
         }
 
@@ -249,6 +254,18 @@ public class Game {
         sc.close();
 
         return result;
+    }
+
+    public static void showVisibility() {
+        for (int i=0; i<15; i++){
+            for (int j=0; j<15; j++){
+                if (map[i][j].isVisible())
+                    System.out.print("X ");
+                else
+                    System.out.print("O ");
+            }
+            System.out.println();
+        }
     }
 
 }

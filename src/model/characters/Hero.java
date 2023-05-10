@@ -114,20 +114,22 @@ public abstract class Hero extends Character {
 
 			// mat walla lesa yakhwana? check if died
 
-			if (this.getCurrentHp() <= 0) {
-				this.onCharacterDeath();
-			}
 		}
 
 		// ba3d ma shofna el cell dy kan feeha eh abl manet7arek feeha, move ba2a to it fel map w ka location fel character
 		this.setLocation(newPosition);
 		Game.map[x][y] = new CharacterCell(this);
+		this.setActionsAvailable(this.getActionsAvailable() - 1);
 
 		// erase el old position
 		Game.map[oldPosition.x][oldPosition.y] = new CharacterCell(null);
 
-		//visibility
-		this.setSquareVisible();
+		if (this.getCurrentHp() <= 0) {
+			this.onCharacterDeath();
+		} else {
+			//visibility
+			this.setSquareVisible();
+		}
 	}
 
 	public void useSpecial() throws InvalidTargetException, NoAvailableResourcesException {
@@ -154,15 +156,16 @@ public abstract class Hero extends Character {
 
 		//get random supply from inventory
 		int index = (int)(Math.random()*this.supplyInventory.size());
-		System.out.println(this.getSupplyInventory());
-		Supply supplyUsed = this.getSupplyInventory().remove(index);
-		System.out.println(this.getSupplyInventory());
+		Supply supplyUsed = this.getSupplyInventory().get(index);
 		supplyUsed.use(this);
 
 
 	}
 
-	public void cure() throws InvalidTargetException, NoAvailableResourcesException {
+	public void cure() throws InvalidTargetException, NoAvailableResourcesException, NotEnoughActionsException {
+		if (this.getActionsAvailable() <= 0){
+			throw new NotEnoughActionsException("No enough action points");
+		}
 		if(this.getVaccineInventory().size() <= 0) {
 			// empty
 			throw new NoAvailableResourcesException("Vaccines Inventory is empty!");
@@ -183,7 +186,7 @@ public abstract class Hero extends Character {
 			// first get random vaccine item from the vaccine inventory
 			// ne3melo random bardo
 			index = (int)(Math.random()*this.getVaccineInventory().size());
-			Vaccine vaccineUsed = this.getVaccineInventory().remove(index);
+			Vaccine vaccineUsed = this.getVaccineInventory().get(index);
 			vaccineUsed.use(this);
 
 			Game.zombies.remove(target);

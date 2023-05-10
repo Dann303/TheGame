@@ -21,8 +21,8 @@ public class Vaccine implements Collectible{
 //        h.cure();
         Game.vaccinesUsed++;
 
-        // keda keda ben3mel remove fel hero zat nafso
-//        h.getVaccineInventory().remove(this);
+        // keda keda ben3mel remove fel hero zat nafso ------ UPDATE --- BRUH ---- me7tag teremove it hena
+        h.getVaccineInventory().remove(this);
     }
 
 }
