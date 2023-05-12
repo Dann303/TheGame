@@ -1,7 +1,6 @@
 package model.collectibles;
 
 import engine.Game;
-import exceptions.InvalidTargetException;
 import model.characters.Hero;
 import model.characters.Zombie;
 import model.world.CharacterCell;
@@ -20,10 +19,9 @@ public class Vaccine implements Collectible{
     }
 
     @Override
-    public void use(Hero h) throws InvalidTargetException {
+    public void use(Hero h) {
         //shelna cure 3shan kda hateb2a habal cuz we call vaccine.use inside el cure nafsaha.
 //        h.cure();
-        Game.vaccinesUsed++;
 
         Zombie target = (Zombie) h.getTarget();
         Point targetLocation = target.getLocation();

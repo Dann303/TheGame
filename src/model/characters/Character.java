@@ -2,9 +2,7 @@ package model.characters;
 
 import engine.Game;
 import exceptions.InvalidTargetException;
-import exceptions.MovementException;
 import exceptions.NotEnoughActionsException;
-import model.world.Cell;
 import model.world.CharacterCell;
 
 import java.awt.Point;
@@ -84,9 +82,6 @@ public abstract class Character {
 			if (target.getCurrentHp() <= 0) {
 				// character dies
 				target.onCharacterDeath();
-			} else {
-				// ignore: --------
-				// if target didn't die, defend
 			}
 		} else {
 			// attack failed

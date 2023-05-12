@@ -21,8 +21,6 @@ public class Game {
     public static ArrayList<Zombie> zombies = new ArrayList<Zombie>(10); // maktoob "an arraylist representing te 10 zombies generated in the game" so initialize el size to 10?
     public static Cell[][] map = new Cell[15][15];
 
-    public static int vaccinesUsed = 0;
-
     // note that there's no constructor
 
     public static void loadHeroes(String filePath) throws Exception {
@@ -44,10 +42,6 @@ public class Game {
     }
 
     public static boolean checkWin() {
-//        if (vaccinesUsed >= 5 && heroes.size() >= 5) {
-//            return true;
-//        }
-//        return false;
         if (heroes.size()>=5 && (countOfVaccinesOnMap()<=0 && vaccinesWithHeroes()<=0))
             return true;
         return false;
@@ -68,7 +62,7 @@ public class Game {
         return result;
     }
 
-    public static int countOfVaccinesOnMap() {
+    private static int countOfVaccinesOnMap() {
         int result = 0;
         for (int i = 0; i < 15; i++){
             for (int j = 0; j < 15; j++) {
@@ -259,7 +253,7 @@ public class Game {
         return result;
     }
 
-    public static void showVisibility() {
+    private static void showVisibility() {
         for (int i=0; i<15; i++){
             for (int j=0; j<15; j++){
                 if (map[i][j].isVisible())

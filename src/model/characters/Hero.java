@@ -96,7 +96,7 @@ public abstract class Hero extends Character {
 
 		Point newPosition = new Point(x,y);
 
-		if (this.isOutGrid(newPosition))
+		if (isOutGrid(newPosition))
 			throw new MovementException("Out of bounds!");
 
 		if (Game.map[x][y] instanceof CharacterCell && ((CharacterCell)Game.map[x][y]).getCharacter() != null)
@@ -148,6 +148,13 @@ public abstract class Hero extends Character {
 			return;
 		}
 
+		this.setSpecialAction(true);
+
+		//get random supply from inventory
+		int index = (int)(Math.random()*this.supplyInventory.size());
+		Supply supplyUsed = this.getSupplyInventory().get(index);
+		supplyUsed.use(this);
+
 		if (this instanceof Explorer) {
 			this.observeMap();
 		}
@@ -156,12 +163,7 @@ public abstract class Hero extends Character {
 			this.setSpecialAction(false);
 		}
 
-		this.setSpecialAction(true);
 
-		//get random supply from inventory
-		int index = (int)(Math.random()*this.supplyInventory.size());
-		Supply supplyUsed = this.getSupplyInventory().get(index);
-		supplyUsed.use(this);
 
 
 	}
@@ -182,6 +184,8 @@ public abstract class Hero extends Character {
 			int index = (int)(Math.random()*this.getVaccineInventory().size());
 			Vaccine vaccineUsed = this.getVaccineInventory().get(index);
 			vaccineUsed.use(this);
+
+			this.setTarget(null);
 		} else {
 			throw new InvalidTargetException("Cannot cure!");
 		}
@@ -212,102 +216,5 @@ public abstract class Hero extends Character {
 			}
 		}
 	}
-
-	public static void main(String[] args) throws InvalidTargetException, NotEnoughActionsException {
-
-		Game.initializeGrid();
-		Fighter rubina = new Fighter("rubina", 100, 10, 3);
-		rubina.setLocation(new Point(2,2));
-		Game.heroes.add(rubina);
-		
-		
-		Game.endTurn();
-		
-		Fighter danny = new Fighter("danny", 100, 10, 3);
-		danny.setLocation(new Point(5,0));
-		Game.heroes.add(danny);
-		
-		
-		for(int i=1; i<=3; i++) {
-			for (int j=1; j<=3; j++) {
-				new Zombie().setLocation(new Point(i,j));
-			}
-		}
-
-		Game.endTurn();
-		
-		Game.showVisibility();
-		
-//		for (int i=-1; i<=15; i++) {
-//			for (int j=-1; j<=15; j++) {
-//				System.out.print(Character.isOutGrid(new Point(i, j)));
-//			}
-//			System.out.println();
-//		}
-		
-//		Medic rubina = new Medic("Rubina", 2, 20, 3);
-//		Zombie z = new Zombie();
-//
-//		Game.heroes.add(rubina);
-//
-//		Game.map = new Cell[15][15];
-//
-//		Game.map[2][2] = new CharacterCell(rubina);
-//		Game.map[2][3] = new CharacterCell(z);
-//
-//		rubina.setLocation(new Point(2,2));
-//		z.setLocation(new Point(2,3));
-//
-//		rubina.setTarget(z);
-//
-//		System.out.println(Game.heroes.size());
-//		System.out.println(rubina.getCurrentHp());
-//
-//		try {
-//			rubina.attack();
-//		} catch (InvalidTargetException e) {
-//			e.printStackTrace();
-//		} catch (NotEnoughActionsException e) {
-//			e.printStackTrace();
-//		}
-//
-//		System.out.println(Game.heroes.size());
-//		System.out.println(rubina.getCurrentHp());
-
-//		try {
-//			Game.loadHeroes("src/shared files/Heros.csv");
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//
-//
-//		Fighter f1 = new Fighter("Joel Miller",140,5,30);
-//		Game.startGame(f1);
-//
-//		f1.setSquareVisible();
-
-
-//		Fighter f1 = new Fighter("Rubina", 300, 1, 2);
-//		Zombie z = new Zombie();
-//
-//		f1.setTarget(z);
-//		f1.setSpecialAction(true);
-//
-//		f1.setLocation(new Point(3,4));
-//		z.setLocation(new Point(3,3));
-//
-//		for (int i = 0; i<35; i++) {
-//			try {
-//				f1.attack();
-//			} catch (NotEnoughActionsException e) {
-//				e.printStackTrace();
-//			} catch (InvalidTargetException e) {
-//				e.printStackTrace();
-//			}
-//			System.out.println(z.getCurrentHp());
-//		}
-
-	}
-
 
 }
