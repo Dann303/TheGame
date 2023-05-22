@@ -15,6 +15,7 @@ public abstract class Character {
 	private int currentHp;
 	private int attackDmg;
 	private Character target;
+	private String imagePath;
 
 	public Character(String name, int maxHp, int attackDmg) {
 		this.name = name;
@@ -161,6 +162,14 @@ public abstract class Character {
 		if (x < 0 || x > 14 || y < 0 || y > 14)
 			return true;
 		return false;
+	}
+
+	public void setImagePath(String imagePath) {
+		this.imagePath = imagePath;
+	}
+
+	public String getImagePath() {
+		return this.imagePath;
 	}
 
 }
