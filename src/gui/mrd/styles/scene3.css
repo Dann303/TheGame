@@ -1,6 +1,6 @@
 .root{
 /*    -fx-background-color: #0399BD; */
-    -fx-background-image: url("./../images/battlefield_background.jpeg");
+    -fx-background-image: url("./../images/scene3/battlefield_background.jpeg");
     -fx-background-position: center center;
     -fx-background-size: stretch;
 }
@@ -30,24 +30,24 @@
 }
 
 .up-key {
-    -fx-background-image: url("./../images/up_arrow.png");
+    -fx-background-image: url("./../images/scene3/up_arrow.png");
     -fx-background-position: center center;
     -fx-background-size: stretch;
 }
 .down-key {
-    -fx-background-image: url("./../images/up_arrow.png");
+    -fx-background-image: url("./../images/scene3/up_arrow.png");
     -fx-background-position: center center;
     -fx-background-size: stretch;
     -fx-rotate: 180;
 }
 .left-key {
-    -fx-background-image: url("./../images/up_arrow.png");
+    -fx-background-image: url("./../images/scene3/up_arrow.png");
     -fx-background-position: center center;
     -fx-background-size: stretch;
     -fx-rotate: 270;
 }
 .right-key {
-    -fx-background-image: url("./../images/up_arrow.png");
+    -fx-background-image: url("./../images/scene3/up_arrow.png");
     -fx-background-position: center center;
     -fx-background-size: stretch;
     -fx-rotate: 90;

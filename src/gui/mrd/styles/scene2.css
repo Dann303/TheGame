@@ -1,6 +1,6 @@
 .root{
     -fx-max-width: 2000px;
-    -fx-background-image: url("./../images/selection_background.jpeg");
+    -fx-background-image: url("./../images/scene2/selection_background.jpeg");
     -fx-background-position: center center;
     -fx-background-size: stretch;
     -fx-text-fill: white;

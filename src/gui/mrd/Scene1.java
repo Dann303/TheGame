@@ -27,12 +27,6 @@ public class Scene1 extends Scene {
             Main.currentStage.setScene(Main.s2);
         });
 
-        // put that text inside a container -------- TELE3 MALOOSH LAZMA FA SHELTO
-//        VBox vbox = new VBox();
-//        vbox.setAlignment(Pos.CENTER);
-//        vbox.getChildren().add(text);
-
-//        root.setCenter(vbox);
         root.setCenter(text);
 
         this.getStylesheets().add(Scene1.class.getResource("styles/scene1.css").toExternalForm());

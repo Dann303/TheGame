@@ -1,5 +1,5 @@
 .root {
-    -fx-background-image: url("./../images/introductory_scene_background.jpg");
+    -fx-background-image: url("./../images/scene1/introductory_scene_background.jpg");
     -fx-background-position: center center;
     -fx-background-size: stretch;
 }

@@ -5,6 +5,9 @@ import javafx.application.Application;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+
 public class Main extends Application {
 
     public static Stage currentStage = new Stage();
@@ -18,6 +21,17 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+        // ba7awel afham ezay a3mel timeouts
+//        CompletableFuture.supplyAsync(() -> {
+//                    System.out.println("hi ");
+//                    return null;
+//                }).get(1, TimeUnit.SECONDS);
+
+        // kharbana
+//        System.out.println("3ed men hena");
+//        Thread.sleep(10000);
+//        System.out.println("heyho");
+
         assignImageToHeroes();
 
         s1 = new Scene1();
@@ -25,9 +39,6 @@ public class Main extends Application {
         s3 = new Scene3();
 
         currentStage.setResizable(true);
-
-        // Timer timer = new Timer();
-        // timer.
 
         Image icon = new Image("gui/mrd/images/the_last_of_us_icon.jpg");
 
