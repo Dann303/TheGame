@@ -5,6 +5,7 @@ import exceptions.MovementException;
 import exceptions.NotEnoughActionsException;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -84,6 +85,9 @@ public class Scene3 extends Scene {
     }
 
     public static void setGridElements() {
+        grid.getChildren().clear();
+        grid.getChildren().removeAll();
+
         for(int i=0;i<15;i++){
             for(int j=0;j<15;j++){
                 // create the element to be added (eg: label)
@@ -208,7 +212,8 @@ public class Scene3 extends Scene {
                             }
 
                             Game.setCellsIcons();
-                            updateGridCells();
+                            setGridElements();
+//                            updateGridCells();
                         }
                     }
                 });
@@ -217,66 +222,72 @@ public class Scene3 extends Scene {
         }
     }
 
-    public static void updateGridCells() {
-        for(int i=0;i<15;i++) {
-            for (int j = 0; j < 15; j++) {
-                // get current cell and its path
-                Cell currentCell = Game.map[i][j];
-
-                Label iconImage = new Label();
-                String icon = "nothing";
-                iconImage.setMouseTransparent(true);
-
-                if (currentCell != null)
-                    icon = currentCell.getIcon();
-
-                // according to iconPath add a css class with the corresponding class
-                switch (icon) {
-                    case "nothing":
-                        iconImage.getStyleClass().add("emptyIcon");
-                        break;
-                    case "hero":
-                        iconImage.getStyleClass().add("heroIcon");
-                        break;
-                    case "zombie":
-                        iconImage.getStyleClass().add("zombieIcon");
-                        break;
-                    case "vaccine":
-                        iconImage.getStyleClass().add("vaccineIcon");
-                        break;
-                    case "supply":
-                        iconImage.getStyleClass().add("supplyIcon");
-                        break;
-                    case "invisible":
-                        iconImage.getStyleClass().add("invisibleIcon");
-                        break;
-                    default:
-                        iconImage.getStyleClass().add("emptyIcon");
-                        break;
-                }
-
-                // set the image settings
-                iconImage.setAlignment(Pos.CENTER);
-                iconImage.setMinWidth(25);
-                iconImage.setMinHeight(25);
-                iconImage.getStyleClass().add("icon");
-
-                // update the cell at the given coordinates
-                // get index of cell
-                int index = 15*i + j;
-
-                StackPane cell = (StackPane) grid.getChildren().get(index);
-                System.out.println(index);
-
-                // get el old image w remove el styleclass el feeha maslan
-                Label oldIcon = (Label) cell.getChildren().get(0);
-                oldIcon.getStyleClass().removeAll();
-
-                cell.getChildren().removeAll();
+//    public static void updateGridCells() {
+//        GridPane newGrid = new GridPane();
+//
+//        for(int i=0;i<15;i++) {
+//            for (int j = 0; j < 15; j++) {
+//                // get current cell and its path
+//                Cell currentCell = Game.map[i][j];
+//
+//                Label iconImage = new Label();
+//                String icon = "nothing";
+//                iconImage.setMouseTransparent(true);
+//
+//                if (currentCell != null)
+//                    icon = currentCell.getIcon();
+//
+//                // according to iconPath add a css class with the corresponding class
+//                switch (icon) {
+//                    case "nothing":
+//                        iconImage.getStyleClass().add("emptyIcon");
+//                        break;
+//                    case "hero":
+//                        iconImage.getStyleClass().add("heroIcon");
+//                        break;
+//                    case "zombie":
+//                        iconImage.getStyleClass().add("zombieIcon");
+//                        break;
+//                    case "vaccine":
+//                        iconImage.getStyleClass().add("vaccineIcon");
+//                        break;
+//                    case "supply":
+//                        iconImage.getStyleClass().add("supplyIcon");
+//                        break;
+//                    case "invisible":
+//                        iconImage.getStyleClass().add("invisibleIcon");
+//                        break;
+//                    default:
+//                        iconImage.getStyleClass().add("emptyIcon");
+//                        break;
+//                }
+//
+//                // set the image settings
+//                iconImage.setAlignment(Pos.CENTER);
+//                iconImage.setMinWidth(25);
+//                iconImage.setMinHeight(25);
+//                iconImage.getStyleClass().add("icon");
+//
+//                // update the cell at the given coordinates
+//                // get index of cell
+//                int index = 15*i + j;
+//
+//                StackPane cell = (StackPane) grid.getChildren().get(index);
+//
+//                // get el old image w remove el styleclass el feeha maslan
+//                Label oldIcon = (Label) cell.getChildren().get(0);
+//                oldIcon.getStyleClass().removeAll();
+//
+//                cell.getChildren().clear();
+//                cell.getChildren().removeAll();
 //                cell.getChildren().add(iconImage);
-            }
-        }
-    }
+//
+//                newGrid.getChildren().add(cell);
+//                newGrid.setConstraints(cell, i, 14-j);
+//            }
+//        }
+//        grid = newGrid;
+//    }
 
     private void setContainerSettings() {
         middleContainer.setAlignment(Pos.CENTER);
