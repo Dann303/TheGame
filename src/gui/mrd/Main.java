@@ -36,7 +36,7 @@ public class Main extends Application {
 
         s1 = new Scene1();
         s2 = new Scene2();
-//        s3 = new Scene3();
+        s3 = new Scene3();
 
         currentStage.setResizable(true);
 

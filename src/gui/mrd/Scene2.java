@@ -153,6 +153,7 @@ public class Scene2 extends Scene {
 
                 currentChild.setOnMouseClicked(e-> {
                     // and if you click then you are sent to scene 3 with the starting hero equal to startingHero (currentHero)
+                    Main.currentStage.setScene(Main.s3);
 
                     // fetch hero from array of availableHeroes using name
                     Hero heroToStart = null;
@@ -163,9 +164,7 @@ public class Scene2 extends Scene {
                         }
                     }
 
-
                     Game.startGame(heroToStart);
-                    Main.currentStage.setScene(Main.s3);
                 });
 
             }

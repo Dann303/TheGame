@@ -40,6 +40,7 @@ public class Scene3 extends Scene {
         parentChildRelations();
 
         // setup the grid elements
+
         setGridElements();
 
         // setup each of the containers settings
@@ -71,7 +72,7 @@ public class Scene3 extends Scene {
 
     }
 
-    private static void setGridElements() {
+    public static void setGridElements() {
         for(int i=0;i<15;i++){
             for(int j=0;j<15;j++){
                 // create the element to be added (eg: label)
@@ -81,48 +82,58 @@ public class Scene3 extends Scene {
 
                 // get current cell and its path
                 Cell currentCell = Game.map[i][j];
-                String icon = currentCell.getIcon();
 
                 // create container (label)
-                Label label = new Label();
+//                Label label = new Label();
+                StackPane cell = new StackPane();
+                Label iconImage = new Label();
+                String icon = "nothing";
 
-                label.getStyleClass().add("icon");
+                if (currentCell != null)
+                    icon = currentCell.getIcon();
 
                 // according to iconPath add a css class with the corresponding class
                 switch (icon) {
                     case "nothing":
-                        label.getStyleClass().add("emptyIcon");
+                        iconImage.getStyleClass().add("emptyIcon");
                         break;
                     case "hero":
-                        label.getStyleClass().add("heroIcon");
+                        iconImage.getStyleClass().add("heroIcon");
                         break;
                     case "zombie":
-                        label.getStyleClass().add("zombieIcon");
+                        iconImage.getStyleClass().add("zombieIcon");
                         break;
                     case "vaccine":
-                        label.getStyleClass().add("vaccineIcon");
+                        iconImage.getStyleClass().add("vaccineIcon");
                         break;
                     case "supply":
-                        label.getStyleClass().add("supplyIcon");
+                        iconImage.getStyleClass().add("supplyIcon");
                         break;
                     case "invisible":
-                        label.getStyleClass().add("invisibleIcon");
+                        iconImage.getStyleClass().add("invisibleIcon");
                         break;
                     default:
-                        label.getStyleClass().add("emptyIcon");
+                        iconImage.getStyleClass().add("emptyIcon");
                         break;
                 }
 
-                // set that element's settings
-                label.setAlignment(Pos.CENTER);
-                label.setMinWidth(40);
-                label.setMinHeight(40);
-                label.getStyleClass().add("cell");
+                // set that container's settings
+                cell.setAlignment(Pos.CENTER);
+                cell.setMinWidth(40);
+                cell.setMinHeight(40);
+                cell.getStyleClass().add("cell");
+
+                // set the image settings
+                iconImage.setAlignment(Pos.CENTER);
+                iconImage.setMinWidth(25);
+                iconImage.setMinHeight(25);
+                iconImage.getStyleClass().add("icon");
 
                 // add it to the grid and set its coordinates
-                grid.getChildren().add(label);
+                cell.getChildren().add(iconImage);
+                grid.getChildren().add(cell);
                 // constraints dy basically specifies the coordinates of the node that was added to the grid
-                grid.setConstraints(label,i,j);
+                grid.setConstraints(cell,i,j);
             }
         }
     }
