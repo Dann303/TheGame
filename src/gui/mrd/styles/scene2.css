@@ -1,0 +1,23 @@
+.root{
+    -fx-max-width: 2000px;
+    -fx-background-image: url("./../images/scene2/selection_background.jpeg");
+    -fx-background-position: center center;
+    -fx-background-size: stretch;
+    -fx-text-fill: white;
+}
+.label{
+    -fx-font-size: 60px;
+    -fx-max-width: 2000px;
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+}
+
+.hero-description{
+    -fx-max-height: 150px;
+    -fx-font-size: 32px;
+}
+
+.hero-stats{
+    -fx-max-height: 150px;
+    -fx-font-size: 48px;
+}
