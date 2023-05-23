@@ -1,5 +1,6 @@
 package gui.mrd;
 
+import engine.Game;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -8,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import model.world.Cell;
 
 public class Scene3 extends Scene {
     public static StackPane root = new StackPane();    // root howwa el asas, han7ot feeh el pain borderPane bas also we can now put over it el exception absolutely! (absolutely ya3ny using any coords we like)
@@ -77,7 +79,39 @@ public class Scene3 extends Scene {
                 // and to link it with some character we'll use el cells in Game.map
                 // basically we're gonna add a property to Cell class which is the iconPath that will hold path to some icon to be displayed
 
-                Label label = new Label("X");
+                // get current cell and its path
+                Cell currentCell = Game.map[i][j];
+                String icon = currentCell.getIcon();
+
+                // create container (label)
+                Label label = new Label();
+
+                label.getStyleClass().add("icon");
+
+                // according to iconPath add a css class with the corresponding class
+                switch (icon) {
+                    case "nothing":
+                        label.getStyleClass().add("emptyIcon");
+                        break;
+                    case "hero":
+                        label.getStyleClass().add("heroIcon");
+                        break;
+                    case "zombie":
+                        label.getStyleClass().add("zombieIcon");
+                        break;
+                    case "vaccine":
+                        label.getStyleClass().add("vaccineIcon");
+                        break;
+                    case "supply":
+                        label.getStyleClass().add("supplyIcon");
+                        break;
+                    case "invisible":
+                        label.getStyleClass().add("invisibleIcon");
+                        break;
+                    default:
+                        label.getStyleClass().add("emptyIcon");
+                        break;
+                }
 
                 // set that element's settings
                 label.setAlignment(Pos.CENTER);

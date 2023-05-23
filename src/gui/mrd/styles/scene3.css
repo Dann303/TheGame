@@ -117,3 +117,38 @@
     -fx-background-color: rgba(200, 1, 40, 0.8);
 }
 
+
+
+/* ICONS OVER HERE !!!!!!!!!!*/
+
+.heroIcon {
+    -fx-background-image: url("./../images/scene3/icons/hero.png");
+}
+
+.zombieIcon {
+    -fx-background-image: url("./../images/scene3/icons/zombie.png");
+}
+
+.supplyIcon {
+    -fx-background-image: url("./../images/scene3/icons/supply.png");
+}
+
+.vaccineIcon {
+    -fx-background-image: url("./../images/scene3/icons/vaccine.png");
+}
+
+.invisibleIcon {
+    -fx-background-image: url("./../images/scene3/icons/invisible.png");
+}
+
+.emptyIcon {
+    -fx-background-color: transparent;
+}
+
+.icon {
+    -fx-background-position: center center;
+    -fx-background-size: stretch;
+}
+
+
+

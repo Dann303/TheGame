@@ -2,6 +2,8 @@ package engine;
 
 import exceptions.InvalidTargetException;
 import exceptions.NotEnoughActionsException;
+import gui.mrd.Main;
+import gui.mrd.Scene3;
 import model.characters.*;
 import model.characters.Character;
 import model.collectibles.Supply;
@@ -39,6 +41,45 @@ public class Game {
         spreadCells();
 
         h.setSquareVisible();
+
+        setCellsIcons();
+
+        Main.s3 = new Scene3();
+    }
+
+    private static void setCellsIcons() {
+        for (int i = 0; i<15; i++) {
+            for (int j=0; j<15; j++) {
+                Cell currentCell = map[i][j];
+
+                if (!currentCell.isVisible()) {
+                    currentCell.setIcon("invisible");
+                } else if (currentCell instanceof CharacterCell) {
+                    if (((CharacterCell) currentCell).getCharacter() == null) {
+                        // empty cell
+                        currentCell.setIcon("nothing");
+                    } else if (((CharacterCell) currentCell).getCharacter() instanceof Hero) {
+                        // hero
+                        currentCell.setIcon("hero");
+                    } else {
+                        // zombie
+                        currentCell.setIcon("zombie");
+                    }
+                } else if (currentCell instanceof CollectibleCell) {
+                    if (((CollectibleCell) currentCell).getCollectible() instanceof Vaccine) {
+                        // vaccine
+                        currentCell.setIcon("vaccine");
+                    } else {
+                        // supply
+                        currentCell.setIcon("supply");
+                    }
+                } else {
+                    // trap cell
+                    currentCell.setIcon("nothing");
+                }
+
+            }
+        }
     }
 
     public static boolean checkWin() {
