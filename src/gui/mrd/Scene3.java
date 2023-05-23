@@ -51,7 +51,7 @@ public class Scene3 extends Scene {
         setRightSideBar();
 
         //bengarab ne3mel setAlertBoxContainer (remove by using index 1)
-        setAlertBoxContainer("Hey, you can't go there!");
+//        setAlertBoxContainer("Hey, you can't go there!");
 
     }
 
