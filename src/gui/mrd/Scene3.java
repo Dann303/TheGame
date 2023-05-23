@@ -148,7 +148,7 @@ public class Scene3 extends Scene {
                 cell.getChildren().add(iconImage);
                 grid.getChildren().add(cell);
                 // constraints dy basically specifies the coordinates of the node that was added to the grid
-                grid.setConstraints(cell,i,14-j);
+                grid.setConstraints(cell, i,14-j);
 
                 final int finalI = i;
                 final int finalJ = j;
@@ -330,6 +330,74 @@ public class Scene3 extends Scene {
         Button down = new Button();
         Button left = new Button();
         Button right = new Button();
+
+        up.setOnMouseClicked(e -> {
+            if (currentHero == null) {
+                // erza3 exception
+            } else {
+                //move
+                try {
+                    currentHero.move(Direction.RIGHT);
+                } catch (MovementException ex) {
+                    ex.printStackTrace();
+                } catch (NotEnoughActionsException ex) {
+                    ex.printStackTrace();
+                }
+                Game.setCellsIcons();
+                setGridElements();
+            }
+        });
+
+        down.setOnMouseClicked(e -> {
+            if (currentHero == null) {
+                // erza3 exception
+            } else {
+                //move
+                try {
+                    currentHero.move(Direction.LEFT);
+                } catch (MovementException ex) {
+                    ex.printStackTrace();
+                } catch (NotEnoughActionsException ex) {
+                    ex.printStackTrace();
+                }
+                Game.setCellsIcons();
+                setGridElements();
+            }
+        });
+
+        left.setOnMouseClicked(e -> {
+            if (currentHero == null) {
+                // erza3 exception
+            } else {
+                //move
+                try {
+                    currentHero.move(Direction.DOWN);
+                } catch (MovementException ex) {
+                    ex.printStackTrace();
+                } catch (NotEnoughActionsException ex) {
+                    ex.printStackTrace();
+                }
+                Game.setCellsIcons();
+                setGridElements();
+            }
+        });
+
+        right.setOnMouseClicked(e -> {
+            if (currentHero == null) {
+                // erza3 exception
+            } else {
+                //move
+                try {
+                    currentHero.move(Direction.UP);
+                } catch (MovementException ex) {
+                    ex.printStackTrace();
+                } catch (NotEnoughActionsException ex) {
+                    ex.printStackTrace();
+                }
+                Game.setCellsIcons();
+                setGridElements();
+            }
+        });
 
         // add them to the small grid container moveKeysButtons
         moveKeysButtons.getChildren().addAll(up, down, left, right);
