@@ -49,7 +49,7 @@ public class Game {
         Scene3.setGridElements();
     }
 
-    private static void setCellsIcons() {
+    public static void setCellsIcons() {
         for (int i = 0; i<15; i++) {
             for (int j=0; j<15; j++) {
                 Cell currentCell = map[i][j];

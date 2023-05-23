@@ -68,9 +68,9 @@ public class Scene2 extends Scene {
 
         // add all hero types (fighter, medic, explorer) to the container of the heroe types.
         typesOfHeroes.getChildren().addAll(
-                getImageViewOfCharacter("src/gui/mrd/images/scene2/ruby_the_medic_edited.jpg"),
-                getImageViewOfCharacter("src/gui/mrd/images/scene2/danny_the_fighter_edited.jpg"),
-                getImageViewOfCharacter("src/gui/mrd/images/scene2/mahmoud_explorer_edited.jpg")
+                getImageViewOfCharacter("src/gui/mrd/images/scene2/ruby_the_medic.jpg"),
+                getImageViewOfCharacter("src/gui/mrd/images/scene2/danny_the_fighter.jpg"),
+                getImageViewOfCharacter("src/gui/mrd/images/scene2/mahmoud_the_explorer.jpg")
         );
 
         Scene2.typesOfHeroes = typesOfHeroes;
