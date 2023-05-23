@@ -23,7 +23,6 @@ import model.characters.Medic;
 public class Scene2 extends Scene {
 
     public static BorderPane root = new BorderPane();
-    public static Button temp = new Button("Play");
     public static Hero startingHero;
 
     public static String typeChosen = "";
@@ -54,13 +53,6 @@ public class Scene2 extends Scene {
 
         // settings
         heroPanel.setTranslateY(75);
-
-        // el part beta3 el button el 3amalnah temporarily to link scene2 with 3
-        root.setBottom(temp);
-        temp.setOnMouseClicked(e-> {
-            System.out.println("bawsal");
-            Main.currentStage.setScene(Main.s3);
-        });
 
     }
 
@@ -161,6 +153,18 @@ public class Scene2 extends Scene {
 
                 currentChild.setOnMouseClicked(e-> {
                     // and if you click then you are sent to scene 3 with the starting hero equal to startingHero (currentHero)
+
+                    // fetch hero from array of availableHeroes using name
+                    Hero heroToStart = null;
+
+                    for (int j=0; j<Game.availableHeroes.size(); j++) {
+                        if (Game.availableHeroes.get(j).getName() == startingHero.getName()) {
+                            heroToStart = Game.availableHeroes.get(j);
+                        }
+                    }
+
+
+                    Game.startGame(heroToStart);
                     Main.currentStage.setScene(Main.s3);
                 });
 
@@ -235,7 +239,6 @@ public class Scene2 extends Scene {
             }
 
             root.setCenter(heroPanel);
-            temp.toFront();
         });
 
         typesOfHeroes.getChildren().get(1).setOnMouseClicked(e -> {
@@ -248,7 +251,6 @@ public class Scene2 extends Scene {
             }
 
             root.setCenter(heroPanel);
-            temp.toFront();
         });
 
         typesOfHeroes.getChildren().get(2).setOnMouseClicked(e -> {
@@ -261,7 +263,6 @@ public class Scene2 extends Scene {
             }
 
             root.setCenter(heroPanel);
-            temp.toFront();
         });
 
     }
