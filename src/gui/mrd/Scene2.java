@@ -68,9 +68,9 @@ public class Scene2 extends Scene {
 
         // add all hero types (fighter, medic, explorer) to the container of the heroe types.
         typesOfHeroes.getChildren().addAll(
-                getImageViewOfCharacter("src/gui/mrd/images/scene2/ruby_the_medic_edited.jpg"),
-                getImageViewOfCharacter("src/gui/mrd/images/scene2/danny_the_fighter_edited.jpg"),
-                getImageViewOfCharacter("src/gui/mrd/images/scene2/mahmoud_explorer_edited.jpg")
+                getImageViewOfCharacter("src/gui/mrd/images/scene2/ruby_the_medic.jpg"),
+                getImageViewOfCharacter("src/gui/mrd/images/scene2/danny_the_fighter.jpg"),
+                getImageViewOfCharacter("src/gui/mrd/images/scene2/mahmoud_the_explorer.jpg")
         );
 
         Scene2.typesOfHeroes = typesOfHeroes;
@@ -153,6 +153,7 @@ public class Scene2 extends Scene {
 
                 currentChild.setOnMouseClicked(e-> {
                     // and if you click then you are sent to scene 3 with the starting hero equal to startingHero (currentHero)
+                    Main.currentStage.setScene(Main.s3);
 
                     // fetch hero from array of availableHeroes using name
                     Hero heroToStart = null;
@@ -163,9 +164,7 @@ public class Scene2 extends Scene {
                         }
                     }
 
-
                     Game.startGame(heroToStart);
-                    Main.currentStage.setScene(Main.s3);
                 });
 
             }

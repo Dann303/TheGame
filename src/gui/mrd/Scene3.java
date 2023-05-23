@@ -1,6 +1,8 @@
 package gui.mrd;
 
 import engine.Game;
+import exceptions.MovementException;
+import exceptions.NotEnoughActionsException;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -9,7 +11,15 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import model.characters.Character;
+import model.characters.Direction;
+import model.characters.Hero;
+import model.collectibles.Collectible;
+import model.collectibles.Vaccine;
 import model.world.Cell;
+import model.world.CharacterCell;
+import model.world.CollectibleCell;
+import model.world.TrapCell;
 
 public class Scene3 extends Scene {
     public static StackPane root = new StackPane();    // root howwa el asas, han7ot feeh el pain borderPane bas also we can now put over it el exception absolutely! (absolutely ya3ny using any coords we like)
@@ -20,8 +30,9 @@ public class Scene3 extends Scene {
     // and also figure a way for healing to work, youll click on the hero to use (medic) then youll pick the other hero to heal (possibly same hero)
     // in a way lazem tefarra2
     // maybe hate3melha enak lama te3mel el superAbility fel medic hayprompt you to click on someone to heal <<==============
-    public static Character currentHero;
+    public static Hero currentHero;
     public static Character currentTarget;
+    public static Character newTarget;
 
     public static VBox middleContainer = new VBox(); // contains top, middle and bottom containers
 
@@ -40,6 +51,7 @@ public class Scene3 extends Scene {
         parentChildRelations();
 
         // setup the grid elements
+
         setGridElements();
 
         // setup each of the containers settings
@@ -71,7 +83,7 @@ public class Scene3 extends Scene {
 
     }
 
-    private static void setGridElements() {
+    public static void setGridElements() {
         for(int i=0;i<15;i++){
             for(int j=0;j<15;j++){
                 // create the element to be added (eg: label)
@@ -81,48 +93,187 @@ public class Scene3 extends Scene {
 
                 // get current cell and its path
                 Cell currentCell = Game.map[i][j];
-                String icon = currentCell.getIcon();
 
                 // create container (label)
-                Label label = new Label();
+//                Label label = new Label();
+                StackPane cell = new StackPane();
+                Label iconImage = new Label();
+                String icon = "nothing";
 
-                label.getStyleClass().add("icon");
+                if (currentCell != null)
+                    icon = currentCell.getIcon();
 
                 // according to iconPath add a css class with the corresponding class
                 switch (icon) {
                     case "nothing":
-                        label.getStyleClass().add("emptyIcon");
+                        iconImage.getStyleClass().add("emptyIcon");
                         break;
                     case "hero":
-                        label.getStyleClass().add("heroIcon");
+                        iconImage.getStyleClass().add("heroIcon");
                         break;
                     case "zombie":
-                        label.getStyleClass().add("zombieIcon");
+                        iconImage.getStyleClass().add("zombieIcon");
                         break;
                     case "vaccine":
-                        label.getStyleClass().add("vaccineIcon");
+                        iconImage.getStyleClass().add("vaccineIcon");
                         break;
                     case "supply":
-                        label.getStyleClass().add("supplyIcon");
+                        iconImage.getStyleClass().add("supplyIcon");
                         break;
                     case "invisible":
-                        label.getStyleClass().add("invisibleIcon");
+                        iconImage.getStyleClass().add("invisibleIcon");
                         break;
                     default:
-                        label.getStyleClass().add("emptyIcon");
+                        iconImage.getStyleClass().add("emptyIcon");
                         break;
                 }
 
-                // set that element's settings
-                label.setAlignment(Pos.CENTER);
-                label.setMinWidth(40);
-                label.setMinHeight(40);
-                label.getStyleClass().add("cell");
+                // set that container's settings
+                cell.setAlignment(Pos.CENTER);
+                cell.setMinWidth(40);
+                cell.setMinHeight(40);
+                cell.getStyleClass().add("cell");
+
+                // set the image settings
+                iconImage.setAlignment(Pos.CENTER);
+                iconImage.setMinWidth(25);
+                iconImage.setMinHeight(25);
+                iconImage.getStyleClass().add("icon");
 
                 // add it to the grid and set its coordinates
-                grid.getChildren().add(label);
+                cell.getChildren().add(iconImage);
+                grid.getChildren().add(cell);
                 // constraints dy basically specifies the coordinates of the node that was added to the grid
-                grid.setConstraints(label,i,j);
+                grid.setConstraints(cell,i,14-j);
+
+                final int finalI = i;
+                final int finalJ = j;
+
+                // create event listener for el grid cells (to extract el coordinates)
+                // hover
+                cell.setOnMouseEntered(e -> {
+
+                });
+
+                // click
+                cell.setOnMouseClicked(e -> {
+                    Cell cellClicked = Game.map[finalI][finalJ];
+                    System.out.println("current hero : " + currentCell);
+                    if (cellClicked instanceof CharacterCell && ((CharacterCell)cellClicked).getCharacter() != null) {
+                        Character characterClicked = ((CharacterCell)cellClicked).getCharacter();
+                        if (characterClicked instanceof Hero) {
+                            // hero cell
+                            // select hero w nekhaleeh yeb2a el currentHero
+                            currentHero = (Hero) characterClicked;
+                        } else {
+                            // zombie
+                            currentTarget = characterClicked;
+                        }
+                    } else {
+                        // law mesh charactercell aw character cell bas null yeb2a heya
+                        // 1- empty cell, 2- vaccine cell, 3- supply cell, 4- trap cell
+                        // once geit hena ana kda nawy amove fa check first if hero is selected
+
+                        if (currentHero == null) {
+                            // erza3 exception men 3andena
+                        } else {
+                            // fee hero selected fa you can move
+                            int heroX = currentHero.getLocation().x;
+                            int heroY = currentHero.getLocation().y;
+                            int targetX = finalI;
+                            int targetY = finalJ;
+
+                            int diffX = targetX - heroX;
+                            int diffY = targetY - heroY;
+
+
+                            Direction directionToMove = null;
+                            if (diffX == 0 && diffY == 1)
+                                directionToMove = Direction.RIGHT;
+                            else if (diffX == 0 && diffY == -1)
+                                directionToMove = Direction.LEFT;
+                            else if (diffX == 1 && diffY == 0)
+                                directionToMove = Direction.UP;
+                            else if (diffX == -1 && diffY == 0)
+                                directionToMove = Direction.DOWN;
+                            else return; // aw erza3 exception
+
+                            try {
+                                currentHero.move(directionToMove);
+                                System.out.println("moved!");
+                            } catch (MovementException ex) {
+                                ex.printStackTrace();
+                            } catch (NotEnoughActionsException ex) {
+                                ex.printStackTrace();
+                            }
+
+                            Game.setCellsIcons();
+                            updateGridCells();
+                        }
+                    }
+                });
+
+            }
+        }
+    }
+
+    public static void updateGridCells() {
+        for(int i=0;i<15;i++) {
+            for (int j = 0; j < 15; j++) {
+                // get current cell and its path
+                Cell currentCell = Game.map[i][j];
+
+                Label iconImage = new Label();
+                String icon = "nothing";
+                iconImage.setMouseTransparent(true);
+
+                if (currentCell != null)
+                    icon = currentCell.getIcon();
+
+                // according to iconPath add a css class with the corresponding class
+                switch (icon) {
+                    case "nothing":
+                        iconImage.getStyleClass().add("emptyIcon");
+                        break;
+                    case "hero":
+                        iconImage.getStyleClass().add("heroIcon");
+                        break;
+                    case "zombie":
+                        iconImage.getStyleClass().add("zombieIcon");
+                        break;
+                    case "vaccine":
+                        iconImage.getStyleClass().add("vaccineIcon");
+                        break;
+                    case "supply":
+                        iconImage.getStyleClass().add("supplyIcon");
+                        break;
+                    case "invisible":
+                        iconImage.getStyleClass().add("invisibleIcon");
+                        break;
+                    default:
+                        iconImage.getStyleClass().add("emptyIcon");
+                        break;
+                }
+
+                // set the image settings
+                iconImage.setAlignment(Pos.CENTER);
+                iconImage.setMinWidth(25);
+                iconImage.setMinHeight(25);
+                iconImage.getStyleClass().add("icon");
+
+                // update the cell at the given coordinates
+                // get index of cell
+                int index = 15*i + j;
+
+                StackPane cell = (StackPane) grid.getChildren().get(index);
+                System.out.println(index);
+
+                // get el old image w remove el styleclass el feeha maslan
+                Label oldIcon = (Label) cell.getChildren().get(0);
+                oldIcon.getStyleClass().removeAll();
+
+                cell.getChildren().removeAll();
+//                cell.getChildren().add(iconImage);
             }
         }
     }

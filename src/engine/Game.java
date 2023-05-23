@@ -44,10 +44,12 @@ public class Game {
 
         setCellsIcons();
 
-        Main.s3 = new Scene3();
+        // badal mate3mel el scene kolo when you start game, just reset el grid elements
+//        Main.s3 = new Scene3();
+        Scene3.setGridElements();
     }
 
-    private static void setCellsIcons() {
+    public static void setCellsIcons() {
         for (int i = 0; i<15; i++) {
             for (int j=0; j<15; j++) {
                 Cell currentCell = map[i][j];
