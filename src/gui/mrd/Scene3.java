@@ -1,6 +1,7 @@
 package gui.mrd;
 
 import engine.Game;
+import exceptions.InvalidTargetException;
 import exceptions.MovementException;
 import exceptions.NotEnoughActionsException;
 import javafx.geometry.Insets;
@@ -41,6 +42,8 @@ public class Scene3 extends Scene {
     public static HBox bottomPane = new HBox();
     public static VBox leftSideBar = new VBox();
     public static VBox rightSideBar = new VBox();
+
+    public static int currentRound = 1;
 
     public Scene3(){
         super(root, 1200, 800, Color.rgb(34,56,78));
@@ -344,9 +347,9 @@ public class Scene3 extends Scene {
                 } catch (NotEnoughActionsException ex) {
                     ex.printStackTrace();
                 }
-                updateLeftSideBar();
-                Game.setCellsIcons();
-                setGridElements();
+
+                //refresh scene
+                updateScene();
             }
         });
 
@@ -362,10 +365,9 @@ public class Scene3 extends Scene {
                 } catch (NotEnoughActionsException ex) {
                     ex.printStackTrace();
                 }
-                updateLeftSideBar();
-                Game.setCellsIcons();
-                setGridElements();
-            }
+
+                //refresh scene
+                updateScene();            }
         });
 
         left.setOnMouseClicked(e -> {
@@ -380,9 +382,9 @@ public class Scene3 extends Scene {
                 } catch (NotEnoughActionsException ex) {
                     ex.printStackTrace();
                 }
-                updateLeftSideBar();
-                Game.setCellsIcons();
-                setGridElements();
+
+                //refresh scene
+                updateScene();
             }
         });
 
@@ -398,9 +400,9 @@ public class Scene3 extends Scene {
                 } catch (NotEnoughActionsException ex) {
                     ex.printStackTrace();
                 }
-                updateLeftSideBar();
-                Game.setCellsIcons();
-                setGridElements();
+
+                //refresh scene
+                updateScene();
             }
         });
 
@@ -438,6 +440,27 @@ public class Scene3 extends Scene {
         specialAbilityButton.getStyleClass().add("bottomPaneButton");
         cureButton.getStyleClass().add("bottomPaneButton");
         moveKeysButtons.getStyleClass().add("bottomPaneButton");
+
+        // action actionlistener
+        attackButton.setOnMouseClicked(e -> {
+            // check if hero is selected walla la2
+            if (currentHero == null) {
+                // erza3 exception
+
+            } else {
+                try {
+                    //before attacking set the currentTarget as the target for the currentHero
+                    currentHero.setTarget(currentTarget);
+                    currentHero.attack();
+                } catch (NotEnoughActionsException ex) {
+                    ex.printStackTrace();
+                } catch (InvalidTargetException ex) {
+                    ex.printStackTrace();
+                }
+
+                updateScene();
+            }
+        });
 
         // FOR LATER **** thanks to mahmoud for the idea, instead of text for the buttons, we will use small images to cover the whole button area
         // we will do this by giving each button a unique class
@@ -584,6 +607,23 @@ public class Scene3 extends Scene {
         Button endTurnButton = new Button("End Turn");
         endTurnButton.setMinHeight(40);
         endTurnButton.setMinWidth(100);
+        endTurnButton.setOnMouseClicked(e -> {
+            try {
+                Game.endTurn();
+            } catch (InvalidTargetException ex) {
+                ex.printStackTrace();
+            } catch (NotEnoughActionsException ex) {
+                ex.printStackTrace();
+            }
+            // set current hero b null
+            currentHero = null;
+
+            // increment round number
+            currentRound++;
+
+            // refresh scene
+            updateScene();
+        });
 
         // element 2 and settings **** EB2A KHALIH TIMER BEGAD
         Label timer = new Label("Time: 01:39");
@@ -591,12 +631,14 @@ public class Scene3 extends Scene {
         timer.setMinWidth(100);
 
         // element 3 and settings **** INCREMENTS WITH GAME.ENDTURN()
-        Label roundCounter = new Label("Round 1");
+        Label roundCounter = new Label("Round " + currentRound);
         roundCounter.setMinHeight(40);
         roundCounter.setMinWidth(100);
 
         // add kolo lel container then add container to topPane
         topPanelContainer.getChildren().addAll(roundCounter, timer, endTurnButton);
+        topPane.getChildren().clear();
+        topPane.getChildren().removeAll();
         topPane.getChildren().add(topPanelContainer);
     }
 
@@ -640,5 +682,17 @@ public class Scene3 extends Scene {
         leftSideBar.getChildren().clear();
         leftSideBar.getChildren().removeAll();
         setLeftSideBar(); // aw update
+    }
+
+    public static void updateScene() {
+        //refresh grid
+        Game.setCellsIcons();
+        setGridElements();
+
+        //refresh leftsidebar
+        updateLeftSideBar();
+
+        //refresh top pane
+        setTopPane();
     }
 }
