@@ -169,6 +169,7 @@ public class Scene3 extends Scene {
                             // hero cell
                             // select hero w nekhaleeh yeb2a el currentHero
                             currentHero = (Hero) characterClicked;
+                            updateLeftSideBar();
                         } else {
                             // zombie
                             currentTarget = characterClicked;
@@ -204,7 +205,7 @@ public class Scene3 extends Scene {
 
                             try {
                                 currentHero.move(directionToMove);
-                                System.out.println("moved!");
+                                updateLeftSideBar();
                             } catch (MovementException ex) {
                                 ex.printStackTrace();
                             } catch (NotEnoughActionsException ex) {
@@ -222,7 +223,7 @@ public class Scene3 extends Scene {
         }
     }
 
-//    public static void updateGridCells() {
+    public static void updateGridCells() {
 //        GridPane newGrid = new GridPane();
 //
 //        for(int i=0;i<15;i++) {
@@ -287,7 +288,7 @@ public class Scene3 extends Scene {
 //            }
 //        }
 //        grid = newGrid;
-//    }
+    } // mesh hane3melha
 
     private void setContainerSettings() {
         middleContainer.setAlignment(Pos.CENTER);
@@ -320,7 +321,7 @@ public class Scene3 extends Scene {
 
     }
 
-    private GridPane getDirectionsButtons() {
+    private static GridPane getDirectionsButtons() {
         // gets us the 4 move buttons we have in the bottomPane
 
         GridPane moveKeysButtons = new GridPane();
@@ -343,6 +344,7 @@ public class Scene3 extends Scene {
                 } catch (NotEnoughActionsException ex) {
                     ex.printStackTrace();
                 }
+                updateLeftSideBar();
                 Game.setCellsIcons();
                 setGridElements();
             }
@@ -360,6 +362,7 @@ public class Scene3 extends Scene {
                 } catch (NotEnoughActionsException ex) {
                     ex.printStackTrace();
                 }
+                updateLeftSideBar();
                 Game.setCellsIcons();
                 setGridElements();
             }
@@ -377,6 +380,7 @@ public class Scene3 extends Scene {
                 } catch (NotEnoughActionsException ex) {
                     ex.printStackTrace();
                 }
+                updateLeftSideBar();
                 Game.setCellsIcons();
                 setGridElements();
             }
@@ -394,6 +398,7 @@ public class Scene3 extends Scene {
                 } catch (NotEnoughActionsException ex) {
                     ex.printStackTrace();
                 }
+                updateLeftSideBar();
                 Game.setCellsIcons();
                 setGridElements();
             }
@@ -421,7 +426,7 @@ public class Scene3 extends Scene {
         return moveKeysButtons;
     }
 
-    private void setBottomPane() {
+    private static void setBottomPane() {
         // create the 4 buttons to be added to the bottom pane
         Button attackButton = new Button("Attack");
         Button specialAbilityButton = new Button("<Special Ability>"); // button text will be set according to currentHero instance of what
@@ -442,8 +447,7 @@ public class Scene3 extends Scene {
         bottomPane.getChildren().addAll(attackButton,specialAbilityButton,cureButton,moveKeysButtons);
     }
 
-
-    private void setRightSideBar() {
+    private static void setRightSideBar() {
         // basically the right side bar contains data of the target
         // note: we didn't set the vbox that we create directly to the right of the borderpane rather 7atenah gowa el vbox that already exists in the right of the border pane
         // that is because we wanna specify en what we setRight fel borderPane hay take some area mo3ayana and the target container nafso hayeb2a gowa this area so that it wont
@@ -486,8 +490,7 @@ public class Scene3 extends Scene {
 
     }
 
-
-    private void setLeftSideBar() {
+    private static void setLeftSideBar() {
         // nafs fekret el right sidebar, besra7a mesh ader akteb tany fa see el notes el maktooba fel mathod beta3et setRightSideBar
 
         VBox heroContainer = new VBox();
@@ -504,14 +507,55 @@ public class Scene3 extends Scene {
         heroImage.setMinHeight(300);
         heroImage.getStyleClass().add("heroImage");
 
+        if (currentHero != null) {
+            if (currentHero == Main.allHeroes.get(0))
+                heroImage.getStyleClass().add("heroImage1");
+            else if (currentHero == Main.allHeroes.get(1))
+                heroImage.getStyleClass().add("heroImage2");
+            else if (currentHero == Main.allHeroes.get(2))
+                heroImage.getStyleClass().add("heroImage3");
+            else if (currentHero == Main.allHeroes.get(3))
+                heroImage.getStyleClass().add("heroImage4");
+            else if (currentHero == Main.allHeroes.get(4))
+                heroImage.getStyleClass().add("heroImage5");
+            else if (currentHero == Main.allHeroes.get(5))
+                heroImage.getStyleClass().add("heroImage6");
+            else if (currentHero == Main.allHeroes.get(6))
+                heroImage.getStyleClass().add("heroImage7");
+            else if (currentHero == Main.allHeroes.get(7))
+                heroImage.getStyleClass().add("heroImage8");
+        } else {
+            heroImage.getStyleClass().add("mysteryImage");
+        }
+
         // text details
-        Text heroName = new Text("Name : Rubina Gamadan");
-        Text heroType = new Text("Medic");
-        Text health = new Text("Health : 50/50 HP");
-        Text attackDamage = new Text("Attack Damage : 4 Points");
-        Text remainingActionPoints = new Text("Moves left : 3");
-        Text supplies = new Text("Supplies in inventory : 2");
-        Text vaccines = new Text("Vaccines in inventory : 1");
+        Text heroName = new Text();
+        Text heroType = new Text();
+        Text health = new Text();
+        Text attackDamage = new Text();
+        Text remainingActionPoints = new Text();
+        Text supplies = new Text();
+        Text vaccines = new Text();
+
+        if (currentHero != null) {
+            // text details
+            heroName = new Text("Name : " + currentHero.getName());
+            heroType = new Text(currentHero.getType()); //getType is a new method fe Hero class bet return type ka string zay getName
+            health = new Text("Health : " + currentHero.getCurrentHp() + "/" + currentHero.getMaxHp() + " HP");
+            attackDamage = new Text("Attack Damage : " + currentHero.getAttackDmg() + " Points");
+            remainingActionPoints = new Text("Moves left : " + currentHero.getActionsAvailable() + " moves");
+            supplies = new Text("Supplies in inventory : " + currentHero.getSupplyInventory().size());
+            vaccines = new Text("Vaccines in inventory : " + currentHero.getVaccineInventory().size());
+        } else {
+            // currentHero not set yet
+            heroName = new Text("Name : ---");
+            heroType = new Text("---");
+            health = new Text("Health : ---");
+            attackDamage = new Text("Attack Damage : ---");
+            remainingActionPoints = new Text("Moves left : ---");
+            supplies = new Text("Supplies in inventory : ---");
+            vaccines = new Text("Vaccines in inventory : ---");
+        }
 
         // text details settings
         VBox heroText = new VBox();
@@ -526,8 +570,7 @@ public class Scene3 extends Scene {
         leftSideBar.getChildren().addAll(heroContainer);
     }
 
-
-    private void setTopPane() {
+    private static void setTopPane() {
         // nafs fekret el left wel rightsidebars
         HBox topPanelContainer = new HBox();
 
@@ -591,5 +634,11 @@ public class Scene3 extends Scene {
         // add kollo lel alertBox w add el alertBox lel root (sheelo bel action listener or be timeout) easy ya3ny isa
         alertBox.getChildren().addAll(labelMessage, xButton);
         root.getChildren().add(alertBox);
+    }
+
+    public static void updateLeftSideBar() {
+        leftSideBar.getChildren().clear();
+        leftSideBar.getChildren().removeAll();
+        setLeftSideBar(); // aw update
     }
 }
