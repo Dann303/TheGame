@@ -23,6 +23,13 @@ import model.world.CharacterCell;
 import model.world.CollectibleCell;
 import model.world.TrapCell;
 
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 public class Scene3 extends Scene {
     public static StackPane root = new StackPane();    // root howwa el asas, han7ot feeh el pain borderPane bas also we can now put over it el exception absolutely! (absolutely ya3ny using any coords we like)
     public static BorderPane theGameLayout = new BorderPane(); // el beta3a el shayla kol 7aga
@@ -47,6 +54,7 @@ public class Scene3 extends Scene {
 
     public static int currentRound = 1;
     public static int randomZombieIndex;
+    public static boolean isHealing = false;
 
     public Scene3(){
         super(root, 1200, 800, Color.rgb(34,56,78));
@@ -167,68 +175,91 @@ public class Scene3 extends Scene {
 
                 // click
                 cell.setOnMouseClicked(e -> {
-                    Cell cellClicked = Game.map[finalI][finalJ];
-                    if (cellClicked instanceof CharacterCell && ((CharacterCell)cellClicked).getCharacter() != null) {
-                        Character characterClicked = ((CharacterCell)cellClicked).getCharacter();
-                        if (characterClicked instanceof Hero) {
-                            // hero cell
-                            // select hero w nekhaleeh yeb2a el currentHero
-                            currentHero = (Hero) characterClicked;
-//                            currentTarget = characterClicked;
-                            updateLeftSideBar();
-                        } else {
-                            // zombie
-                            if(currentTarget != characterClicked)
-                                randomZombieIndex = (int)(Math.random()*2) + 1;
-
-                            currentTarget = characterClicked;
-                            currentTargetCell = cellClicked;
-
-                        }
-                        updateScene();
-                    } else {
-                        // law mesh charactercell aw character cell bas null yeb2a heya
-                        // 1- empty cell, 2- vaccine cell, 3- supply cell, 4- trap cell
-                        // once geit hena ana kda nawy amove fa check first if hero is selected
-                        currentTargetCell = cellClicked;
-                        updateScene();
-
-                        if (currentHero == null) {
-                            // erza3 exception men 3andena
-                        } else {
-                            // fee hero selected fa you can move
-                            int heroX = currentHero.getLocation().x;
-                            int heroY = currentHero.getLocation().y;
-                            int targetX = finalI;
-                            int targetY = finalJ;
-
-                            int diffX = targetX - heroX;
-                            int diffY = targetY - heroY;
-
-
-                            Direction directionToMove = null;
-                            if (diffX == 0 && diffY == 1)
-                                directionToMove = Direction.RIGHT;
-                            else if (diffX == 0 && diffY == -1)
-                                directionToMove = Direction.LEFT;
-                            else if (diffX == 1 && diffY == 0)
-                                directionToMove = Direction.UP;
-                            else if (diffX == -1 && diffY == 0)
-                                directionToMove = Direction.DOWN;
-                            else return; // aw erza3 exception
+                    if (isHealing) {
+                        // medic's isSpecial to select target to heal
+                        Cell cellClicked = Game.map[finalI][finalJ];
+                        if (cellClicked instanceof CharacterCell && cellClicked.isVisible() && ((CharacterCell)cellClicked).getCharacter() instanceof Hero) {
+                            currentTarget = (Hero) ((CharacterCell)cellClicked).getCharacter();
+                            currentHero.setTarget(currentTarget);
 
                             try {
-                                currentHero.move(directionToMove);
-                                updateLeftSideBar();
-                            } catch (MovementException ex) {
-                                ex.printStackTrace();
-                            } catch (NotEnoughActionsException ex) {
-                                ex.printStackTrace();
+                                currentHero.useSpecial();
+                            } catch (InvalidTargetException e2) {
+                                e2.printStackTrace();
+                            } catch (NoAvailableResourcesException e2) {
+                                e2.printStackTrace();
                             }
-//                            updateGridCells();
                         }
                         updateScene();
+                        isHealing = false;
+                    } else {
+                        // normal click
+                        Cell cellClicked = Game.map[finalI][finalJ];
+                        if (cellClicked instanceof CharacterCell && ((CharacterCell)cellClicked).getCharacter() != null) {
+                            Character characterClicked = ((CharacterCell)cellClicked).getCharacter();
+                            if (characterClicked instanceof Hero) {
+                                // hero cell
+                                // select hero w nekhaleeh yeb2a el currentHero
+                                currentHero = (Hero) characterClicked;
+//                            currentTarget = characterClicked;
+                                updateLeftSideBar();
+                            } else {
+                                // zombie
+                                if(currentTarget != characterClicked)
+                                    randomZombieIndex = (int)(Math.random()*2) + 1;
+
+                                currentTarget = characterClicked;
+                                currentTargetCell = cellClicked;
+
+                            }
+                            updateScene();
+                        } else {
+                            // law mesh charactercell aw character cell bas null yeb2a heya
+                            // 1- empty cell, 2- vaccine cell, 3- supply cell, 4- trap cell
+                            // once geit hena ana kda nawy amove fa check first if hero is selected
+                            currentTargetCell = cellClicked;
+                            updateScene();
+
+                            if (currentHero == null) {
+                                // erza3 exception men 3andena
+                            } else {
+                                // fee hero selected fa you can move
+                                int heroX = currentHero.getLocation().x;
+                                int heroY = currentHero.getLocation().y;
+                                int targetX = finalI;
+                                int targetY = finalJ;
+
+                                int diffX = targetX - heroX;
+                                int diffY = targetY - heroY;
+
+
+                                Direction directionToMove = null;
+                                if (diffX == 0 && diffY == 1)
+                                    directionToMove = Direction.RIGHT;
+                                else if (diffX == 0 && diffY == -1)
+                                    directionToMove = Direction.LEFT;
+                                else if (diffX == 1 && diffY == 0)
+                                    directionToMove = Direction.UP;
+                                else if (diffX == -1 && diffY == 0)
+                                    directionToMove = Direction.DOWN;
+                                else return; // aw erza3 exception
+
+                                try {
+                                    currentHero.move(directionToMove);
+                                    updateLeftSideBar();
+                                } catch (MovementException ex) {
+                                    ex.printStackTrace();
+                                } catch (NotEnoughActionsException ex) {
+                                    ex.printStackTrace();
+                                }
+//                            updateGridCells();
+                            }
+                            updateScene();
+                        }
+
                     }
+
+                    cell.setOnMouseClicked(null);
                 });
 
             }
@@ -468,6 +499,40 @@ public class Scene3 extends Scene {
                     //before attacking set the currentTarget as the target for the currentHero
                     currentHero.setTarget(currentTarget);
                     currentHero.attack();
+                    updateScene();
+                    if (currentTarget.getCurrentHp() == 0) {
+                        
+                        // timer 3 seconds
+//                        Timer t = new Timer();
+//
+//                        t.schedule(new TimerTask() {
+//                            @Override
+//                            public void run() {
+//                                currentTarget = null;
+//                                updateScene();
+//                            }
+//                        }, 2000);
+//                        TimerTask t1 = new java.util.TimerTask() {
+//                            @Override
+//                            public void run() {
+//                                // your code here
+//                                System.out.println("hi1");
+//                                currentTarget = null;
+//                                updateScene();
+//                            }
+//                        };
+//                        TimerTask t2 = new java.util.TimerTask() {
+//                            @Override
+//                            public void run() {
+//                                // your code here
+//                                System.out.println("hi2");
+//                            }
+//                        };
+//
+//                        t.schedule(t1, 2000);
+//                        t.schedule(t2, 3000);
+
+                    }
                 } catch (NotEnoughActionsException ex) {
                     ex.printStackTrace();
                 } catch (InvalidTargetException ex) {
@@ -483,93 +548,7 @@ public class Scene3 extends Scene {
                 //erza3 exception
             } else {
                 if (currentHero instanceof Medic){
-                    System.out.println("dost 3ala heal, doos ba2a 3ala hero");
-                    // if medic we have to specify the target to heal mazboot?
-                    // ta3alo ba3d ma ndoos 3ala el zorar abl mane3mel call le useSpecial neprompt el ragel eno yedoos el awel 3ala hero mel grid
-
-                    grid.getChildren().clear();
-                    grid.getChildren().removeAll();
-
-                    for (int i = 0; i < 15; i++) {
-                        for (int j = 0; j < 1; j++){
-                            final int finalI = i;
-                            final int finalJ = j;
-
-                            Cell currentCell = Game.map[i][j];
-
-                            // create container (label)
-//                          Label label = new Label();
-                            StackPane cell = new StackPane();
-                            Label iconImage = new Label();
-                            String icon = "nothing";
-
-                            if (currentCell != null)
-                                icon = currentCell.getIcon();
-
-                            // according to iconPath add a css class with the corresponding class
-                            switch (icon) {
-                                case "nothing":
-                                    iconImage.getStyleClass().add("emptyIcon");
-                                    break;
-                                case "hero":
-                                    iconImage.getStyleClass().add("heroIcon");
-                                    break;
-                                case "zombie":
-                                    iconImage.getStyleClass().add("zombieIcon");
-                                    break;
-                                case "vaccine":
-                                    iconImage.getStyleClass().add("vaccineIcon");
-                                    break;
-                                case "supply":
-                                    iconImage.getStyleClass().add("supplyIcon");
-                                    break;
-                                case "invisible":
-                                    iconImage.getStyleClass().add("invisibleIcon");
-                                    break;
-                                default:
-                                    iconImage.getStyleClass().add("emptyIcon");
-                                    break;
-                            }
-
-                            // set that container's settings
-                            cell.setAlignment(Pos.CENTER);
-                            cell.setMinWidth(40);
-                            cell.setMinHeight(40);
-                            cell.getStyleClass().add("cell");
-
-                            // set the image settings
-                            iconImage.setAlignment(Pos.CENTER);
-                            iconImage.setMinWidth(25);
-                            iconImage.setMinHeight(25);
-                            iconImage.getStyleClass().add("icon");
-
-                            // add it to the grid and set its coordinates
-                            cell.getChildren().add(iconImage);
-                            grid.getChildren().add(cell);
-                            // constraints dy basically specifies the coordinates of the node that was added to the grid
-                            grid.setConstraints(cell, i,14-j);
-
-                            cell.setOnMouseClicked(e2 -> {
-                                System.out.println("dost 3ala hero shatoor");
-                                Cell cellClicked = Game.map[finalI][finalJ];
-                                if (cellClicked instanceof CharacterCell && cellClicked.isVisible() && ((CharacterCell)cellClicked).getCharacter() instanceof Hero) {
-                                    currentTarget = (Hero) ((CharacterCell)cellClicked).getCharacter();
-                                    currentHero.setTarget(currentTarget);
-
-                                    try {
-                                        currentHero.useSpecial();
-                                    } catch (InvalidTargetException e) {
-                                        e.printStackTrace();
-                                    } catch (NoAvailableResourcesException e) {
-                                        e.printStackTrace();
-                                    }
-
-                                }
-                                // refresh scene to reset action listeners to normal
-                                updateScene();
-                            });
-                        }
-                    }
+                    isHealing = true;
 
                 } else {
                     // not medic ya3ny fighter aw explorer
@@ -587,6 +566,30 @@ public class Scene3 extends Scene {
             }
         });
 
+        cureButton.setOnMouseClicked(e -> {
+            if (currentHero == null) {
+                // erza3 exception
+
+            } else {
+                if (currentTarget instanceof Zombie) {
+                    currentHero.setTarget(currentTarget);
+                    try {
+                        currentHero.cure();
+                    } catch (InvalidTargetException ex) {
+                        ex.printStackTrace();
+                    } catch (NoAvailableResourcesException ex) {
+                        ex.printStackTrace();
+                    } catch (NotEnoughActionsException ex) {
+                        ex.printStackTrace();
+                    }
+                    currentTarget = null;
+                    currentTargetCell = null;
+                } else {
+                    // erza3 exception
+                }
+            }
+            updateScene();
+        });
         // FOR LATER **** thanks to mahmoud for the idea, instead of text for the buttons, we will use small images to cover the whole button area
         // we will do this by giving each button a unique class
         // and in this class add an image that refers to what the button does
@@ -670,8 +673,8 @@ public class Scene3 extends Scene {
             health.setText("Health : " + currentTarget.getCurrentHp() + "/" + currentTarget.getMaxHp() + " HP");
             attackDamage.setText("Attack Damage : " + currentTarget.getAttackDmg());
             remainingActionPoints.setText("Moves left : " + ((Hero) currentTarget).getActionsAvailable());
-            supplies.setText("Supplies in inventory : " + ((Hero) currentTarget).getSupplyInventory());
-            vaccines.setText("Vaccines in inventory : " + ((Hero) currentTarget).getVaccineInventory());
+            supplies.setText("Supplies in inventory : " + ((Hero) currentTarget).getSupplyInventory().size());
+            vaccines.setText("Vaccines in inventory : " + ((Hero) currentTarget).getVaccineInventory().size());
         } else {
 //            targetName.setText("Name : Danny 7ayawan");
 //            targetType.setText("Fighter");

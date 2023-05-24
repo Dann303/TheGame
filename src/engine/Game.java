@@ -54,7 +54,7 @@ public class Game {
             for (int j=0; j<15; j++) {
                 Cell currentCell = map[i][j];
 
-                if (!currentCell.isVisible()) {
+                if (!currentCell.isVisible() && !(currentCell instanceof CharacterCell && ((CharacterCell) currentCell).getCharacter() instanceof Hero)) {
                     currentCell.setIcon("invisible");
                 } else if (currentCell instanceof CharacterCell) {
                     if (((CharacterCell) currentCell).getCharacter() == null) {
