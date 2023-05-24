@@ -120,12 +120,35 @@
 }
 
 .targetImage {
-    -fx-background-image: url("./../images/medic_1.jpg");
     -fx-background-position: center center;
     -fx-background-size: stretch;
     -fx-border-color: black;
     -fx-border-style: hidden hidden solid hidden;
     -fx-border-width: 2px;
+}
+
+.targetImageZombie1 {
+    -fx-background-image: url("./../images/scene3/zombie/1.jpeg");
+}
+
+.targetImageZombie2 {
+    -fx-background-image: url("./../images/scene3/zombie/3.jpeg");
+}
+
+.targetImageVaccine {
+    -fx-background-image: url("./../images/scene3/vaccine/2.jpeg");
+}
+
+.targetImageSupply {
+    -fx-background-image: url("./../images/scene3/supply/2.jpeg");
+}
+
+.targetImageEmpty {
+    -fx-background-image: url("./../images/scene3/empty/1.jpeg");
+}
+
+.targetImageInvisible {
+    -fx-background-image: url("./../images/scene3/mystery_guy.jpg");
 }
 
 .targetText {
