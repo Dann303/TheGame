@@ -5,15 +5,18 @@ import exceptions.InvalidTargetException;
 import exceptions.MovementException;
 import exceptions.NoAvailableResourcesException;
 import exceptions.NotEnoughActionsException;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import model.characters.*;
 import model.characters.Character;
 import model.collectibles.Collectible;
@@ -55,6 +58,11 @@ public class Scene3 extends Scene {
     public static int currentRound = 1;
     public static int randomZombieIndex;
     public static boolean isHealing = false;
+    public static boolean isHovering = false;
+    public static Cell hoveredOverCell = null;
+
+    public static int seconds = 0;
+    public static String timeFormat = "00 : 00";
 
     public Scene3(){
         super(root, 1200, 800, Color.rgb(34,56,78));
@@ -79,9 +87,21 @@ public class Scene3 extends Scene {
         setBottomPane();
         setRightSideBar();
 
+        createMoveKeysActionListeners();
         //bengarab ne3mel setAlertBoxContainer (remove by using index 1)
 //        setAlertBoxContainer("Hey, you can't go there!");
 
+    }
+
+    private static void createMoveKeysActionListeners() {
+//        Scene3.root.setOnKeyPressed(e -> {
+//            if (currentHero == null) {
+//                // erza3 exception
+//            } else {
+//                // move
+//                switch (e.getCode() == KeyCode.DOWN)
+//            }
+//        });
     }
 
     private void parentChildRelations() {
@@ -170,11 +190,18 @@ public class Scene3 extends Scene {
                 // create event listener for el grid cells (to extract el coordinates)
                 // hover
                 cell.setOnMouseEntered(e -> {
+                    isHovering = true;
+                    hoveredOverCell = Game.map[finalI][finalJ];
+                });
 
+                cell.setOnMouseExited(e -> {
+                    hoveredOverCell = null;
+                    isHovering = false;
                 });
 
                 // click
                 cell.setOnMouseClicked(e -> {
+                    isHovering = false;
                     if (isHealing) {
                         // medic's isSpecial to select target to heal
                         Cell cellClicked = Game.map[finalI][finalJ];
@@ -200,7 +227,10 @@ public class Scene3 extends Scene {
                             if (characterClicked instanceof Hero) {
                                 // hero cell
                                 // select hero w nekhaleeh yeb2a el currentHero
-                                currentHero = (Hero) characterClicked;
+                                if (currentHero == (Hero) characterClicked)
+                                    currentHero = null;
+                                else
+                                    currentHero = (Hero) characterClicked;
 //                            currentTarget = characterClicked;
                                 updateLeftSideBar();
                             } else {
@@ -222,6 +252,7 @@ public class Scene3 extends Scene {
 
                             if (currentHero == null) {
                                 // erza3 exception men 3andena
+//                                setAlertBoxContainer("Please select a hero before moving!");
                             } else {
                                 // fee hero selected fa you can move
                                 int heroX = currentHero.getLocation().x;
@@ -242,8 +273,10 @@ public class Scene3 extends Scene {
                                     directionToMove = Direction.UP;
                                 else if (diffX == -1 && diffY == 0)
                                     directionToMove = Direction.DOWN;
-                                else return; // aw erza3 exception
-
+                                else {
+                                    // aw erza3 exception
+                                    return;
+                                }
                                 try {
                                     currentHero.move(directionToMove);
                                     updateLeftSideBar();
@@ -378,6 +411,7 @@ public class Scene3 extends Scene {
         up.setOnMouseClicked(e -> {
             if (currentHero == null) {
                 // erza3 exception
+                setAlertBoxContainer("Please select a hero first!");
             } else {
                 //move
                 try {
@@ -396,6 +430,7 @@ public class Scene3 extends Scene {
         down.setOnMouseClicked(e -> {
             if (currentHero == null) {
                 // erza3 exception
+                setAlertBoxContainer("Please select a hero first!");
             } else {
                 //move
                 try {
@@ -413,6 +448,7 @@ public class Scene3 extends Scene {
         left.setOnMouseClicked(e -> {
             if (currentHero == null) {
                 // erza3 exception
+                setAlertBoxContainer("Please select a hero first!");
             } else {
                 //move
                 try {
@@ -431,6 +467,7 @@ public class Scene3 extends Scene {
         right.setOnMouseClicked(e -> {
             if (currentHero == null) {
                 // erza3 exception
+                setAlertBoxContainer("Please select a hero first!");
             } else {
                 //move
                 try {
@@ -493,7 +530,7 @@ public class Scene3 extends Scene {
             // check if hero is selected walla la2
             if (currentHero == null) {
                 // erza3 exception
-
+                setAlertBoxContainer("Please select a hero before attacking!");
             } else {
                 try {
                     //before attacking set the currentTarget as the target for the currentHero
@@ -501,36 +538,21 @@ public class Scene3 extends Scene {
                     currentHero.attack();
                     updateScene();
                     if (currentTarget.getCurrentHp() == 0) {
-                        
+
                         // timer 3 seconds
-//                        Timer t = new Timer();
-//
-//                        t.schedule(new TimerTask() {
-//                            @Override
-//                            public void run() {
-//                                currentTarget = null;
-//                                updateScene();
-//                            }
-//                        }, 2000);
-//                        TimerTask t1 = new java.util.TimerTask() {
-//                            @Override
-//                            public void run() {
-//                                // your code here
-//                                System.out.println("hi1");
-//                                currentTarget = null;
-//                                updateScene();
-//                            }
-//                        };
-//                        TimerTask t2 = new java.util.TimerTask() {
-//                            @Override
-//                            public void run() {
-//                                // your code here
-//                                System.out.println("hi2");
-//                            }
-//                        };
-//
-//                        t.schedule(t1, 2000);
-//                        t.schedule(t2, 3000);
+                        Timer t = new Timer();
+                        TimerTask t1 = new TimerTask() {
+                            @Override
+                            public void run() {
+                                Platform.runLater(() -> {
+                                    currentTarget = null;
+                                    updateScene();
+                                    t.cancel();
+                                });
+                            }
+                        };
+
+                        t.schedule(t1, 3000);
 
                     }
                 } catch (NotEnoughActionsException ex) {
@@ -546,10 +568,15 @@ public class Scene3 extends Scene {
         specialAbilityButton.setOnMouseClicked(e1 -> {
             if (currentHero == null) {
                 //erza3 exception
+                setAlertBoxContainer("Please select a hero first before invoking a special Ability!");
             } else {
                 if (currentHero instanceof Medic){
-                    isHealing = true;
-
+                    if (currentHero.getSupplyInventory().size()<=0) { // empty
+                        // erza3 exception
+                        setAlertBoxContainer("No enough supplies!");
+                    } else {
+                        isHealing = true;
+                    }
                 } else {
                     // not medic ya3ny fighter aw explorer
                     try {
@@ -569,7 +596,7 @@ public class Scene3 extends Scene {
         cureButton.setOnMouseClicked(e -> {
             if (currentHero == null) {
                 // erza3 exception
-
+                setAlertBoxContainer("Please select a hero to cure a zombie!");
             } else {
                 if (currentTarget instanceof Zombie) {
                     currentHero.setTarget(currentTarget);
@@ -586,6 +613,7 @@ public class Scene3 extends Scene {
                     currentTargetCell = null;
                 } else {
                     // erza3 exception
+                    setAlertBoxContainer("Invalid target to cure!");
                 }
             }
             updateScene();
@@ -620,10 +648,19 @@ public class Scene3 extends Scene {
         targetImage.setMinHeight(300);
         targetImage.getStyleClass().add("targetImage");
 
+        if (isHovering) {
+            // hovering so display the hovered thing
+        } else {
+            // not hovering so display the selected Target
+        }
         if ((currentTargetCell != null && !currentTargetCell.isVisible())) { // || (currentTargetCell instanceof CharacterCell && currentTarget)
             targetImage.getStyleClass().add("targetImageInvisible");
         } else {
-            if(currentTargetCell instanceof CollectibleCell) {
+            if (currentTargetCell instanceof TrapCell){
+                targetImage.getStyleClass().add("targetImageTrap");
+            } else if (currentTargetCell instanceof CharacterCell && currentTarget == null){
+                targetImage.getStyleClass().add("targetImageEmpty");
+            } else if(currentTargetCell instanceof CollectibleCell) {
                 if (((CollectibleCell) currentTargetCell).getCollectible() instanceof Vaccine) {
                     // vaccine
                     targetImage.getStyleClass().add("targetImageVaccine");
@@ -641,7 +678,7 @@ public class Scene3 extends Scene {
                 }
             } else {
                 // trap or empty
-//                targetImage.getStyleClass().add("targetImageEmpty");
+                targetImage.getStyleClass().add("targetImageEmpty");
             }
         }
 
@@ -675,6 +712,10 @@ public class Scene3 extends Scene {
             remainingActionPoints.setText("Moves left : " + ((Hero) currentTarget).getActionsAvailable());
             supplies.setText("Supplies in inventory : " + ((Hero) currentTarget).getSupplyInventory().size());
             vaccines.setText("Vaccines in inventory : " + ((Hero) currentTarget).getVaccineInventory().size());
+        } else if (currentTargetCell instanceof TrapCell){
+            targetText.setSpacing(10);
+            targetName.setText("You caught a trap!");
+            attackDamage.setText("Damage inflicted : " + ((TrapCell) currentTargetCell).getTrapDamage());
         } else {
 //            targetName.setText("Name : Danny 7ayawan");
 //            targetType.setText("Fighter");
@@ -808,7 +849,7 @@ public class Scene3 extends Scene {
         });
 
         // element 2 and settings **** EB2A KHALIH TIMER BEGAD
-        Label timer = new Label("Time: 01:39");
+        Label timer = new Label("Time : " + timeFormat);
         timer.setMinHeight(40);
         timer.setMinWidth(100);
 
@@ -826,7 +867,7 @@ public class Scene3 extends Scene {
 
     public static void setAlertBoxContainer(String message) { //TO DO : E3MEL TEXT WRAP
         // create alert box
-        HBox alertBox = new HBox();
+        StackPane alertBox = new StackPane();
 
         // the close button inside the alert box to force close it (remove it from the root.getChildren().get(1))
         Button xButton = new Button();
@@ -835,12 +876,21 @@ public class Scene3 extends Scene {
         xButton.setMaxWidth(20);
         xButton.setMinHeight(20);
         xButton.setMaxHeight(20);
+        xButton.setAlignment(Pos.TOP_RIGHT);
+        xButton.setTranslateX(135);
+        xButton.setTranslateY(-35);
+        xButton.setOnMouseClicked(e -> {
+            root.getChildren().remove(alertBox);
+        });
 
         // add xButton actionlistener here (pressed yeb2a remove it from the root
 
         // create the message to be added aw inserted as error
         Label labelMessage = new Label(message);
         labelMessage.setAlignment(Pos.CENTER);
+        labelMessage.setWrapText(true);
+        labelMessage.setTextAlignment(TextAlignment.CENTER);
+        labelMessage.setMaxWidth(280);
 
         // settings
         alertBox.setMinWidth(300);
@@ -848,8 +898,8 @@ public class Scene3 extends Scene {
         alertBox.setMinHeight(100);
         alertBox.setMaxHeight(100);
         alertBox.setAlignment(Pos.CENTER);
-        alertBox.setSpacing(15);
         alertBox.getStyleClass().add("alertBox");
+
 
         // coordinates
         alertBox.setTranslateX(-200);
@@ -873,6 +923,18 @@ public class Scene3 extends Scene {
     }
 
     public static void updateScene() {
+        if(Game.checkWin()){
+            // win
+            Main.currentStage.setScene(Main.gameWin);
+            Main.gameWin.startTimer();
+        }
+
+        if(Game.checkGameOver()) {
+            // game over
+            Main.currentStage.setScene(Main.gameOver);
+            Main.gameOver.startTimer();
+        }
+
         //refresh grid
         Game.setCellsIcons();
         setGridElements();
@@ -888,5 +950,38 @@ public class Scene3 extends Scene {
 
         //refresh bottom pane
         setBottomPane();
+    }
+
+    public static void startTimer() {
+        Timer t = new Timer();
+        TimerTask t1 = new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(() -> {
+                    seconds++;
+                    createTimeString();
+                    setTopPane();
+                    startTimer();
+                });
+            }
+        };
+
+        t.schedule(t1, 1000);
+    }
+
+    public static void createTimeString(){
+        String result = "";
+        int minutes = (int) (seconds / 60);
+        int secondsLeft = seconds % 60;
+
+        String minString = (minutes<10)?("0"):("");
+        String secString = (secondsLeft<10)?("0"):("");
+
+        minString += minutes;
+        secString += secondsLeft;
+
+        result = minString + " : " + secString;
+
+        timeFormat = result;
     }
 }

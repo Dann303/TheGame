@@ -1,5 +1,7 @@
 package exceptions;
 
+import gui.mrd.Scene3;
+
 public class NoAvailableResourcesException extends GameActionException {
 
 	public NoAvailableResourcesException() {
@@ -8,6 +10,7 @@ public class NoAvailableResourcesException extends GameActionException {
 
 	public NoAvailableResourcesException(String message) {
 		super(message);
+		Scene3.setAlertBoxContainer(message);
 	}
 
 	public NoAvailableResourcesException(String message, Throwable cause, boolean enableSuppression,

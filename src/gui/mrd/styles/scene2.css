@@ -31,5 +31,19 @@
     -fx-font-size: 40px;
     -fx-text-fill: rgb(247, 208, 0); /* mesh sha8al fa e3melo fel .java file */
     -fx-effect: dropshadow(three-pass-box, rgba(175, 140, 23, 0.8), 1.5, 1, 0, 0);
+}
 
+.back-button {
+    -fx-background-color: #123456;
+    -fx-background-radius: 25px;
+    -fx-border-radius: 25px;
+    -fx-text-fill: rgb(247, 208, 0);
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.imageView {
+    -fx-border-color: black;
+    -fx-border-style: solid;
+    -fx-border-width: 10;
 }
