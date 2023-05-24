@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 public class Main extends Application {
 
     public static Stage currentStage = new Stage();
+    public static HowToPlayScene howToPlayScene;
     public static Scene1 s1;
     public static Scene2 s2;
     public static Scene3 s3;
@@ -39,6 +40,8 @@ public class Main extends Application {
         assignImageToHeroes();
 
         createAllHeroesArray();
+
+        howToPlayScene = new HowToPlayScene();
 
         s1 = new Scene1();
         s2 = new Scene2();

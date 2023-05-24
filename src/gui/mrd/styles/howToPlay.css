@@ -1,0 +1,21 @@
+.root {
+    -fx-background-image: url("./../images/zombie_apocalypse_background.jpg");
+    -fx-background-position: center center;
+    -fx-background-size: stretch;
+}
+
+.instructions-title {
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(three-pass-box, rgba(200, 200, 200, 0.8), 1.5, 1, 0, 0);
+    -fx-font-size: 48px;
+}
+
+.instructions-text {
+    -fx-text-fill: rgb(150,150,150);
+    -fx-font-size: 20px;
+}
+
+.press-any-key {
+    -fx-text-fill: #123456;
+    -fx-font-size: 36px;
+}

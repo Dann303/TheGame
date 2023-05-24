@@ -5,12 +5,14 @@ import exceptions.InvalidTargetException;
 import exceptions.MovementException;
 import exceptions.NoAvailableResourcesException;
 import exceptions.NotEnoughActionsException;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -55,6 +57,11 @@ public class Scene3 extends Scene {
     public static int currentRound = 1;
     public static int randomZombieIndex;
     public static boolean isHealing = false;
+    public static boolean isHovering = false;
+    public static Cell hoveredOverCell = null;
+
+    public static int seconds = 0;
+    public static String timeFormat = "00 : 00";
 
     public Scene3(){
         super(root, 1200, 800, Color.rgb(34,56,78));
@@ -79,9 +86,21 @@ public class Scene3 extends Scene {
         setBottomPane();
         setRightSideBar();
 
+        createMoveKeysActionListeners();
         //bengarab ne3mel setAlertBoxContainer (remove by using index 1)
 //        setAlertBoxContainer("Hey, you can't go there!");
 
+    }
+
+    private static void createMoveKeysActionListeners() {
+//        Scene3.root.setOnKeyPressed(e -> {
+//            if (currentHero == null) {
+//                // erza3 exception
+//            } else {
+//                // move
+//                switch (e.getCode() == KeyCode.DOWN)
+//            }
+//        });
     }
 
     private void parentChildRelations() {
@@ -170,11 +189,18 @@ public class Scene3 extends Scene {
                 // create event listener for el grid cells (to extract el coordinates)
                 // hover
                 cell.setOnMouseEntered(e -> {
+                    isHovering = true;
+                    hoveredOverCell = Game.map[finalI][finalJ];
+                });
 
+                cell.setOnMouseExited(e -> {
+                    hoveredOverCell = null;
+                    isHovering = false;
                 });
 
                 // click
                 cell.setOnMouseClicked(e -> {
+                    isHovering = false;
                     if (isHealing) {
                         // medic's isSpecial to select target to heal
                         Cell cellClicked = Game.map[finalI][finalJ];
@@ -501,36 +527,21 @@ public class Scene3 extends Scene {
                     currentHero.attack();
                     updateScene();
                     if (currentTarget.getCurrentHp() == 0) {
-                        
+
                         // timer 3 seconds
-//                        Timer t = new Timer();
-//
-//                        t.schedule(new TimerTask() {
-//                            @Override
-//                            public void run() {
-//                                currentTarget = null;
-//                                updateScene();
-//                            }
-//                        }, 2000);
-//                        TimerTask t1 = new java.util.TimerTask() {
-//                            @Override
-//                            public void run() {
-//                                // your code here
-//                                System.out.println("hi1");
-//                                currentTarget = null;
-//                                updateScene();
-//                            }
-//                        };
-//                        TimerTask t2 = new java.util.TimerTask() {
-//                            @Override
-//                            public void run() {
-//                                // your code here
-//                                System.out.println("hi2");
-//                            }
-//                        };
-//
-//                        t.schedule(t1, 2000);
-//                        t.schedule(t2, 3000);
+                        Timer t = new Timer();
+                        TimerTask t1 = new TimerTask() {
+                            @Override
+                            public void run() {
+                                Platform.runLater(() -> {
+                                    currentTarget = null;
+                                    updateScene();
+                                    t.cancel();
+                                });
+                            }
+                        };
+
+                        t.schedule(t1, 3000);
 
                     }
                 } catch (NotEnoughActionsException ex) {
@@ -620,10 +631,19 @@ public class Scene3 extends Scene {
         targetImage.setMinHeight(300);
         targetImage.getStyleClass().add("targetImage");
 
+        if (isHovering) {
+            // hovering so display the hovered thing
+        } else {
+            // not hovering so display the selected Target
+        }
         if ((currentTargetCell != null && !currentTargetCell.isVisible())) { // || (currentTargetCell instanceof CharacterCell && currentTarget)
             targetImage.getStyleClass().add("targetImageInvisible");
         } else {
-            if(currentTargetCell instanceof CollectibleCell) {
+            if (currentTargetCell instanceof TrapCell){
+                targetImage.getStyleClass().add("targetImageTrap");
+            } else if (currentTargetCell instanceof CharacterCell && currentTarget == null){
+                targetImage.getStyleClass().add("targetImageEmpty");
+            } else if(currentTargetCell instanceof CollectibleCell) {
                 if (((CollectibleCell) currentTargetCell).getCollectible() instanceof Vaccine) {
                     // vaccine
                     targetImage.getStyleClass().add("targetImageVaccine");
@@ -641,7 +661,7 @@ public class Scene3 extends Scene {
                 }
             } else {
                 // trap or empty
-//                targetImage.getStyleClass().add("targetImageEmpty");
+                targetImage.getStyleClass().add("targetImageEmpty");
             }
         }
 
@@ -675,6 +695,10 @@ public class Scene3 extends Scene {
             remainingActionPoints.setText("Moves left : " + ((Hero) currentTarget).getActionsAvailable());
             supplies.setText("Supplies in inventory : " + ((Hero) currentTarget).getSupplyInventory().size());
             vaccines.setText("Vaccines in inventory : " + ((Hero) currentTarget).getVaccineInventory().size());
+        } else if (currentTargetCell instanceof TrapCell){
+            targetText.setSpacing(10);
+            targetName.setText("You caught a trap!");
+            attackDamage.setText("Damage inflicted : " + ((TrapCell) currentTargetCell).getTrapDamage());
         } else {
 //            targetName.setText("Name : Danny 7ayawan");
 //            targetType.setText("Fighter");
@@ -808,7 +832,7 @@ public class Scene3 extends Scene {
         });
 
         // element 2 and settings **** EB2A KHALIH TIMER BEGAD
-        Label timer = new Label("Time: 01:39");
+        Label timer = new Label("Time : " + timeFormat);
         timer.setMinHeight(40);
         timer.setMinWidth(100);
 
@@ -888,5 +912,38 @@ public class Scene3 extends Scene {
 
         //refresh bottom pane
         setBottomPane();
+    }
+
+    public static void startTimer() {
+        Timer t = new Timer();
+        TimerTask t1 = new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(() -> {
+                    seconds++;
+                    createTimeString();
+                    setTopPane();
+                    startTimer();
+                });
+            }
+        };
+
+        t.schedule(t1, 1000);
+    }
+
+    public static void createTimeString(){
+        String result = "";
+        int minutes = (int) (seconds / 60);
+        int secondsLeft = seconds % 60;
+
+        String minString = (minutes<10)?("0"):("");
+        String secString = (secondsLeft<10)?("0"):("");
+
+        minString += minutes;
+        secString += secondsLeft;
+
+        result = minString + " : " + secString;
+
+        timeFormat = result;
     }
 }

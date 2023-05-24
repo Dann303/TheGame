@@ -7,11 +7,11 @@ import engine.Game;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -23,7 +23,8 @@ import model.characters.Medic;
 
 public class Scene2 extends Scene {
 
-    public static BorderPane root = new BorderPane();
+    public static StackPane root = new StackPane();
+    public static BorderPane everything = new BorderPane();
     public static Hero startingHero;
 
     public static String typeChosen = "";
@@ -46,6 +47,9 @@ public class Scene2 extends Scene {
     public Scene2() throws FileNotFoundException {
         super(root, 1200, 800, Color.rgb(34, 56, 78));
 
+        root.getChildren().add(everything);
+        root.setAlignment(Pos.CENTER);
+
         // add link to css file
         this.getStylesheets().add(Scene2.class.getResource("styles/scene2.css").toExternalForm());
 
@@ -53,7 +57,7 @@ public class Scene2 extends Scene {
         middleContainer.setTranslateY(75);
 
         middleContainer.getChildren().addAll(getTypesOfHeroes());
-        root.setCenter(middleContainer);
+        everything.setCenter(middleContainer);
 
 
         // after clicking one of the 3 hero types, preview all heroes in the availableHeroes array of that type
@@ -153,6 +157,8 @@ public class Scene2 extends Scene {
 
                 // getting ImageView to add next to each other and add action events for each image
                 ImageView currentChild = getImageViewOfCharacter(currentHero.getImagePath());
+                currentChild.getStyleClass().add("imageView");
+
                 availableHeroes.getChildren().add(currentChild);
 
                 currentChild.setOnMouseEntered(e -> {
@@ -192,15 +198,17 @@ public class Scene2 extends Scene {
                     }
 
                     Game.startGame(heroToStart);
+                    Scene3.startTimer();
                 });
 
             }
         }
 
         // settings
-        availableHeroes.setSpacing(90);
-
-        heroPanel.getChildren().addAll(availableHeroes);
+        availableHeroes.setSpacing(100);
+        heroPanel.getChildren().clear();
+        heroPanel.getChildren().removeAll();
+        heroPanel.getChildren().add(availableHeroes);
     }
 
     private static boolean isHeroCorrectType(Hero h) {
@@ -256,6 +264,11 @@ public class Scene2 extends Scene {
     private static void createActionListenersOfHeroTypes() {
         // when you click on one of the three types (medic, fighter, explorer) you begin to construct the second part (the heroes to display) according to what you pressed
 
+        // make sure availableHeroes fady before you put inside it heroes
+        availableHeroes.getChildren().clear();
+        availableHeroes.getChildren().removeAll();
+
+
         typesOfHeroes.getChildren().get(0).setOnMouseClicked(e -> {
             typeChosen = "Medic";
 
@@ -265,7 +278,9 @@ public class Scene2 extends Scene {
                 ex.printStackTrace();
             }
 
-            root.setCenter(heroPanel);
+            everything.getChildren().remove(middleContainer);
+            everything.setCenter(heroPanel);
+            addGoBackButton();
         });
 
         typesOfHeroes.getChildren().get(1).setOnMouseClicked(e -> {
@@ -277,7 +292,9 @@ public class Scene2 extends Scene {
                 ex.printStackTrace();
             }
 
-            root.setCenter(heroPanel);
+            everything.getChildren().remove(middleContainer);
+            everything.setCenter(heroPanel);
+            addGoBackButton();
         });
 
         typesOfHeroes.getChildren().get(2).setOnMouseClicked(e -> {
@@ -289,7 +306,9 @@ public class Scene2 extends Scene {
                 ex.printStackTrace();
             }
 
-            root.setCenter(heroPanel);
+            everything.getChildren().remove(middleContainer);
+            everything.setCenter(heroPanel);
+            addGoBackButton();
         });
 
     }
@@ -303,6 +322,27 @@ public class Scene2 extends Scene {
         view.setFitHeight(300);
         view.setFitWidth(180);
         return view;
+    }
+
+    public static void addGoBackButton() {
+        Button back = new Button("Back");
+
+        back.setMinWidth(150);
+        back.setMinHeight(50);
+        back.setTranslateX(-470);
+        back.setTranslateY(-330);
+        back.getStyleClass().add("back-button");
+
+        back.setOnMouseClicked(e -> {
+            // make sure availableHeroes fady before you put inside it heroes
+            availableHeroes.getChildren().clear();
+            availableHeroes.getChildren().removeAll();
+
+            everything.getChildren().remove(heroPanel);
+            everything.setCenter(middleContainer);
+            root.getChildren().remove(1);
+        });
+        root.getChildren().add(back);
     }
 
 }

@@ -34,18 +34,21 @@
     -fx-background-position: center center;
     -fx-background-size: stretch;
 }
+
 .down-key {
     -fx-background-image: url("./../images/scene3/up_arrow.png");
     -fx-background-position: center center;
     -fx-background-size: stretch;
     -fx-rotate: 180;
 }
+
 .left-key {
     -fx-background-image: url("./../images/scene3/up_arrow.png");
     -fx-background-position: center center;
     -fx-background-size: stretch;
     -fx-rotate: 270;
 }
+
 .right-key {
     -fx-background-image: url("./../images/scene3/up_arrow.png");
     -fx-background-position: center center;
@@ -106,7 +109,6 @@
     -fx-background-image: url("./../images/scene3/mystery_guy.jpg");
 }
 
-
 .heroText {
     -fx-font-size: 16px;
     -fx-font-weight: bold;
@@ -145,6 +147,10 @@
 
 .targetImageEmpty {
     -fx-background-image: url("./../images/scene3/empty/1.jpeg");
+}
+
+.targetImageTrap {
+    -fx-background-image: url("./../images/scene3/trap/3.jpeg");
 }
 
 .targetImageInvisible {

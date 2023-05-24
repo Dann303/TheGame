@@ -24,7 +24,7 @@ public class Scene1 extends Scene {
 
         // add its action listener
         text.setOnMouseClicked(e -> {
-            Main.currentStage.setScene(Main.s2);
+            Main.currentStage.setScene(Main.howToPlayScene);
         });
 
         root.setCenter(text);
