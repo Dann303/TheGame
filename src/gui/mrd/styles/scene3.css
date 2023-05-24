@@ -60,14 +60,52 @@
     -fx-background-color: linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(255,255,255,0.5));
 }
 
+
+/* HERO IMAGES <==================> HERO IMAGES */
 .heroImage {
-    -fx-background-image: url("./../images/medic_1.jpg");
     -fx-background-position: center center;
     -fx-background-size: stretch;
     -fx-border-color: black;
     -fx-border-style: hidden hidden solid hidden;
     -fx-border-width: 2;
 }
+
+.heroImage1 {
+    -fx-background-image: url("./../images/scene3/fighters/1.jpeg");
+}
+
+.heroImage2 {
+    -fx-background-image: url("./../images/scene3/medic/1.jpeg");
+}
+
+.heroImage3 {
+    -fx-background-image: url("./../images/scene3/explorer/5.jpeg");
+}
+
+.heroImage4 {
+    -fx-background-image: url("./../images/scene3/explorer/4.jpeg");
+}
+
+.heroImage5 {
+    -fx-background-image: url("./../images/scene3/explorer/1.jpeg");
+}
+
+.heroImage6 {
+    -fx-background-image: url("./../images/scene3/medic/5.jpeg");
+}
+
+.heroImage7 {
+    -fx-background-image: url("./../images/scene3/fighters/2.jpeg");
+}
+
+.heroImage8 {
+    -fx-background-image: url("./../images/scene3/medic/4.jpeg");
+}
+
+.mysteryImage {
+    -fx-background-image: url("./../images/scene3/mystery_guy.jpg");
+}
+
 
 .heroText {
     -fx-font-size: 16px;

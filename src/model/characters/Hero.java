@@ -217,4 +217,13 @@ public abstract class Hero extends Character {
 		}
 	}
 
+	public String getType() {
+		if (this instanceof Fighter)
+			return "Fighter";
+		else if (this instanceof Medic)
+			return "Medic";
+		else
+			return "Explorer";
+	}
+
 }
