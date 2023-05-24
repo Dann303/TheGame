@@ -16,6 +16,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import model.characters.*;
 import model.characters.Character;
 import model.collectibles.Collectible;
@@ -226,7 +227,10 @@ public class Scene3 extends Scene {
                             if (characterClicked instanceof Hero) {
                                 // hero cell
                                 // select hero w nekhaleeh yeb2a el currentHero
-                                currentHero = (Hero) characterClicked;
+                                if (currentHero == (Hero) characterClicked)
+                                    currentHero = null;
+                                else
+                                    currentHero = (Hero) characterClicked;
 //                            currentTarget = characterClicked;
                                 updateLeftSideBar();
                             } else {
@@ -248,6 +252,7 @@ public class Scene3 extends Scene {
 
                             if (currentHero == null) {
                                 // erza3 exception men 3andena
+//                                setAlertBoxContainer("Please select a hero before moving!");
                             } else {
                                 // fee hero selected fa you can move
                                 int heroX = currentHero.getLocation().x;
@@ -268,8 +273,10 @@ public class Scene3 extends Scene {
                                     directionToMove = Direction.UP;
                                 else if (diffX == -1 && diffY == 0)
                                     directionToMove = Direction.DOWN;
-                                else return; // aw erza3 exception
-
+                                else {
+                                    // aw erza3 exception
+                                    return;
+                                }
                                 try {
                                     currentHero.move(directionToMove);
                                     updateLeftSideBar();
@@ -404,6 +411,7 @@ public class Scene3 extends Scene {
         up.setOnMouseClicked(e -> {
             if (currentHero == null) {
                 // erza3 exception
+                setAlertBoxContainer("Please select a hero first!");
             } else {
                 //move
                 try {
@@ -422,6 +430,7 @@ public class Scene3 extends Scene {
         down.setOnMouseClicked(e -> {
             if (currentHero == null) {
                 // erza3 exception
+                setAlertBoxContainer("Please select a hero first!");
             } else {
                 //move
                 try {
@@ -439,6 +448,7 @@ public class Scene3 extends Scene {
         left.setOnMouseClicked(e -> {
             if (currentHero == null) {
                 // erza3 exception
+                setAlertBoxContainer("Please select a hero first!");
             } else {
                 //move
                 try {
@@ -457,6 +467,7 @@ public class Scene3 extends Scene {
         right.setOnMouseClicked(e -> {
             if (currentHero == null) {
                 // erza3 exception
+                setAlertBoxContainer("Please select a hero first!");
             } else {
                 //move
                 try {
@@ -519,7 +530,7 @@ public class Scene3 extends Scene {
             // check if hero is selected walla la2
             if (currentHero == null) {
                 // erza3 exception
-
+                setAlertBoxContainer("Please select a hero before attacking!");
             } else {
                 try {
                     //before attacking set the currentTarget as the target for the currentHero
@@ -557,10 +568,15 @@ public class Scene3 extends Scene {
         specialAbilityButton.setOnMouseClicked(e1 -> {
             if (currentHero == null) {
                 //erza3 exception
+                setAlertBoxContainer("Please select a hero first before invoking a special Ability!");
             } else {
                 if (currentHero instanceof Medic){
-                    isHealing = true;
-
+                    if (currentHero.getSupplyInventory().size()<=0) { // empty
+                        // erza3 exception
+                        setAlertBoxContainer("No enough supplies!");
+                    } else {
+                        isHealing = true;
+                    }
                 } else {
                     // not medic ya3ny fighter aw explorer
                     try {
@@ -580,7 +596,7 @@ public class Scene3 extends Scene {
         cureButton.setOnMouseClicked(e -> {
             if (currentHero == null) {
                 // erza3 exception
-
+                setAlertBoxContainer("Please select a hero to cure a zombie!");
             } else {
                 if (currentTarget instanceof Zombie) {
                     currentHero.setTarget(currentTarget);
@@ -597,6 +613,7 @@ public class Scene3 extends Scene {
                     currentTargetCell = null;
                 } else {
                     // erza3 exception
+                    setAlertBoxContainer("Invalid target to cure!");
                 }
             }
             updateScene();
@@ -850,7 +867,7 @@ public class Scene3 extends Scene {
 
     public static void setAlertBoxContainer(String message) { //TO DO : E3MEL TEXT WRAP
         // create alert box
-        HBox alertBox = new HBox();
+        StackPane alertBox = new StackPane();
 
         // the close button inside the alert box to force close it (remove it from the root.getChildren().get(1))
         Button xButton = new Button();
@@ -859,12 +876,21 @@ public class Scene3 extends Scene {
         xButton.setMaxWidth(20);
         xButton.setMinHeight(20);
         xButton.setMaxHeight(20);
+        xButton.setAlignment(Pos.TOP_RIGHT);
+        xButton.setTranslateX(135);
+        xButton.setTranslateY(-35);
+        xButton.setOnMouseClicked(e -> {
+            root.getChildren().remove(alertBox);
+        });
 
         // add xButton actionlistener here (pressed yeb2a remove it from the root
 
         // create the message to be added aw inserted as error
         Label labelMessage = new Label(message);
         labelMessage.setAlignment(Pos.CENTER);
+        labelMessage.setWrapText(true);
+        labelMessage.setTextAlignment(TextAlignment.CENTER);
+        labelMessage.setMaxWidth(280);
 
         // settings
         alertBox.setMinWidth(300);
@@ -872,8 +898,8 @@ public class Scene3 extends Scene {
         alertBox.setMinHeight(100);
         alertBox.setMaxHeight(100);
         alertBox.setAlignment(Pos.CENTER);
-        alertBox.setSpacing(15);
         alertBox.getStyleClass().add("alertBox");
+
 
         // coordinates
         alertBox.setTranslateX(-200);
@@ -897,6 +923,18 @@ public class Scene3 extends Scene {
     }
 
     public static void updateScene() {
+        if(Game.checkWin()){
+            // win
+            Main.currentStage.setScene(Main.gameWin);
+            Main.gameWin.startTimer();
+        }
+
+        if(Game.checkGameOver()) {
+            // game over
+            Main.currentStage.setScene(Main.gameOver);
+            Main.gameOver.startTimer();
+        }
+
         //refresh grid
         Game.setCellsIcons();
         setGridElements();

@@ -1,5 +1,7 @@
 package exceptions;
 
+import gui.mrd.Scene3;
+
 public class NotEnoughActionsException extends GameActionException {
 
 	public NotEnoughActionsException() {
@@ -8,6 +10,7 @@ public class NotEnoughActionsException extends GameActionException {
 
 	public NotEnoughActionsException(String message) {
 		super(message);
+		Scene3.setAlertBoxContainer(message);
 	}
 
 	public NotEnoughActionsException(String message, Throwable cause, boolean enableSuppression,

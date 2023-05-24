@@ -181,7 +181,10 @@
 }
 
 .alertXButton {
-    -fx-background-color: rgba(200, 1, 40, 0.8);
+    -fx-background-position: center center;
+    -fx-background-size: stretch;
+    -fx-background-color: transparent;
+    -fx-background-image: url("./../images/scene3/close_button.png");
 }
 
 

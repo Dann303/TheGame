@@ -7,8 +7,6 @@ import javafx.stage.Stage;
 import model.characters.Hero;
 
 import java.util.ArrayList;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 
 public class Main extends Application {
 
@@ -17,6 +15,8 @@ public class Main extends Application {
     public static Scene1 s1;
     public static Scene2 s2;
     public static Scene3 s3;
+    public static GameWinScene gameWin;
+    public static GameOverScene gameOver;
 
     public static ArrayList<Hero> allHeroes = new ArrayList<Hero>();
 
@@ -26,19 +26,8 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        // ba7awel afham ezay a3mel timeouts
-//        CompletableFuture.supplyAsync(() -> {
-//                    System.out.println("hi ");
-//                    return null;
-//                }).get(1, TimeUnit.SECONDS);
-
-        // kharbana
-//        System.out.println("3ed men hena");
-//        Thread.sleep(10000);
-//        System.out.println("heyho");
 
         assignImageToHeroes();
-
         createAllHeroesArray();
 
         howToPlayScene = new HowToPlayScene();
@@ -46,6 +35,8 @@ public class Main extends Application {
         s1 = new Scene1();
         s2 = new Scene2();
         s3 = new Scene3();
+        gameWin = new GameWinScene();
+        gameOver = new GameOverScene();
 
         currentStage.setResizable(true);
 
@@ -55,6 +46,12 @@ public class Main extends Application {
         currentStage.getIcons().add(icon);
         currentStage.setScene(s1);
         currentStage.show();
+
+//        currentStage.setOnCloseRequest(e -> {
+//            Platform.exit();
+//            System.out.println("e2fel el zeft dah!");
+//        });
+
     }
 
     private void assignImageToHeroes() throws Exception {

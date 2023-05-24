@@ -1,5 +1,7 @@
 package exceptions;
 
+import gui.mrd.Scene3;
+
 public class InvalidTargetException extends GameActionException{
 
 	public InvalidTargetException() {
@@ -8,6 +10,8 @@ public class InvalidTargetException extends GameActionException{
 
 	public InvalidTargetException(String message) {
 		super(message);
+		Scene3.setAlertBoxContainer(message);
+
 	}
 
 	public InvalidTargetException(String message, Throwable cause, boolean enableSuppression,
