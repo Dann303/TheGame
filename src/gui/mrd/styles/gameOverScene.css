@@ -1,0 +1,5 @@
+.root {
+    -fx-background-image: url("./../images/lose_background.jpeg");
+    -fx-background-position: center center;
+    -fx-background-size: stretch;
+}

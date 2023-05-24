@@ -44,7 +44,7 @@ public class Main extends Application {
 
         currentStage.setTitle("The Last of MRD");
         currentStage.getIcons().add(icon);
-        currentStage.setScene(s1);
+        currentStage.setScene(gameOver);
         currentStage.show();
 
 //        currentStage.setOnCloseRequest(e -> {
