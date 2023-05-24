@@ -34,6 +34,7 @@ public class Scene2 extends Scene {
 //            {"Medic", "Heals a hero around him including himself", "Raised among titans and beasts in the depth of", "mystical islands, medics found their way supporting", "those around them excelling as team players."},
 //            {"Explorer", "Lights up the map's visibility for 1 turn", "Gifted heroes with the ability to differentiate streets", "of Maadi apart with ease. If you're ever stuck", "somewhere and feel a bit lost get yourself an explorer", "to enlighten you. They're basically Heimdall of the game."}};
     private static String[][] typeDetails = {{"Medic", "Heals a hero around him including himself", "Raised among titans and beasts in the depth of mystical islands, medics found their way supporting those around them excelling as team players."},
+            {"Fighter", "Attacks without consuming action points for 1 turn", "Ancient warriors born among monsters of the underworld, fighters' specialty lies at slicing their enemies into pieces over and over with no remorse."},
             {"Explorer", "Lights up the map's visibility for 1 turn", "Gifted heroes with the ability to differentiate streets of Maadi apart with ease. If you're ever stuck somewhere and feel a bit lost get yourself an explorer to enlighten you. They're basically Heimdall of the game."}};
 
 
