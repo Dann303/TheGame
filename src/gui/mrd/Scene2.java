@@ -7,6 +7,7 @@ import engine.Game;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -26,9 +27,20 @@ public class Scene2 extends Scene {
     public static Hero startingHero;
 
     public static String typeChosen = "";
+    public static int typeHovered = -1;
+
+    // type, ability description
+//    private static String[][] typeDetails = {{"Fighter", "Attacks without consuming action points for 1 turn", "Ancient warriors born among monsters of the ", "underworld, fighters' specialty lies at slicing", "their enemies into pieces over and over with no remorse."},
+//            {"Medic", "Heals a hero around him including himself", "Raised among titans and beasts in the depth of", "mystical islands, medics found their way supporting", "those around them excelling as team players."},
+//            {"Explorer", "Lights up the map's visibility for 1 turn", "Gifted heroes with the ability to differentiate streets", "of Maadi apart with ease. If you're ever stuck", "somewhere and feel a bit lost get yourself an explorer", "to enlighten you. They're basically Heimdall of the game."}};
+    private static String[][] typeDetails = {{"Fighter", "Attacks without consuming action points for 1 turn", "Ancient warriors born among monsters of the underworld, fighters' specialty lies at slicing their enemies into pieces over and over with no remorse."},
+            {"Medic", "Heals a hero around him including himself", "Raised among titans and beasts in the depth of mystical islands, medics found their way supporting those around them excelling as team players."},
+            {"Explorer", "Lights up the map's visibility for 1 turn", "Gifted heroes with the ability to differentiate streets of Maadi apart with ease. If you're ever stuck somewhere and feel a bit lost get yourself an explorer to enlighten you. They're basically Heimdall of the game."}};
+
 
     public static HBox availableHeroes = new HBox();
     public static HBox typesOfHeroes;
+    public static VBox middleContainer = new VBox();
     public static VBox heroPanel = new VBox();
 
     public Scene2() throws FileNotFoundException {
@@ -38,10 +50,9 @@ public class Scene2 extends Scene {
         this.getStylesheets().add(Scene2.class.getResource("styles/scene2.css").toExternalForm());
 
         // create a container to be put in the center of the root, inside that container han7ot awel element el heroes w el second hayeb2a el text
-        VBox middleContainer = new VBox();
         middleContainer.setTranslateY(75);
 
-        middleContainer.getChildren().addAll(getTypesOfHeroes(),getHeroType());
+        middleContainer.getChildren().addAll(getTypesOfHeroes());
         root.setCenter(middleContainer);
 
 
@@ -73,6 +84,19 @@ public class Scene2 extends Scene {
                 getImageViewOfCharacter("src/gui/mrd/images/scene2/mahmoud_the_explorer.jpg")
         );
 
+        for (int i = 0; i < typesOfHeroes.getChildren().size(); i++){
+            ImageView currentChild = (ImageView) typesOfHeroes.getChildren().get(i);
+            final int finalI = i;
+            currentChild.setOnMouseEntered(e -> {
+                typeHovered = finalI;
+                middleContainer.getChildren().add(getHeroType());
+            });
+
+            currentChild.setOnMouseExited(e -> {
+                middleContainer.getChildren().remove(1);
+            });
+        }
+
         Scene2.typesOfHeroes = typesOfHeroes;
         return typesOfHeroes;
     }
@@ -82,14 +106,21 @@ public class Scene2 extends Scene {
 
         // to be changed dynamically
         VBox heroType = new VBox();
-        Text heroTypeName = new Text("Medic");
-        Text heroTypeAbility = new Text("Heals other heroes including himself");
-        Text heroTypeDescription = new Text("Raised among titans and warriors, medics found their way supporting those around them excelling as team players.");
+        Text heroTypeName = new Text();
+        Text heroTypeAbility = new Text();
+        Text heroTypeDescription = new Text();
+
+        if (typeHovered != -1) {
+            heroTypeName.setText(typeDetails[typeHovered][0]);
+            heroTypeAbility.setText(typeDetails[typeHovered][1]);
+            heroTypeDescription.setText(typeDetails[typeHovered][2]);
+        }
 
         // settings
         heroType.setAlignment(Pos.CENTER);
-        heroType.getStyleClass().add("hero-description"); // add css class
-        heroType.setTranslateY(100); // translate it 100px downwards relative to its place in its parent container
+        heroType.setSpacing(15);
+        heroType.getStyleClass().add("heroDescription"); // add css class
+        heroType.setTranslateY(30); // translate it 30px downwards relative to its place in its parent container
 
         // add the 3 texts to the container
         heroType.getChildren().addAll(heroTypeName,heroTypeAbility,heroTypeDescription);
@@ -97,9 +128,10 @@ public class Scene2 extends Scene {
         // apply the following to all text 1- font color, 2- center it, 3- starts wrapping into new line after 800 px
         for (int i = 0; i < heroType.getChildren().size(); i++) {
             // instead of setting color here, you can add a class and use custom colors with rgb
-            ((Text)heroType.getChildren().get(i)).setFill(Color.WHITE);
+            heroType.getChildren().get(i).getStyleClass().add("heroDescriptionText");
+            ((Text)heroType.getChildren().get(i)).setFill(Color.rgb(12,21,20));
             ((Text)heroType.getChildren().get(i)).setTextAlignment(TextAlignment.CENTER);
-            ((Text)heroType.getChildren().get(i)).setWrappingWidth(800);
+            ((Text)heroType.getChildren().get(i)).setWrappingWidth(900);
         }
 
         return heroType;
@@ -136,11 +168,6 @@ public class Scene2 extends Scene {
                         startingHero = new Medic(name, health, damage, moves);
                     else
                         startingHero = new Explorer(name, health, damage, moves);
-
-                    System.out.println(startingHero.getName());
-                    System.out.println(startingHero.getMaxHp());
-                    System.out.println(startingHero.getAttackDmg());
-                    System.out.println(startingHero.getMaxActions());
 
                     // right after you store the data of the hero of the image, you show its text with the corresponding data
                     heroPanel.getChildren().add(getHeroStats());
@@ -208,7 +235,7 @@ public class Scene2 extends Scene {
         // settings
         heroStats.setSpacing(20);
         heroStats.setAlignment(Pos.CENTER);
-        heroStats.getStyleClass().add("hero-stats"); // add css class
+        heroStats.getStyleClass().add("heroStats"); // add css class
         heroStats.setTranslateY(50); // translate it 100px downwards relative to its place in its parent container
 
         // adding children to the container of type VBox (result)
@@ -217,9 +244,10 @@ public class Scene2 extends Scene {
         // apply the following to all text 1- font color, 2- center it, 3- starts wrapping into new line after 800 px
         for (int i = 0; i < heroStats.getChildren().size(); i++) {
             // nafs el fekra fel color, add for each text individually a class to style their color
-            ((Text)heroStats.getChildren().get(i)).setFill(Color.RED);
+            heroStats.getChildren().get(i).getStyleClass().add("heroStatsText");
+            ((Text)heroStats.getChildren().get(i)).setFill(Color.rgb(247, 208, 0));
             ((Text)heroStats.getChildren().get(i)).setTextAlignment(TextAlignment.CENTER);
-            ((Text)heroStats.getChildren().get(i)).setWrappingWidth(800);
+            ((Text)heroStats.getChildren().get(i)).setWrappingWidth(900);
         }
 
         return heroStats;
