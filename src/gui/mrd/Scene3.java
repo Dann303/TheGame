@@ -3,6 +3,7 @@ package gui.mrd;
 import engine.Game;
 import exceptions.InvalidTargetException;
 import exceptions.MovementException;
+import exceptions.NoAvailableResourcesException;
 import exceptions.NotEnoughActionsException;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -13,9 +14,8 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import model.characters.*;
 import model.characters.Character;
-import model.characters.Direction;
-import model.characters.Hero;
 import model.collectibles.Collectible;
 import model.collectibles.Vaccine;
 import model.world.Cell;
@@ -34,6 +34,8 @@ public class Scene3 extends Scene {
     // maybe hate3melha enak lama te3mel el superAbility fel medic hayprompt you to click on someone to heal <<==============
     public static Hero currentHero;
     public static Character currentTarget;
+    public static Cell currentTargetCell;
+
     public static Character newTarget;
 
     public static VBox middleContainer = new VBox(); // contains top, middle and bottom containers
@@ -44,6 +46,7 @@ public class Scene3 extends Scene {
     public static VBox rightSideBar = new VBox();
 
     public static int currentRound = 1;
+    public static int randomZombieIndex;
 
     public Scene3(){
         super(root, 1200, 800, Color.rgb(34,56,78));
@@ -165,22 +168,30 @@ public class Scene3 extends Scene {
                 // click
                 cell.setOnMouseClicked(e -> {
                     Cell cellClicked = Game.map[finalI][finalJ];
-                    System.out.println("current hero : " + currentCell);
                     if (cellClicked instanceof CharacterCell && ((CharacterCell)cellClicked).getCharacter() != null) {
                         Character characterClicked = ((CharacterCell)cellClicked).getCharacter();
                         if (characterClicked instanceof Hero) {
                             // hero cell
                             // select hero w nekhaleeh yeb2a el currentHero
                             currentHero = (Hero) characterClicked;
+//                            currentTarget = characterClicked;
                             updateLeftSideBar();
                         } else {
                             // zombie
+                            if(currentTarget != characterClicked)
+                                randomZombieIndex = (int)(Math.random()*2) + 1;
+
                             currentTarget = characterClicked;
+                            currentTargetCell = cellClicked;
+
                         }
+                        updateScene();
                     } else {
                         // law mesh charactercell aw character cell bas null yeb2a heya
                         // 1- empty cell, 2- vaccine cell, 3- supply cell, 4- trap cell
                         // once geit hena ana kda nawy amove fa check first if hero is selected
+                        currentTargetCell = cellClicked;
+                        updateScene();
 
                         if (currentHero == null) {
                             // erza3 exception men 3andena
@@ -214,11 +225,9 @@ public class Scene3 extends Scene {
                             } catch (NotEnoughActionsException ex) {
                                 ex.printStackTrace();
                             }
-
-                            Game.setCellsIcons();
-                            setGridElements();
 //                            updateGridCells();
                         }
+                        updateScene();
                     }
                 });
 
@@ -435,6 +444,13 @@ public class Scene3 extends Scene {
         Button cureButton = new Button("Cure");
         GridPane moveKeysButtons = getDirectionsButtons(); // the 4 movement button keys
 
+        if (currentHero instanceof Fighter)
+            specialAbilityButton.setText("Berserk Mode");
+        else if (currentHero instanceof Medic)
+            specialAbilityButton.setText("Heal");
+        else if (currentHero instanceof Explorer)
+            specialAbilityButton.setText("Illuminate"); //show map
+
         // for each one add the class bottomPaneButton
         attackButton.getStyleClass().add("bottomPaneButton");
         specialAbilityButton.getStyleClass().add("bottomPaneButton");
@@ -462,11 +478,122 @@ public class Scene3 extends Scene {
             }
         });
 
+        specialAbilityButton.setOnMouseClicked(e1 -> {
+            if (currentHero == null) {
+                //erza3 exception
+            } else {
+                if (currentHero instanceof Medic){
+                    System.out.println("dost 3ala heal, doos ba2a 3ala hero");
+                    // if medic we have to specify the target to heal mazboot?
+                    // ta3alo ba3d ma ndoos 3ala el zorar abl mane3mel call le useSpecial neprompt el ragel eno yedoos el awel 3ala hero mel grid
+
+                    grid.getChildren().clear();
+                    grid.getChildren().removeAll();
+
+                    for (int i = 0; i < 15; i++) {
+                        for (int j = 0; j < 1; j++){
+                            final int finalI = i;
+                            final int finalJ = j;
+
+                            Cell currentCell = Game.map[i][j];
+
+                            // create container (label)
+//                          Label label = new Label();
+                            StackPane cell = new StackPane();
+                            Label iconImage = new Label();
+                            String icon = "nothing";
+
+                            if (currentCell != null)
+                                icon = currentCell.getIcon();
+
+                            // according to iconPath add a css class with the corresponding class
+                            switch (icon) {
+                                case "nothing":
+                                    iconImage.getStyleClass().add("emptyIcon");
+                                    break;
+                                case "hero":
+                                    iconImage.getStyleClass().add("heroIcon");
+                                    break;
+                                case "zombie":
+                                    iconImage.getStyleClass().add("zombieIcon");
+                                    break;
+                                case "vaccine":
+                                    iconImage.getStyleClass().add("vaccineIcon");
+                                    break;
+                                case "supply":
+                                    iconImage.getStyleClass().add("supplyIcon");
+                                    break;
+                                case "invisible":
+                                    iconImage.getStyleClass().add("invisibleIcon");
+                                    break;
+                                default:
+                                    iconImage.getStyleClass().add("emptyIcon");
+                                    break;
+                            }
+
+                            // set that container's settings
+                            cell.setAlignment(Pos.CENTER);
+                            cell.setMinWidth(40);
+                            cell.setMinHeight(40);
+                            cell.getStyleClass().add("cell");
+
+                            // set the image settings
+                            iconImage.setAlignment(Pos.CENTER);
+                            iconImage.setMinWidth(25);
+                            iconImage.setMinHeight(25);
+                            iconImage.getStyleClass().add("icon");
+
+                            // add it to the grid and set its coordinates
+                            cell.getChildren().add(iconImage);
+                            grid.getChildren().add(cell);
+                            // constraints dy basically specifies the coordinates of the node that was added to the grid
+                            grid.setConstraints(cell, i,14-j);
+
+                            cell.setOnMouseClicked(e2 -> {
+                                System.out.println("dost 3ala hero shatoor");
+                                Cell cellClicked = Game.map[finalI][finalJ];
+                                if (cellClicked instanceof CharacterCell && cellClicked.isVisible() && ((CharacterCell)cellClicked).getCharacter() instanceof Hero) {
+                                    currentTarget = (Hero) ((CharacterCell)cellClicked).getCharacter();
+                                    currentHero.setTarget(currentTarget);
+
+                                    try {
+                                        currentHero.useSpecial();
+                                    } catch (InvalidTargetException e) {
+                                        e.printStackTrace();
+                                    } catch (NoAvailableResourcesException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                }
+                                // refresh scene to reset action listeners to normal
+                                updateScene();
+                            });
+                        }
+                    }
+
+                } else {
+                    // not medic ya3ny fighter aw explorer
+                    try {
+                        currentHero.useSpecial();
+                    } catch (InvalidTargetException e) {
+                        e.printStackTrace();
+                    } catch (NoAvailableResourcesException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                // refresh scene
+                updateScene();
+            }
+        });
+
         // FOR LATER **** thanks to mahmoud for the idea, instead of text for the buttons, we will use small images to cover the whole button area
         // we will do this by giving each button a unique class
         // and in this class add an image that refers to what the button does
 
         // add them to the bottomPane
+        bottomPane.getChildren().clear();
+        bottomPane.getChildren().removeAll();
         bottomPane.getChildren().addAll(attackButton,specialAbilityButton,cureButton,moveKeysButtons);
     }
 
@@ -490,14 +617,38 @@ public class Scene3 extends Scene {
         targetImage.setMinHeight(300);
         targetImage.getStyleClass().add("targetImage");
 
-        // text to be added as details **** TO BE CHANGED TO BE DYNAMIC (according to currentTarget)
-        Text targetName = new Text("Name : Danny 7ayawan");
-        Text targetType = new Text("Fighter");
-        Text health = new Text("Health : 50/70 HP");
-        Text attackDamage = new Text("Attack Damage : 4 Points");
-        Text remainingActionPoints = new Text("Moves left : 3");
-        Text supplies = new Text("Supplies in inventory : 2");
-        Text vaccines = new Text("Vaccines in inventory : 1");
+        if ((currentTargetCell != null && !currentTargetCell.isVisible())) { // || (currentTargetCell instanceof CharacterCell && currentTarget)
+            targetImage.getStyleClass().add("targetImageInvisible");
+        } else {
+            if(currentTargetCell instanceof CollectibleCell) {
+                if (((CollectibleCell) currentTargetCell).getCollectible() instanceof Vaccine) {
+                    // vaccine
+                    targetImage.getStyleClass().add("targetImageVaccine");
+                } else {
+                    // supply
+                    targetImage.getStyleClass().add("targetImageSupply");
+                }
+            } else if (currentTargetCell instanceof CharacterCell){
+                // zombie aw hero
+                if (currentTarget instanceof Zombie){
+                    // zombie
+                    targetImage.getStyleClass().add("targetImageZombie" + randomZombieIndex);
+                } else if (currentTarget instanceof Hero) {
+                    // hero
+                }
+            } else {
+                // trap or empty
+//                targetImage.getStyleClass().add("targetImageEmpty");
+            }
+        }
+
+        Text targetName = new Text();
+        Text targetType = new Text();
+        Text health = new Text();
+        Text attackDamage = new Text();
+        Text remainingActionPoints = new Text();
+        Text supplies = new Text();
+        Text vaccines = new Text();
 
         // ba2eit el text that will be added as details and their settings
         VBox targetText = new VBox();
@@ -505,6 +656,32 @@ public class Scene3 extends Scene {
         targetText.setAlignment(Pos.CENTER);
         targetText.setSpacing(20);
         targetText.setPadding(new Insets(50, 0, 0, 0));
+
+        // text to be added as details **** TO BE CHANGED TO BE DYNAMIC (according to currentTarget)
+        if (currentTarget instanceof Zombie){
+            targetText.setSpacing(30);
+            targetText.setPadding(new Insets(100, 0, 0, 0));
+            targetName.setText("Name : " + currentTarget.getName());
+            health.setText("Health : " + currentTarget.getCurrentHp() + "/" + currentTarget.getMaxHp() + " HP");
+            attackDamage.setText("Attack Damage : " + currentTarget.getAttackDmg());
+        } else if (currentTarget instanceof Hero){
+            targetName.setText("Name : " + currentTarget.getName());
+            targetType.setText(((Hero) currentTarget).getType());
+            health.setText("Health : " + currentTarget.getCurrentHp() + "/" + currentTarget.getMaxHp() + " HP");
+            attackDamage.setText("Attack Damage : " + currentTarget.getAttackDmg());
+            remainingActionPoints.setText("Moves left : " + ((Hero) currentTarget).getActionsAvailable());
+            supplies.setText("Supplies in inventory : " + ((Hero) currentTarget).getSupplyInventory());
+            vaccines.setText("Vaccines in inventory : " + ((Hero) currentTarget).getVaccineInventory());
+        } else {
+//            targetName.setText("Name : Danny 7ayawan");
+//            targetType.setText("Fighter");
+//            health.setText("Health : 50/70 HP");
+//            attackDamage.setText("Attack Damage : 4 Points");
+//            remainingActionPoints.setText("Moves left : 3");
+//            supplies.setText("Supplies in inventory : 2");
+//            vaccines.setText("Vaccines in inventory : 1");
+        }
+
         targetText.getChildren().addAll(targetName, targetType, health, attackDamage, remainingActionPoints, supplies, vaccines);
 
         // add el targetImage wel text details to el container that we then add to the rightSideBar (not replacing it ha)
@@ -615,8 +792,10 @@ public class Scene3 extends Scene {
             } catch (NotEnoughActionsException ex) {
                 ex.printStackTrace();
             }
-            // set current hero b null
+            // set current hero w current target b null
             currentHero = null;
+            currentTarget = null;
+            currentTargetCell = null;
 
             // increment round number
             currentRound++;
@@ -684,6 +863,12 @@ public class Scene3 extends Scene {
         setLeftSideBar(); // aw update
     }
 
+    public static void updateRightSideBar() {
+        rightSideBar.getChildren().clear();
+        rightSideBar.getChildren().removeAll();
+        setRightSideBar(); // aw update
+    }
+
     public static void updateScene() {
         //refresh grid
         Game.setCellsIcons();
@@ -692,7 +877,13 @@ public class Scene3 extends Scene {
         //refresh leftsidebar
         updateLeftSideBar();
 
+        //refresh rightsidebar
+        updateRightSideBar();
+
         //refresh top pane
         setTopPane();
+
+        //refresh bottom pane
+        setBottomPane();
     }
 }
