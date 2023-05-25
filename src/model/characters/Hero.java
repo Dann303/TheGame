@@ -5,6 +5,7 @@ import exceptions.InvalidTargetException;
 import exceptions.MovementException;
 import exceptions.NoAvailableResourcesException;
 import exceptions.NotEnoughActionsException;
+import gui.mrd.Scene3;
 import model.collectibles.Supply;
 import model.collectibles.Vaccine;
 import model.world.Cell;
@@ -116,6 +117,7 @@ public abstract class Hero extends Character {
 
 			this.setCurrentHp(this.getCurrentHp() - trapDamage);
 
+			Scene3.setAlertBoxContainer("You caught a trap!\nReceived Damage : " + trapDamage);
 			// mat walla lesa yakhwana? check if died
 
 		}

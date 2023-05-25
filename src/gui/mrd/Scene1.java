@@ -47,14 +47,4 @@ public class Scene1 extends Scene {
 
         return text;
     }
-
-    private static ImageView getImageViewOfCharacter(String path) throws FileNotFoundException {
-        FileInputStream file = new FileInputStream(path);
-        Image image = new Image(file);
-        ImageView view = new ImageView(image);
-        view.setFitHeight(300);
-        view.setFitWidth(150);
-        return view;
-    }
-
 }

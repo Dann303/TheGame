@@ -137,6 +137,10 @@
     -fx-background-image: url("./../images/scene3/zombie/3.jpeg");
 }
 
+.targetImageZombie3 {
+    -fx-background-image: url("./../images/scene3/zombie/4.jpg");
+}
+
 .targetImageVaccine {
     -fx-background-image: url("./../images/scene3/vaccine/2.jpeg");
 }

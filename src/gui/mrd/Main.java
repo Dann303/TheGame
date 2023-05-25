@@ -42,9 +42,9 @@ public class Main extends Application {
 
         Image icon = new Image("gui/mrd/images/the_last_of_us_icon.jpg");
 
-        currentStage.setTitle("The Last of MRD");
+        currentStage.setTitle("The La   st of MRD");
         currentStage.getIcons().add(icon);
-        currentStage.setScene(gameOver);
+        currentStage.setScene(s2);
         currentStage.show();
 
 //        currentStage.setOnCloseRequest(e -> {
