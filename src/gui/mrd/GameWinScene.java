@@ -13,7 +13,6 @@ public class GameWinScene extends Scene {
     public static BorderPane root = new BorderPane();
     private Timer timer = new Timer();
 
-
     public GameWinScene(){
         super(root, 1200, 800, Color.rgb(34, 56, 78));
         this.getStylesheets().add(GameOverScene.class.getResource("styles/gameWinScene.css").toExternalForm());
