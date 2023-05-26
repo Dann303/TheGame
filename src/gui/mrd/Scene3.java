@@ -1075,6 +1075,8 @@ public class Scene3 extends Scene {
 
     public static void updateScene() {
         if(Game.checkWin()){
+            GameWinScene.timeTaken = timeFormat;
+            GameWinScene.roundNumber = currentRound;
             // win, delay 3 seconds
             Timer timer = new Timer();
             TimerTask t1 = new TimerTask() {
@@ -1160,35 +1162,55 @@ public class Scene3 extends Scene {
             // arrow keys : up is right, down is left, left is down, right is up
             KeyCode[] moveKeys = {KeyCode.UP,KeyCode.DOWN,KeyCode.LEFT,KeyCode.RIGHT,KeyCode.W,KeyCode.A,KeyCode.S,KeyCode.D};
 
-            if(elementExistsInsideArray(moveKeys ,keyEvent.getCode()) && currentHero == null) {
-                setAlertBoxContainer("Select a hero first!");
-                return;
-            }
+            if(elementExistsInsideArray(moveKeys ,keyEvent.getCode())) {
+                if (currentHero == null){
+                    setAlertBoxContainer("Select a hero first!");
+                    return;
+                }
 
-            if(keyEvent.getCode() == KeyCode.UP || keyEvent.getCode() == KeyCode.W){
-                try {
-                    currentHero.move(Direction.RIGHT);
-                } catch (MovementException | NotEnoughActionsException ex) {
-                    ex.printStackTrace();
+                Cell cellToMoveTo = null;
+                boolean movedSuccessfully = false;
+
+                if(keyEvent.getCode() == KeyCode.UP || keyEvent.getCode() == KeyCode.W){
+                    try {
+                        cellToMoveTo = Game.map[currentHero.getLocation().x][currentHero.getLocation().y+1];
+                        currentHero.move(Direction.RIGHT);
+                        movedSuccessfully = true;
+                    } catch (MovementException | NotEnoughActionsException ex) {
+                        ex.printStackTrace();
+                    }
+                } else if(keyEvent.getCode() == KeyCode.DOWN || keyEvent.getCode() == KeyCode.S) {
+                    try {
+                        cellToMoveTo = Game.map[currentHero.getLocation().x][currentHero.getLocation().y-1];
+                        currentHero.move(Direction.LEFT);
+                        movedSuccessfully = true;
+                    } catch (MovementException | NotEnoughActionsException ex) {
+                        ex.printStackTrace();
+                    }
+                } else if(keyEvent.getCode() == KeyCode.LEFT || keyEvent.getCode() == KeyCode.A) {
+                    try {
+                        cellToMoveTo = Game.map[currentHero.getLocation().x-1][currentHero.getLocation().y];
+                        currentHero.move(Direction.DOWN);
+                        movedSuccessfully = true;
+                    } catch (MovementException | NotEnoughActionsException ex) {
+                        ex.printStackTrace();
+                    }
+                } else if(keyEvent.getCode() == KeyCode.RIGHT || keyEvent.getCode() == KeyCode.D) {
+                    try {
+                        cellToMoveTo = Game.map[currentHero.getLocation().x+1][currentHero.getLocation().y];
+                        currentHero.move(Direction.UP);
+                        movedSuccessfully = true;
+                    } catch (MovementException | NotEnoughActionsException ex) {
+                        ex.printStackTrace();
+                    }
                 }
-            } else if(keyEvent.getCode() == KeyCode.DOWN || keyEvent.getCode() == KeyCode.S) {
-                try {
-                    currentHero.move(Direction.LEFT);
-                } catch (MovementException | NotEnoughActionsException ex) {
-                    ex.printStackTrace();
+                System.out.println(movedSuccessfully);
+
+                if (cellToMoveTo instanceof TrapCell && movedSuccessfully){
+                    currentTargetCell = cellToMoveTo;
+                    updateScene();
                 }
-            } else if(keyEvent.getCode() == KeyCode.LEFT || keyEvent.getCode() == KeyCode.A) {
-                try {
-                    currentHero.move(Direction.DOWN);
-                } catch (MovementException | NotEnoughActionsException ex) {
-                    ex.printStackTrace();
-                }
-            } else if(keyEvent.getCode() == KeyCode.RIGHT || keyEvent.getCode() == KeyCode.D) {
-                try {
-                    currentHero.move(Direction.UP);
-                } catch (MovementException | NotEnoughActionsException ex) {
-                    ex.printStackTrace();
-                }
+
             } else if(keyEvent.getCode() == KeyCode.E){
                 try {
                     Game.endTurn();
