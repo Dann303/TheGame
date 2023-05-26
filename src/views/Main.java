@@ -1,4 +1,4 @@
-package gui.mrd;
+package views;
 
 import engine.Game;
 import javafx.application.Application;
@@ -40,7 +40,7 @@ public class Main extends Application {
 
         currentStage.setResizable(true);
 
-        Image icon = new Image("gui/mrd/images/the_last_of_us_icon.jpg");
+        Image icon = new Image("views/images/the_last_of_us_icon.jpg");
 
         currentStage.setTitle("The Last of MRD");
         currentStage.getIcons().add(icon);
@@ -57,14 +57,14 @@ public class Main extends Application {
     private void assignImageToHeroes() throws Exception {
         Game.loadHeroes("src/shared files/Heros.csv");
 
-        Game.availableHeroes.get(0).setImagePath("src/gui/mrd/images/scene3/fighters/1.jpeg");
-        Game.availableHeroes.get(1).setImagePath("src/gui/mrd/images/scene3/medic/1.jpeg");
-        Game.availableHeroes.get(2).setImagePath("src/gui/mrd/images/scene3/explorer/5.jpeg");
-        Game.availableHeroes.get(3).setImagePath("src/gui/mrd/images/scene3/explorer/4.jpeg");
-        Game.availableHeroes.get(4).setImagePath("src/gui/mrd/images/scene3/explorer/1.jpeg");
-        Game.availableHeroes.get(5).setImagePath("src/gui/mrd/images/scene3/medic/5.jpeg");
-        Game.availableHeroes.get(6).setImagePath("src/gui/mrd/images/scene3/fighters/2.jpeg");
-        Game.availableHeroes.get(7).setImagePath("src/gui/mrd/images/scene3/medic/4.jpeg");
+        Game.availableHeroes.get(0).setImagePath("src/views/images/scene3/fighters/1.jpeg");
+        Game.availableHeroes.get(1).setImagePath("src/views/images/scene3/medic/1.jpeg");
+        Game.availableHeroes.get(2).setImagePath("src/views/images/scene3/explorer/5.jpeg");
+        Game.availableHeroes.get(3).setImagePath("src/views/images/scene3/explorer/4.jpeg");
+        Game.availableHeroes.get(4).setImagePath("src/views/images/scene3/explorer/1.jpeg");
+        Game.availableHeroes.get(5).setImagePath("src/views/images/scene3/medic/5.jpeg");
+        Game.availableHeroes.get(6).setImagePath("src/views/images/scene3/fighters/2.jpeg");
+        Game.availableHeroes.get(7).setImagePath("src/views/images/scene3/medic/4.jpeg");
 
     }
 

@@ -1,4 +1,4 @@
-package gui.mrd;
+package views;
 
 import engine.Game;
 import exceptions.InvalidTargetException;
@@ -10,7 +10,6 @@ import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -23,21 +22,14 @@ import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 import model.characters.*;
 import model.characters.Character;
-import model.collectibles.Collectible;
 import model.collectibles.Vaccine;
 import model.world.Cell;
 import model.world.CharacterCell;
 import model.world.CollectibleCell;
 import model.world.TrapCell;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 public class Scene3 extends Scene {
     public static StackPane root = new StackPane();    // root howwa el asas, han7ot feeh el pain borderPane bas also we can now put over it el exception absolutely! (absolutely ya3ny using any coords we like)
@@ -65,6 +57,7 @@ public class Scene3 extends Scene {
     public static boolean isHealing = false;
     public static boolean isHovering = false;
     public static Cell hoveredOverCell = null;
+    public static boolean gameDone = false;
 
     public static int seconds = 0;
     public static String timeFormat = "00 : 00";
@@ -1074,7 +1067,8 @@ public class Scene3 extends Scene {
     }
 
     public static void updateScene() {
-        if(Game.checkWin()){
+        if(Game.checkWin() && !gameDone){
+            gameDone = true;
             GameWinScene.timeTaken = timeFormat;
             GameWinScene.roundNumber = currentRound;
             // win, delay 3 seconds
@@ -1090,7 +1084,8 @@ public class Scene3 extends Scene {
             };
             timer.schedule(t1,3000);
 
-        }else if(Game.checkGameOver()) {
+        }else if(Game.checkGameOver() && !gameDone) {
+            gameDone = true;
             // game over, delay 3 seconds!
             Timer timer = new Timer();
             TimerTask t2 = new TimerTask() {
@@ -1204,7 +1199,6 @@ public class Scene3 extends Scene {
                         ex.printStackTrace();
                     }
                 }
-                System.out.println(movedSuccessfully);
 
                 if (cellToMoveTo instanceof TrapCell && movedSuccessfully){
                     currentTargetCell = cellToMoveTo;

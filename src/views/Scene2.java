@@ -1,4 +1,4 @@
-package gui.mrd;
+package views;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -83,9 +83,9 @@ public class Scene2 extends Scene {
 
         // add all hero types (fighter, medic, explorer) to the container of the heroe types.
         typesOfHeroes.getChildren().addAll(
-                getImageViewOfCharacter("src/gui/mrd/images/scene2/ruby_the_medic.jpg"),
-                getImageViewOfCharacter("src/gui/mrd/images/scene2/danny_the_fighter.jpg"),
-                getImageViewOfCharacter("src/gui/mrd/images/scene2/mahmoud_the_explorer.jpg")
+                getImageViewOfCharacter("src/views/images/scene2/ruby_the_medic.jpg"),
+                getImageViewOfCharacter("src/views/images/scene2/danny_the_fighter.jpg"),
+                getImageViewOfCharacter("src/views/images/scene2/mahmoud_the_explorer.jpg")
         );
 
         for (int i = 0; i < typesOfHeroes.getChildren().size(); i++){
