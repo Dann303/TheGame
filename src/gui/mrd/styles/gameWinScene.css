@@ -3,3 +3,17 @@
     -fx-background-position: center center;
     -fx-background-size: stretch;
 }
+
+.message {
+    -fx-font-size: 64px;
+    -fx-font-color: green;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(three-pass-box, darkgreen, 1.5, 1, 0, 0);
+}
+
+.messages {
+    -fx-font-size: 48px;
+    -fx-font-color: green;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(three-pass-box, darkgreen, 1.5, 1, 0, 0);
+}
