@@ -12,6 +12,8 @@ public class Zombie extends Character{
 
     private static int ZOMBIES_COUNT = 0;
 
+    private int zombieImageIndex = -1;
+
     public Zombie() {
         super("Zombie " + ++ZOMBIES_COUNT, 40, 10);
     }
@@ -34,4 +36,13 @@ public class Zombie extends Character{
             index = (int)(Math.random()*surroundingCells.size());
         }
     }
+
+    public int getZombieImageIndex() {
+        return this.zombieImageIndex;
+    }
+
+    public void setZombieImageIndex(int zombieImageIndex){
+        this.zombieImageIndex = zombieImageIndex;
+    }
+
 }

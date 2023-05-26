@@ -3,3 +3,15 @@
     -fx-background-position: center center;
     -fx-background-size: stretch;
 }
+
+.gif {
+    -fx-background-image: url("./../images/tree_guy.gif");
+    -fx-background-position: center center;
+    -fx-background-size: stretch;
+    -fx-background-radius: 50px;
+    -fx-border-radius: 50px;
+}
+
+.media {
+    -fx-background-image: url("./../images/tree_guy.gif");
+}

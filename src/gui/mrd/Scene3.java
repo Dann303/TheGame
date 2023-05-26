@@ -5,7 +5,9 @@ import exceptions.InvalidTargetException;
 import exceptions.MovementException;
 import exceptions.NoAvailableResourcesException;
 import exceptions.NotEnoughActionsException;
+import javafx.animation.FadeTransition;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -13,10 +15,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import javafx.util.Duration;
 import model.characters.*;
 import model.characters.Character;
 import model.collectibles.Collectible;
@@ -26,6 +30,8 @@ import model.world.CharacterCell;
 import model.world.CollectibleCell;
 import model.world.TrapCell;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.CompletableFuture;
@@ -56,7 +62,6 @@ public class Scene3 extends Scene {
     public static VBox rightSideBar = new VBox();
 
     public static int currentRound = 1;
-    public static int randomZombieIndex;
     public static boolean isHealing = false;
     public static boolean isHovering = false;
     public static Cell hoveredOverCell = null;
@@ -64,11 +69,23 @@ public class Scene3 extends Scene {
     public static int seconds = 0;
     public static String timeFormat = "00 : 00";
 
+    // buttons
+    private static Button up;
+    private static Button down;
+    private static Button left;
+    private static Button right;
+    private static Button attackButton;
+    private static Button specialAbilityButton;
+    private static Button cureButton;
+    private static Button endTurnButton;
+
     public Scene3(){
         super(root, 1200, 800, Color.rgb(34,56,78));
 
         // css link
         this.getStylesheets().add(Scene3.class.getResource("styles/scene3.css").toExternalForm()); // link to css file
+
+        createKeysActionsListeners();
 
         // take care of all parent-child relations ya3ny middle container gowah top w middle w bottom, etc.
         parentChildRelations();
@@ -90,7 +107,7 @@ public class Scene3 extends Scene {
         createMoveKeysActionListeners();
         //bengarab ne3mel setAlertBoxContainer (remove by using index 1)
 //        setAlertBoxContainer("Hey, you can't go there!");
-
+        setButtonsFocusable(false);
     }
 
     private static void createMoveKeysActionListeners() {
@@ -192,11 +209,20 @@ public class Scene3 extends Scene {
                 cell.setOnMouseEntered(e -> {
                     isHovering = true;
                     hoveredOverCell = Game.map[finalI][finalJ];
+                    if (hoveredOverCell instanceof CharacterCell && ((CharacterCell) hoveredOverCell).getCharacter() instanceof Zombie){
+                        Zombie zombie = ((Zombie) ((CharacterCell) hoveredOverCell).getCharacter());
+                        if (zombie.getZombieImageIndex() == -1) {
+                            int randomZombieIndex = (int) (Math.random() * 3) + 1;
+                            zombie.setZombieImageIndex(randomZombieIndex);
+                        }
+                    }
+                    setRightSideBar();
                 });
 
                 cell.setOnMouseExited(e -> {
                     hoveredOverCell = null;
                     isHovering = false;
+                    setRightSideBar();
                 });
 
                 // click
@@ -235,9 +261,10 @@ public class Scene3 extends Scene {
                                 updateLeftSideBar();
                             } else {
                                 // zombie
-                                if(currentTarget != characterClicked)
-                                    randomZombieIndex = (int)(Math.random()*2) + 1;
-
+                                if((Zombie)((CharacterCell) cellClicked).getCharacter() != characterClicked && ((Zombie)((CharacterCell) cellClicked).getCharacter()).getZombieImageIndex() == -1) {
+                                    int randomZombieIndex = (int) (Math.random() * 3) + 1;
+                                    ((Zombie) currentTarget).setZombieImageIndex(randomZombieIndex);
+                                }
                                 currentTarget = characterClicked;
                                 currentTargetCell = cellClicked;
 
@@ -403,10 +430,12 @@ public class Scene3 extends Scene {
         GridPane moveKeysButtons = new GridPane();
 
         // create 4 buttons and add them to a container moveKeysButtons
-        Button up = new Button();
-        Button down = new Button();
-        Button left = new Button();
-        Button right = new Button();
+        up = new Button();
+        down = new Button();
+        left = new Button();
+        right = new Button();
+
+
 
         up.setOnMouseClicked(e -> {
             if (currentHero == null) {
@@ -507,9 +536,9 @@ public class Scene3 extends Scene {
 
     private static void setBottomPane() {
         // create the 4 buttons to be added to the bottom pane
-        Button attackButton = new Button("Attack");
-        Button specialAbilityButton = new Button("<Special Ability>"); // button text will be set according to currentHero instance of what
-        Button cureButton = new Button("Cure");
+        attackButton = new Button("Attack");
+        specialAbilityButton = new Button("<Special Ability>"); // button text will be set according to currentHero instance of what
+        cureButton = new Button("Cure");
         GridPane moveKeysButtons = getDirectionsButtons(); // the 4 movement button keys
 
         if (currentHero instanceof Fighter)
@@ -648,40 +677,6 @@ public class Scene3 extends Scene {
         targetImage.setMinHeight(300);
         targetImage.getStyleClass().add("targetImage");
 
-        if (isHovering) {
-            // hovering so display the hovered thing
-        } else {
-            // not hovering so display the selected Target
-        }
-        if ((currentTargetCell != null && !currentTargetCell.isVisible())) { // || (currentTargetCell instanceof CharacterCell && currentTarget)
-            targetImage.getStyleClass().add("targetImageInvisible");
-        } else {
-            if (currentTargetCell instanceof TrapCell){
-                targetImage.getStyleClass().add("targetImageTrap");
-            } else if (currentTargetCell instanceof CharacterCell && currentTarget == null){
-                targetImage.getStyleClass().add("targetImageEmpty");
-            } else if(currentTargetCell instanceof CollectibleCell) {
-                if (((CollectibleCell) currentTargetCell).getCollectible() instanceof Vaccine) {
-                    // vaccine
-                    targetImage.getStyleClass().add("targetImageVaccine");
-                } else {
-                    // supply
-                    targetImage.getStyleClass().add("targetImageSupply");
-                }
-            } else if (currentTargetCell instanceof CharacterCell){
-                // zombie aw hero
-                if (currentTarget instanceof Zombie){
-                    // zombie
-                    targetImage.getStyleClass().add("targetImageZombie" + randomZombieIndex);
-                } else if (currentTarget instanceof Hero) {
-                    // hero
-                }
-            } else {
-                // trap or empty
-                targetImage.getStyleClass().add("targetImageEmpty");
-            }
-        }
-
         Text targetName = new Text();
         Text targetType = new Text();
         Text health = new Text();
@@ -697,26 +692,143 @@ public class Scene3 extends Scene {
         targetText.setSpacing(20);
         targetText.setPadding(new Insets(50, 0, 0, 0));
 
-        // text to be added as details **** TO BE CHANGED TO BE DYNAMIC (according to currentTarget)
-        if (currentTarget instanceof Zombie){
-            targetText.setSpacing(30);
-            targetText.setPadding(new Insets(100, 0, 0, 0));
-            targetName.setText("Name : " + currentTarget.getName());
-            health.setText("Health : " + currentTarget.getCurrentHp() + "/" + currentTarget.getMaxHp() + " HP");
-            attackDamage.setText("Attack Damage : " + currentTarget.getAttackDmg());
-        } else if (currentTarget instanceof Hero){
-            targetName.setText("Name : " + currentTarget.getName());
-            targetType.setText(((Hero) currentTarget).getType());
-            health.setText("Health : " + currentTarget.getCurrentHp() + "/" + currentTarget.getMaxHp() + " HP");
-            attackDamage.setText("Attack Damage : " + currentTarget.getAttackDmg());
-            remainingActionPoints.setText("Moves left : " + ((Hero) currentTarget).getActionsAvailable());
-            supplies.setText("Supplies in inventory : " + ((Hero) currentTarget).getSupplyInventory().size());
-            vaccines.setText("Vaccines in inventory : " + ((Hero) currentTarget).getVaccineInventory().size());
-        } else if (currentTargetCell instanceof TrapCell){
-            targetText.setSpacing(10);
-            targetName.setText("You caught a trap!");
-            attackDamage.setText("Damage inflicted : " + ((TrapCell) currentTargetCell).getTrapDamage());
+
+        if (isHovering) {
+            // hovering so display the hovered thing
+
+            //targetImage
+            if ((hoveredOverCell != null && !hoveredOverCell.isVisible())) { // || (currentTargetCell instanceof CharacterCell && currentTarget)
+                targetImage.getStyleClass().add("targetImageInvisible");
+            } else {
+                if (hoveredOverCell instanceof TrapCell){
+                    targetImage.getStyleClass().add("targetImageEmpty");
+                } else if (hoveredOverCell instanceof CharacterCell && ((CharacterCell) hoveredOverCell).getCharacter() == null){
+                    targetImage.getStyleClass().add("targetImageEmpty");
+                } else if(hoveredOverCell instanceof CollectibleCell) {
+                    if (((CollectibleCell) hoveredOverCell).getCollectible() instanceof Vaccine) {
+                        // vaccine
+                        targetImage.getStyleClass().add("targetImageVaccine");
+                    } else {
+                        // supply
+                        targetImage.getStyleClass().add("targetImageSupply");
+                    }
+                } else if (hoveredOverCell instanceof CharacterCell){
+                    // zombie aw hero
+                    if (((CharacterCell) hoveredOverCell).getCharacter() instanceof Zombie){
+                        // zombie
+                        targetImage.getStyleClass().add("targetImageZombie" + ((Zombie)((CharacterCell) hoveredOverCell).getCharacter()).getZombieImageIndex());
+                    } else if (((CharacterCell) hoveredOverCell).getCharacter() instanceof Hero) {
+                        Hero hero = (Hero)(((CharacterCell) hoveredOverCell).getCharacter());
+
+                        // hero
+                        if (hero == Main.allHeroes.get(0))
+                            targetImage.getStyleClass().add("heroImage1");
+                        else if (hero == Main.allHeroes.get(1))
+                            targetImage.getStyleClass().add("heroImage2");
+                        else if (hero == Main.allHeroes.get(2))
+                            targetImage.getStyleClass().add("heroImage3");
+                        else if (hero == Main.allHeroes.get(3))
+                            targetImage.getStyleClass().add("heroImage4");
+                        else if (hero == Main.allHeroes.get(4))
+                            targetImage.getStyleClass().add("heroImage5");
+                        else if (hero == Main.allHeroes.get(5))
+                            targetImage.getStyleClass().add("heroImage6");
+                        else if (hero == Main.allHeroes.get(6))
+                            targetImage.getStyleClass().add("heroImage7");
+                        else if (hero == Main.allHeroes.get(7))
+                            targetImage.getStyleClass().add("heroImage8");
+                    }
+                } else {
+                    // trap or empty
+                    targetImage.getStyleClass().add("targetImageEmpty");
+                }
+
+                // description
+
+                // text to be added as details **** TO BE CHANGED TO BE DYNAMIC (according to currentTarget)
+                if (hoveredOverCell instanceof CharacterCell) {
+                    Character character = ((CharacterCell) hoveredOverCell).getCharacter();
+                    if (character instanceof Zombie){
+                        targetText.setSpacing(30);
+                        targetText.setPadding(new Insets(100, 0, 0, 0));
+                        targetName.setText("Name : " + character.getName());
+                        health.setText("Health : " + character.getCurrentHp() + "/" + character.getMaxHp() + " HP");
+                        attackDamage.setText("Attack Damage : " + character.getAttackDmg());
+                    } else if (character instanceof Hero){
+                        targetName.setText("Name : " + character.getName());
+                        targetType.setText(((Hero) character).getType());
+                        health.setText("Health : " + character.getCurrentHp() + "/" + character.getMaxHp() + " HP");
+                        attackDamage.setText("Attack Damage : " + character.getAttackDmg());
+                        remainingActionPoints.setText("Moves left : " + ((Hero) character).getActionsAvailable());
+                        supplies.setText("Supplies in inventory : " + ((Hero) character).getSupplyInventory().size());
+                        vaccines.setText("Vaccines in inventory : " + ((Hero) character).getVaccineInventory().size());
+                    }
+                } else {
+                    targetName.setText("");
+                    targetType.setText("");
+                    health.setText("");
+                    attackDamage.setText("");
+                    remainingActionPoints.setText("");
+                    supplies.setText("");
+                    vaccines.setText("");
+                }
+
+            }
         } else {
+            // not hovering so display the selected Target
+
+            // targetImage
+            if ((currentTargetCell != null && !currentTargetCell.isVisible())) { // || (currentTargetCell instanceof CharacterCell && currentTarget)
+                targetImage.getStyleClass().add("targetImageInvisible");
+            } else {
+                if (currentTargetCell instanceof TrapCell){
+                    targetImage.getStyleClass().add("targetImageTrap");
+                } else if (currentTargetCell instanceof CharacterCell && currentTarget == null){
+                    targetImage.getStyleClass().add("targetImageEmpty");
+                } else if(currentTargetCell instanceof CollectibleCell) {
+                    if (((CollectibleCell) currentTargetCell).getCollectible() instanceof Vaccine) {
+                        // vaccine
+                        targetImage.getStyleClass().add("targetImageVaccine");
+                    } else {
+                        // supply
+                        targetImage.getStyleClass().add("targetImageSupply");
+                    }
+                } else if (currentTargetCell instanceof CharacterCell){
+                    // zombie aw hero
+                    if (currentTarget instanceof Zombie){
+                        // zombie
+                        targetImage.getStyleClass().add("targetImageZombie" + ((Zombie)currentTarget).getZombieImageIndex());
+                    } else if (currentTarget instanceof Hero) {
+                        // hero
+                    }
+                } else {
+                    // trap or empty
+                    targetImage.getStyleClass().add("targetImageEmpty");
+                }
+            }
+
+            // description
+
+            // text to be added as details **** TO BE CHANGED TO BE DYNAMIC (according to currentTarget)
+            if (currentTarget instanceof Zombie){
+                targetText.setSpacing(30);
+                targetText.setPadding(new Insets(100, 0, 0, 0));
+                targetName.setText("Name : " + currentTarget.getName());
+                health.setText("Health : " + currentTarget.getCurrentHp() + "/" + currentTarget.getMaxHp() + " HP");
+                attackDamage.setText("Attack Damage : " + currentTarget.getAttackDmg());
+            } else if (currentTarget instanceof Hero){
+                targetName.setText("Name : " + currentTarget.getName());
+                targetType.setText(((Hero) currentTarget).getType());
+                health.setText("Health : " + currentTarget.getCurrentHp() + "/" + currentTarget.getMaxHp() + " HP");
+                attackDamage.setText("Attack Damage : " + currentTarget.getAttackDmg());
+                remainingActionPoints.setText("Moves left : " + ((Hero) currentTarget).getActionsAvailable());
+                supplies.setText("Supplies in inventory : " + ((Hero) currentTarget).getSupplyInventory().size());
+                vaccines.setText("Vaccines in inventory : " + ((Hero) currentTarget).getVaccineInventory().size());
+            } else if (currentTargetCell instanceof TrapCell){
+                targetText.setSpacing(10);
+                targetName.setText("You caught a trap!");
+                attackDamage.setText("Damage inflicted : " + ((TrapCell) currentTargetCell).getTrapDamage());
+            } else {
 //            targetName.setText("Name : Danny 7ayawan");
 //            targetType.setText("Fighter");
 //            health.setText("Health : 50/70 HP");
@@ -724,12 +836,16 @@ public class Scene3 extends Scene {
 //            remainingActionPoints.setText("Moves left : 3");
 //            supplies.setText("Supplies in inventory : 2");
 //            vaccines.setText("Vaccines in inventory : 1");
+            }
         }
+
+
 
         targetText.getChildren().addAll(targetName, targetType, health, attackDamage, remainingActionPoints, supplies, vaccines);
 
         // add el targetImage wel text details to el container that we then add to the rightSideBar (not replacing it ha)
         targetContainer.getChildren().addAll(targetImage, targetText);
+        rightSideBar.getChildren().clear();
         rightSideBar.getChildren().add(targetContainer);
 
     }
@@ -825,7 +941,7 @@ public class Scene3 extends Scene {
         topPanelContainer.setAlignment(Pos.CENTER);
 
         // element 1 and settings
-        Button endTurnButton = new Button("End Turn");
+        endTurnButton = new Button("End Turn");
         endTurnButton.setMinHeight(40);
         endTurnButton.setMinWidth(100);
         endTurnButton.setOnMouseClicked(e -> {
@@ -883,6 +999,31 @@ public class Scene3 extends Scene {
             root.getChildren().remove(alertBox);
         });
 
+        FadeTransition fadeOut = createEffect();
+        fadeOut.setNode(alertBox);
+
+        Timer timer = new Timer();
+        TimerTask t1 = new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(() -> {
+                    fadeOut.play();
+                });
+            }
+        };
+
+        TimerTask t2 = new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(() -> {
+                    root.getChildren().remove(alertBox);
+                });
+            }
+        };
+
+        timer.schedule(t1,5000);
+        timer.schedule(t2,7000);
+
         // add xButton actionlistener here (pressed yeb2a remove it from the root
 
         // create the message to be added aw inserted as error
@@ -910,6 +1051,16 @@ public class Scene3 extends Scene {
         root.getChildren().add(alertBox);
     }
 
+    private static FadeTransition createEffect() {
+        FadeTransition result = new FadeTransition();
+        result.setDuration(Duration.millis(2000));
+        result.setFromValue(1);
+        result.setToValue(0);
+        result.setCycleCount(1000);
+
+        return result;
+    }
+
     public static void updateLeftSideBar() {
         leftSideBar.getChildren().clear();
         leftSideBar.getChildren().removeAll();
@@ -924,15 +1075,33 @@ public class Scene3 extends Scene {
 
     public static void updateScene() {
         if(Game.checkWin()){
-            // win
-            Main.currentStage.setScene(Main.gameWin);
-            Main.gameWin.startTimer();
-        }
+            // win, delay 3 seconds
+            Timer timer = new Timer();
+            TimerTask t1 = new TimerTask() {
+                @Override
+                public void run() {
+                    Platform.runLater(() -> {
+                        Main.currentStage.setScene(Main.gameWin);
+                        Main.gameWin.startTimer();
+                    });
+                }
+            };
+            timer.schedule(t1,3000);
 
-        if(Game.checkGameOver()) {
-            // game over
-            Main.currentStage.setScene(Main.gameOver);
-            Main.gameOver.startTimer();
+        }else if(Game.checkGameOver()) {
+            // game over, delay 3 seconds!
+            Timer timer = new Timer();
+            TimerTask t2 = new TimerTask() {
+                @Override
+                public void run() {
+                    Platform.runLater(() -> {
+                        Main.currentStage.setScene(Main.gameOver);
+                        Main.gameOver.startTimer();
+
+                    });
+                }
+            };
+            timer.schedule(t2, 3000);
         }
 
         //refresh grid
@@ -984,4 +1153,101 @@ public class Scene3 extends Scene {
 
         timeFormat = result;
     }
+
+    private EventHandler<KeyEvent> keyListener = new javafx.event.EventHandler<KeyEvent>(){
+        @Override
+        public void handle(KeyEvent keyEvent) {
+            // arrow keys : up is right, down is left, left is down, right is up
+            KeyCode[] moveKeys = {KeyCode.UP,KeyCode.DOWN,KeyCode.LEFT,KeyCode.RIGHT,KeyCode.W,KeyCode.A,KeyCode.S,KeyCode.D};
+
+            if(elementExistsInsideArray(moveKeys ,keyEvent.getCode()) && currentHero == null) {
+                setAlertBoxContainer("Select a hero first!");
+                return;
+            }
+
+            if(keyEvent.getCode() == KeyCode.UP || keyEvent.getCode() == KeyCode.W){
+                try {
+                    currentHero.move(Direction.RIGHT);
+                } catch (MovementException | NotEnoughActionsException ex) {
+                    ex.printStackTrace();
+                }
+            } else if(keyEvent.getCode() == KeyCode.DOWN || keyEvent.getCode() == KeyCode.S) {
+                try {
+                    currentHero.move(Direction.LEFT);
+                } catch (MovementException | NotEnoughActionsException ex) {
+                    ex.printStackTrace();
+                }
+            } else if(keyEvent.getCode() == KeyCode.LEFT || keyEvent.getCode() == KeyCode.A) {
+                try {
+                    currentHero.move(Direction.DOWN);
+                } catch (MovementException | NotEnoughActionsException ex) {
+                    ex.printStackTrace();
+                }
+            } else if(keyEvent.getCode() == KeyCode.RIGHT || keyEvent.getCode() == KeyCode.D) {
+                try {
+                    currentHero.move(Direction.UP);
+                } catch (MovementException | NotEnoughActionsException ex) {
+                    ex.printStackTrace();
+                }
+            } else if(keyEvent.getCode() == KeyCode.E){
+                try {
+                    Game.endTurn();
+                } catch (InvalidTargetException ex) {
+                    ex.printStackTrace();
+                } catch (NotEnoughActionsException ex) {
+                    ex.printStackTrace();
+                }
+                // set current hero w current target b null
+                currentHero = null;
+                currentTarget = null;
+                currentTargetCell = null;
+
+                // increment round number
+                currentRound++;
+            } else if(keyEvent.getCode() == KeyCode.TAB){
+                if (currentHero == null && Game.heroes.size() > 0) {
+                    currentHero = Game.heroes.get(0);
+                } else {
+                    int indexOfHero = Game.heroes.indexOf(currentHero);
+                    indexOfHero++;
+                    if (indexOfHero >= Game.heroes.size()) {
+                        indexOfHero = 0;
+                    }
+                    currentHero = Game.heroes.get(indexOfHero);
+                }
+            } else if(keyEvent.getCode() == KeyCode.ESCAPE) {
+                if (root.getChildren().size() > 1) {
+                    root.getChildren().remove(1);
+                }
+            }
+            // else if () {}
+            updateScene();
+
+        }
+    };
+
+    private boolean elementExistsInsideArray(KeyCode[] array, KeyCode object){
+        for (int i=0; i<array.length; i++) {
+            if (array[i] == object) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void createKeysActionsListeners() {
+        this.addEventFilter(KeyEvent.KEY_PRESSED, keyListener);
+    }
+
+    private void setButtonsFocusable(boolean bool) {
+//        up.setFocusTraversable(bool);
+//        down.setFocusTraversable(bool);
+//        left.setFocusTraversable(bool);
+//        right.setFocusTraversable(bool);
+//        attackButton.setFocusTraversable(bool);
+//        specialAbilityButton.setFocusTraversable(bool);
+//        cureButton.setFocusTraversable(bool);
+//        endTurnButton.setFocusTraversable(bool);
+    }
+
 }
