@@ -1,4 +1,4 @@
-package gui.mrd;
+package views;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -6,8 +6,6 @@ import java.io.FileNotFoundException;
 
 import javafx.scene.Scene;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -25,6 +23,8 @@ public class Scene1 extends Scene {
         // add its action listener
         text.setOnMouseClicked(e -> {
             Main.currentStage.setScene(Main.howToPlayScene);
+            Main.howToPlayScene.startAllowContinue();
+
         });
 
         root.setCenter(text);

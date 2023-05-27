@@ -1,4 +1,4 @@
-package gui.mrd;
+package views;
 
 import javafx.application.Platform;
 import javafx.geometry.Pos;
@@ -15,9 +15,13 @@ import java.util.TimerTask;
 public class GameWinScene extends Scene {
 
     public static BorderPane root = new BorderPane();
+    public static VBox stats = new VBox();
+
     private Timer timer = new Timer();
     public static String timeTaken = "00 : 00";
     public static int roundNumber = 0;
+
+
 
     public GameWinScene(){
         super(root, 1200, 800, Color.rgb(34, 56, 78));
@@ -30,7 +34,41 @@ public class GameWinScene extends Scene {
 
         root.setCenter(message1);
 
-        VBox stats = new VBox();
+
+    }
+
+    public void startTimer() {
+        createStats();
+
+        TimerTask t1 = new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(() -> {
+                    root.getChildren().clear();
+                    root.setCenter(stats);
+                    setClosingTimer();
+                });
+            }
+        };
+
+        timer.schedule(t1, 5000);
+    }
+
+    public void setClosingTimer(){
+        TimerTask t2 = new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(() -> {
+                    createActionListeners();
+                    // upon allowing to close preview a message zay beta3et how to play
+                });
+            }
+        };
+        timer.schedule(t2, 3000);
+    }
+
+    public void createStats(){
+        stats = new VBox();
         Label message2 = new Label("Your stats");
         Label message3 = new Label("Time : " + timeTaken);
         Label message4 = new Label("Rounds played : " + roundNumber);
@@ -49,30 +87,6 @@ public class GameWinScene extends Scene {
         stats.setSpacing(2);
         stats.setAlignment(Pos.CENTER);
         stats.getChildren().addAll(message2, message3, message4);
-
-        TimerTask t2 = new TimerTask() {
-            @Override
-            public void run() {
-                Platform.runLater(() -> {
-                    root.getChildren().clear();
-                    root.setCenter(stats);
-                });
-            }
-        };
-
-        timer.schedule(t2, 5000);
-    }
-
-    public void startTimer() {
-        TimerTask t1 = new TimerTask() {
-            @Override
-            public void run() {
-                Platform.runLater(() -> {
-                    createActionListeners();
-                });
-            }
-        };
-        timer.schedule(t1, 5000);
     }
 
     private void createActionListeners() {

@@ -2,8 +2,7 @@ package engine;
 
 import exceptions.InvalidTargetException;
 import exceptions.NotEnoughActionsException;
-import gui.mrd.Main;
-import gui.mrd.Scene3;
+import views.Scene3;
 import model.characters.*;
 import model.characters.Character;
 import model.collectibles.Supply;
@@ -11,7 +10,6 @@ import model.collectibles.Vaccine;
 import model.world.*;
 
 import java.awt.*;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.io. * ;
 import java.util.Scanner;

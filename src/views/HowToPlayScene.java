@@ -1,4 +1,4 @@
-package gui.mrd;
+package views;
 
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
@@ -18,6 +18,8 @@ public class HowToPlayScene extends Scene {
     public static StackPane root = new StackPane();
     public static VBox instructions = new VBox();
     private static FadeTransition fadeEffect = new FadeTransition();
+    public static Timer timer = new Timer();
+
 
     public HowToPlayScene() {
         super(root, 1200, 800, Color.rgb(34, 56, 78));
@@ -60,7 +62,12 @@ public class HowToPlayScene extends Scene {
 //                "you can move by either clicking on an \nappropriate cell after selecting the hero to move, or you can click on the " +
 //                "arrow key buttons \npresented on the screen or even using your keyboard (wasd & arrow keys)... Enjoy! :)");
 
-        Timer timer = new Timer();
+        instructions.getChildren().addAll(title, instructionsText);
+        root.getChildren().add(instructions);
+
+    }
+
+    public void startAllowContinue() {
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
@@ -70,11 +77,8 @@ public class HowToPlayScene extends Scene {
                 });
             }
         };
+
         timer.schedule(task, 5000);
-
-        instructions.getChildren().addAll(title, instructionsText);
-        root.getChildren().add(instructions);
-
     }
 
     private void addPressAnyKeyToContinue() {

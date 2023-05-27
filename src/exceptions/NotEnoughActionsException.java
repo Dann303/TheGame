@@ -1,6 +1,6 @@
 package exceptions;
 
-import gui.mrd.Scene3;
+import views.Scene3;
 
 public class NotEnoughActionsException extends GameActionException {
 
