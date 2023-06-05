@@ -1,9 +1,13 @@
 package views;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 import engine.Game;
+import javafx.beans.binding.Bindings;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -14,6 +18,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import model.characters.Explorer;
@@ -44,8 +49,12 @@ public class Scene2 extends Scene {
     public static VBox middleContainer = new VBox();
     public static VBox heroPanel = new VBox();
 
+
+
     public Scene2() throws FileNotFoundException {
-        super(root, 1200, 800, Color.rgb(34, 56, 78));
+        super(root, Main.WINDOW_WIDTH, Main.WINDOW_HEIGHT, Color.rgb(34, 56, 78));
+
+        setWindowResizeableListener();
 
         root.getChildren().add(everything);
         root.setAlignment(Pos.CENTER);
@@ -54,7 +63,8 @@ public class Scene2 extends Scene {
         this.getStylesheets().add(Scene2.class.getResource("styles/scene2.css").toExternalForm());
 
         // create a container to be put in the center of the root, inside that container han7ot awel element el heroes w el second hayeb2a el text
-        middleContainer.setTranslateY(75);
+//        middleContainer.setTranslateY(Main.WINDOW_HEIGHT/10.667);
+        middleContainer.translateYProperty().bind(Bindings.divide(Main.height, 10.667));
 
         middleContainer.getChildren().addAll(getTypesOfHeroes());
         everything.setCenter(middleContainer);
@@ -67,7 +77,8 @@ public class Scene2 extends Scene {
         createActionListenersOfHeroTypes();
 
         // settings
-        heroPanel.setTranslateY(75);
+//        heroPanel.setTranslateY(Main.WINDOW_HEIGHT/10.667);
+        heroPanel.setTranslateY(Main.height.getValue()/10.667);
 
     }
 
@@ -78,7 +89,8 @@ public class Scene2 extends Scene {
         HBox typesOfHeroes = new HBox();
 
         // settings
-        typesOfHeroes.setSpacing(100);
+//        typesOfHeroes.setSpacing(Main.WINDOW_WIDTH/12);
+        typesOfHeroes.spacingProperty().bind(Bindings.divide(Main.width,12));
         typesOfHeroes.setAlignment(Pos.TOP_CENTER);
 
         // add all hero types (fighter, medic, explorer) to the container of the heroe types.
@@ -122,9 +134,13 @@ public class Scene2 extends Scene {
 
         // settings
         heroType.setAlignment(Pos.CENTER);
-        heroType.setSpacing(15);
+//        heroType.setSpacing(15);
+        heroType.spacingProperty().bind(Bindings.divide(Main.height, 53.333));
+//        heroType.spacingProperty().bind(Bindings.divide(Main.WINDOW_HEIGHT, new 53.333));
         heroType.getStyleClass().add("heroDescription"); // add css class
-        heroType.setTranslateY(30); // translate it 30px downwards relative to its place in its parent container
+        heroType.styleProperty().bind(Bindings.concat("-fx-max-height: ", Bindings.divide(Main.height, 5.333), "px;"));
+//        heroType.setTranslateY(30); // translate it 30px downwards relative to its place in its parent container
+        heroType.translateYProperty().bind(Bindings.divide(Main.height, 26.667));
 
         // add the 3 texts to the container
         heroType.getChildren().addAll(heroTypeName,heroTypeAbility,heroTypeDescription);
@@ -133,9 +149,11 @@ public class Scene2 extends Scene {
         for (int i = 0; i < heroType.getChildren().size(); i++) {
             // instead of setting color here, you can add a class and use custom colors with rgb
             heroType.getChildren().get(i).getStyleClass().add("heroDescriptionText");
+            heroType.getChildren().get(i).styleProperty().bind(Bindings.concat("-fx-font-size: ", Bindings.divide(Main.width, 33.333), "px;"));
             ((Text)heroType.getChildren().get(i)).setFill(Color.rgb(12,21,20));
             ((Text)heroType.getChildren().get(i)).setTextAlignment(TextAlignment.CENTER);
-            ((Text)heroType.getChildren().get(i)).setWrappingWidth(900);
+//            ((Text)heroType.getChildren().get(i)).setWrappingWidth(900);
+            ((Text)heroType.getChildren().get(i)).wrappingWidthProperty().bind(Bindings.divide(Main.width, 1.333));
         }
 
         return heroType;
@@ -186,7 +204,13 @@ public class Scene2 extends Scene {
 
                 currentChild.setOnMouseClicked(e-> {
                     // and if you click then you are sent to scene 3 with the starting hero equal to startingHero (currentHero)
+                    Main.s3 = new Scene3();
+                    Main.setUpSceneWindowResizeDetector(Main.s2, null);
+                    boolean wasFullScreen = Main.currentStage.isFullScreen();
                     Main.currentStage.setScene(Main.s3);
+                    if (wasFullScreen)
+                        Main.currentStage.setFullScreen(true);
+                    Main.setUpSceneWindowResizeDetector(null, Main.s3);
 
                     // fetch hero from array of availableHeroes using name
                     Hero heroToStart = null;
@@ -205,7 +229,8 @@ public class Scene2 extends Scene {
         }
 
         // settings
-        availableHeroes.setSpacing(100);
+//        availableHeroes.setSpacing(100);
+        availableHeroes.spacingProperty().bind(Bindings.divide(Main.width, 12));
         heroPanel.getChildren().clear();
         heroPanel.getChildren().removeAll();
         heroPanel.getChildren().add(availableHeroes);
@@ -241,10 +266,13 @@ public class Scene2 extends Scene {
         moves.setText("Number of moves per turn : " + startingHero.getMaxActions() + " moves");
 
         // settings
-        heroStats.setSpacing(20);
+//        heroStats.setSpacing(20);
+        heroStats.spacingProperty().bind(Bindings.divide(Main.height,40));
         heroStats.setAlignment(Pos.CENTER);
-        heroStats.getStyleClass().add("heroStats"); // add css class
-        heroStats.setTranslateY(50); // translate it 100px downwards relative to its place in its parent container
+        heroStats.maxHeightProperty().bind(Bindings.divide(Main.height,5.333));
+
+//        heroStats.setTranslateY(50); // translate it 100px downwards relative to its place in its parent container
+        heroStats.translateYProperty().bind(Bindings.divide(Main.height, 16));
 
         // adding children to the container of type VBox (result)
         heroStats.getChildren().addAll(name, health, attackDmg, moves);
@@ -253,9 +281,11 @@ public class Scene2 extends Scene {
         for (int i = 0; i < heroStats.getChildren().size(); i++) {
             // nafs el fekra fel color, add for each text individually a class to style their color
             heroStats.getChildren().get(i).getStyleClass().add("heroStatsText");
+            heroStats.getChildren().get(i).styleProperty().bind(Bindings.concat("-fx-font-size: ", Bindings.divide(Main.width, 30), "px;"));
             ((Text)heroStats.getChildren().get(i)).setFill(Color.rgb(247, 208, 0));
             ((Text)heroStats.getChildren().get(i)).setTextAlignment(TextAlignment.CENTER);
-            ((Text)heroStats.getChildren().get(i)).setWrappingWidth(900);
+//            ((Text)heroStats.getChildren().get(i)).setWrappingWidth(900);
+            ((Text)heroStats.getChildren().get(i)).wrappingWidthProperty().bind(Bindings.divide(Main.width,1.333));
         }
 
         return heroStats;
@@ -319,19 +349,28 @@ public class Scene2 extends Scene {
         FileInputStream file = new FileInputStream(path);
         Image image = new Image(file);
         ImageView view = new ImageView(image);
-        view.setFitHeight(300);
-        view.setFitWidth(180);
+//        view.setFitHeight(300);
+        view.fitHeightProperty().bind(Bindings.divide(Main.height, 2.667));
+//        view.setFitWidth(180);
+        view.fitWidthProperty().bind(Bindings.divide(Main.width, 6.667));
         return view;
     }
 
     public static void addGoBackButton() {
         Button back = new Button("Back");
 
-        back.setMinWidth(150);
-        back.setMinHeight(50);
-        back.setTranslateX(-470);
-        back.setTranslateY(-330);
+//        back.setMinWidth(150);
+        back.minWidthProperty().bind(Bindings.divide(Main.width, 8));
+//        back.setMinHeight(50);
+        back.minHeightProperty().bind(Bindings.divide(Main.width, 24));
+//        back.setTranslateX(-470);
+        back.translateXProperty().bind(Bindings.divide(Main.width, -2.553));
+//        back.setTranslateY(-330);
+        back.translateYProperty().bind(Bindings.divide(Main.height, -2.424));
         back.getStyleClass().add("back-button");
+        back.styleProperty().bind(Bindings.concat("-fx-background-radius: ", Bindings.divide(Main.width,48), "px;\n" +
+                "-fx-border-radius: ", Bindings.divide(Main.width,48), "px;\n" +
+                "-fx-font-size: ", Bindings.divide(Main.width,50), "px;\n"));
 
         back.setOnMouseClicked(e -> {
             // make sure availableHeroes fady before you put inside it heroes
@@ -343,6 +382,22 @@ public class Scene2 extends Scene {
             root.getChildren().remove(1);
         });
         root.getChildren().add(back);
+    }
+
+    private void setWindowResizeableListener() {
+        Main.height.bind(this.heightProperty());
+        Main.width.bind(this.widthProperty());
+
+        ChangeListener<Number> changeListener = new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
+                Main.WINDOW_WIDTH = Main.s2.getWidth();
+                Main.WINDOW_HEIGHT = Main.s2.getHeight();
+            }
+        };
+
+        this.widthProperty().addListener(changeListener);
+        this.heightProperty().addListener(changeListener);
     }
 
 }

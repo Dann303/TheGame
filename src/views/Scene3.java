@@ -7,6 +7,9 @@ import exceptions.NoAvailableResourcesException;
 import exceptions.NotEnoughActionsException;
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -28,6 +31,8 @@ import model.world.CharacterCell;
 import model.world.CollectibleCell;
 import model.world.TrapCell;
 
+import java.awt.*;
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -43,6 +48,9 @@ public class Scene3 extends Scene {
     public static Hero currentHero;
     public static Character currentTarget;
     public static Cell currentTargetCell;
+    public static Cell currentHeroCell;
+//    public static ArrayList<Hero> heroesAlive = new ArrayList<>();
+    public static VBox heroesAlive = new VBox();
 
     public static Character newTarget;
 
@@ -62,6 +70,8 @@ public class Scene3 extends Scene {
     public static int seconds = 0;
     public static String timeFormat = "00 : 00";
 
+    public static boolean selectingTarget = false;
+
     // buttons
     private static Button up;
     private static Button down;
@@ -70,10 +80,13 @@ public class Scene3 extends Scene {
     private static Button attackButton;
     private static Button specialAbilityButton;
     private static Button cureButton;
+    private static Button showHeroes;
     private static Button endTurnButton;
 
     public Scene3(){
-        super(root, 1200, 800, Color.rgb(34,56,78));
+        super(root, Main.WINDOW_WIDTH, Main.WINDOW_HEIGHT, Color.rgb(34,56,78));
+
+        setWindowResizeableListener();
 
         // css link
         this.getStylesheets().add(Scene3.class.getResource("styles/scene3.css").toExternalForm()); // link to css file
@@ -101,6 +114,8 @@ public class Scene3 extends Scene {
         //bengarab ne3mel setAlertBoxContainer (remove by using index 1)
 //        setAlertBoxContainer("Hey, you can't go there!");
         setButtonsFocusable(false);
+
+
     }
 
     private static void createMoveKeysActionListeners() {
@@ -178,17 +193,30 @@ public class Scene3 extends Scene {
 
                 // set that container's settings
                 cell.setAlignment(Pos.CENTER);
-                cell.setMinWidth(40);
-                cell.setMinHeight(40);
+                cell.minWidthProperty().bind(Bindings.divide(Main.width, 30));
+//                cell.setMinWidth(40);
+                cell.minHeightProperty().bind(Bindings.divide(Main.height, 26.6667));
+//                cell.setMinHeight(40);
                 cell.getStyleClass().add("cell");
 
                 // set the image settings
                 iconImage.setAlignment(Pos.CENTER);
-                iconImage.setMinWidth(25);
-                iconImage.setMinHeight(25);
+                iconImage.minWidthProperty().bind(Bindings.divide(Main.width, 48));
+//                iconImage.setMinWidth(25);
+                iconImage.minHeightProperty().bind(Bindings.divide(Main.height, 32));
+//                iconImage.setMinHeight(25);
                 iconImage.getStyleClass().add("icon");
 
                 // add it to the grid and set its coordinates
+                if(currentCell == currentHeroCell) {
+                    cell.getStyleClass().add("currentHeroCell");
+                } else if (currentCell == hoveredOverCell) {
+                    cell.getStyleClass().add("hoveredOverCell");
+                } else if (currentCell == currentTargetCell) {
+                    cell.getStyleClass().add("currentTargetCell");
+                } else {
+
+                }
                 cell.getChildren().add(iconImage);
                 grid.getChildren().add(cell);
                 // constraints dy basically specifies the coordinates of the node that was added to the grid
@@ -201,7 +229,9 @@ public class Scene3 extends Scene {
                 // hover
                 cell.setOnMouseEntered(e -> {
                     isHovering = true;
+                    selectingTarget = false;
                     hoveredOverCell = Game.map[finalI][finalJ];
+                    cell.getStyleClass().add("hoveredOverCell");
                     if (hoveredOverCell instanceof CharacterCell && ((CharacterCell) hoveredOverCell).getCharacter() instanceof Zombie){
                         Zombie zombie = ((Zombie) ((CharacterCell) hoveredOverCell).getCharacter());
                         if (zombie.getZombieImageIndex() == -1) {
@@ -214,7 +244,9 @@ public class Scene3 extends Scene {
 
                 cell.setOnMouseExited(e -> {
                     hoveredOverCell = null;
+                    selectingTarget = false;
                     isHovering = false;
+                    cell.getStyleClass().remove("hoveredOverCell");
                     setRightSideBar();
                 });
 
@@ -246,10 +278,14 @@ public class Scene3 extends Scene {
                             if (characterClicked instanceof Hero) {
                                 // hero cell
                                 // select hero w nekhaleeh yeb2a el currentHero
-                                if (currentHero == (Hero) characterClicked)
+                                if (currentHero == (Hero) characterClicked) {
                                     currentHero = null;
-                                else
+                                    currentHeroCell = null;
+                                }
+                                else {
                                     currentHero = (Hero) characterClicked;
+                                    currentHeroCell = cellClicked;
+                                }
 //                            currentTarget = characterClicked;
                                 updateLeftSideBar();
                             } else {
@@ -258,8 +294,13 @@ public class Scene3 extends Scene {
                                     int randomZombieIndex = (int) (Math.random() * 3) + 1;
                                     ((Zombie) currentTarget).setZombieImageIndex(randomZombieIndex);
                                 }
-                                currentTarget = characterClicked;
-                                currentTargetCell = cellClicked;
+                                if(currentTarget != characterClicked){
+                                    currentTarget = characterClicked;
+                                    currentTargetCell = cellClicked;
+                                } else {
+                                    currentTarget = null;
+                                    currentTargetCell = null;
+                                }
 
                             }
                             updateScene();
@@ -267,7 +308,11 @@ public class Scene3 extends Scene {
                             // law mesh charactercell aw character cell bas null yeb2a heya
                             // 1- empty cell, 2- vaccine cell, 3- supply cell, 4- trap cell
                             // once geit hena ana kda nawy amove fa check first if hero is selected
-                            currentTargetCell = cellClicked;
+                            if (currentTargetCell == cellClicked){
+                                currentTargetCell = null;
+                            } else {
+                                currentTargetCell = cellClicked;
+                            }
                             updateScene();
 
                             if (currentHero == null) {
@@ -319,73 +364,6 @@ public class Scene3 extends Scene {
         }
     }
 
-    public static void updateGridCells() {
-//        GridPane newGrid = new GridPane();
-//
-//        for(int i=0;i<15;i++) {
-//            for (int j = 0; j < 15; j++) {
-//                // get current cell and its path
-//                Cell currentCell = Game.map[i][j];
-//
-//                Label iconImage = new Label();
-//                String icon = "nothing";
-//                iconImage.setMouseTransparent(true);
-//
-//                if (currentCell != null)
-//                    icon = currentCell.getIcon();
-//
-//                // according to iconPath add a css class with the corresponding class
-//                switch (icon) {
-//                    case "nothing":
-//                        iconImage.getStyleClass().add("emptyIcon");
-//                        break;
-//                    case "hero":
-//                        iconImage.getStyleClass().add("heroIcon");
-//                        break;
-//                    case "zombie":
-//                        iconImage.getStyleClass().add("zombieIcon");
-//                        break;
-//                    case "vaccine":
-//                        iconImage.getStyleClass().add("vaccineIcon");
-//                        break;
-//                    case "supply":
-//                        iconImage.getStyleClass().add("supplyIcon");
-//                        break;
-//                    case "invisible":
-//                        iconImage.getStyleClass().add("invisibleIcon");
-//                        break;
-//                    default:
-//                        iconImage.getStyleClass().add("emptyIcon");
-//                        break;
-//                }
-//
-//                // set the image settings
-//                iconImage.setAlignment(Pos.CENTER);
-//                iconImage.setMinWidth(25);
-//                iconImage.setMinHeight(25);
-//                iconImage.getStyleClass().add("icon");
-//
-//                // update the cell at the given coordinates
-//                // get index of cell
-//                int index = 15*i + j;
-//
-//                StackPane cell = (StackPane) grid.getChildren().get(index);
-//
-//                // get el old image w remove el styleclass el feeha maslan
-//                Label oldIcon = (Label) cell.getChildren().get(0);
-//                oldIcon.getStyleClass().removeAll();
-//
-//                cell.getChildren().clear();
-//                cell.getChildren().removeAll();
-//                cell.getChildren().add(iconImage);
-//
-//                newGrid.getChildren().add(cell);
-//                newGrid.setConstraints(cell, i, 14-j);
-//            }
-//        }
-//        grid = newGrid;
-    } // mesh hane3melha
-
     private void setContainerSettings() {
         middleContainer.setAlignment(Pos.CENTER);
         middleContainer.getStyleClass().add("middleContainer");
@@ -396,24 +374,32 @@ public class Scene3 extends Scene {
         grid.getStyleClass().add("grid");
 
         topPane.setAlignment(Pos.CENTER);
-        topPane.setMinHeight(80);
-        topPane.getStyleClass().add("topPane");
+//        topPane.setMinHeight(80);
+        topPane.minHeightProperty().bind(Bindings.divide(Main.height, 10));
+//        topPane.getStyleClass().add("topPane");
 
         rightSideBar.setAlignment(Pos.CENTER);
-        rightSideBar.setMinWidth(200);
-        rightSideBar.setPadding(new Insets(0, 25, 0, 25));
-        rightSideBar.getStyleClass().add("rightSideBar");
+//        rightSideBar.setMinWidth(200);
+        rightSideBar.minWidthProperty().bind(Bindings.divide(Main.width, 6));
+//        rightSideBar.setPadding(new Insets(0, 25, 0, 25));
+        rightSideBar.styleProperty().bind(Bindings.concat("-fx-padding: 0 ", Bindings.divide(Main.width,48), " 0 ", Bindings.divide(Main.width,48), ";"));
+//        rightSideBar.getStyleClass().add("rightSideBar");
 
         bottomPane.setAlignment(Pos.CENTER);
-        bottomPane.setMinHeight(80);
-        bottomPane.setSpacing(80);
-        bottomPane.setPadding(new Insets(10, 0, 10, 0));
-        bottomPane.getStyleClass().add("bottomPane");
+//        bottomPane.setMinHeight(80);
+        bottomPane.minHeightProperty().bind(Bindings.divide(Main.height, 10));
+//        bottomPane.setSpacing(80);
+        bottomPane.spacingProperty().bind(Bindings.divide(Main.width, 15));
+//        bottomPane.setPadding(new Insets(10, 0, 10, 0));
+        bottomPane.styleProperty().bind(Bindings.concat("-fx-padding: ", Bindings.divide(Main.height,80), " 0 ", Bindings.divide(Main.height,80), " 0;"));
+//        bottomPane.getStyleClass().add("bottomPane");
 
         leftSideBar.setAlignment(Pos.CENTER);
-        leftSideBar.setMinWidth(200);
-        leftSideBar.setPadding(new Insets(0, 25, 0, 25));
-        leftSideBar.getStyleClass().add("leftSideBar");
+//        leftSideBar.setMinWidth(200);
+        leftSideBar.minWidthProperty().bind(Bindings.divide(Main.width, 6));
+//        leftSideBar.setPadding(new Insets(0, 25, 0, 25));
+        leftSideBar.styleProperty().bind(Bindings.concat("-fx-padding: 0 ", Bindings.divide(Main.width,48), " 0 ", Bindings.divide(Main.width,48), ";"));
+//        leftSideBar.getStyleClass().add("leftSideBar");
 
     }
 
@@ -509,10 +495,23 @@ public class Scene3 extends Scene {
         moveKeysButtons.getChildren().addAll(up, down, left, right);
 
         // add to each one a seperate class to style their backgrounds
-        up.getStyleClass().addAll("key-button", "up-key");
-        down.getStyleClass().addAll("key-button", "down-key");
-        left.getStyleClass().addAll("key-button", "left-key");
-        right.getStyleClass().addAll("key-button", "right-key");
+//        up.getStyleClass().addAll("key-button", "up-key");
+        up.getStyleClass().add("up-key");
+//        down.getStyleClass().addAll("key-button", "down-key");
+        down.getStyleClass().add("down-key");
+//        left.getStyleClass().addAll("key-button", "left-key");
+        left.getStyleClass().add("left-key");
+//        right.getStyleClass().addAll("key-button", "right-key");
+        right.getStyleClass().add("right-key");
+
+        up.minWidthProperty().bind(Bindings.divide(Main.width, 40));
+        up.minHeightProperty().bind(Bindings.divide(Main.height, 26.667));
+        down.minWidthProperty().bind(Bindings.divide(Main.width, 40));
+        down.minHeightProperty().bind(Bindings.divide(Main.height, 26.667));
+        left.minWidthProperty().bind(Bindings.divide(Main.width, 40));
+        left.minHeightProperty().bind(Bindings.divide(Main.height, 26.667));
+        right.minWidthProperty().bind(Bindings.divide(Main.width, 40));
+        right.minHeightProperty().bind(Bindings.divide(Main.height, 26.667));
 
         // set the coordinates of each in their container
         moveKeysButtons.setConstraints(up, 1,0);
@@ -542,10 +541,17 @@ public class Scene3 extends Scene {
             specialAbilityButton.setText("Illuminate"); //show map
 
         // for each one add the class bottomPaneButton
-        attackButton.getStyleClass().add("bottomPaneButton");
-        specialAbilityButton.getStyleClass().add("bottomPaneButton");
-        cureButton.getStyleClass().add("bottomPaneButton");
-        moveKeysButtons.getStyleClass().add("bottomPaneButton");
+//        attackButton.getStyleClass().add("bottomPaneButton");
+//        specialAbilityButton.getStyleClass().add("bottomPaneButton");
+//        cureButton.getStyleClass().add("bottomPaneButton");
+//        moveKeysButtons.getStyleClass().add("bottomPaneButton");
+
+        attackButton.minWidthProperty().bind(Bindings.divide(Main.width, 17.143));
+        attackButton.minHeightProperty().bind(Bindings.divide(Main.height, 20));
+        specialAbilityButton.minWidthProperty().bind(Bindings.divide(Main.width, 17.143));
+        specialAbilityButton.minHeightProperty().bind(Bindings.divide(Main.height, 20));
+        cureButton.minWidthProperty().bind(Bindings.divide(Main.width, 17.143));
+        cureButton.minHeightProperty().bind(Bindings.divide(Main.height, 20));
 
         // action actionlistener
         attackButton.setOnMouseClicked(e -> {
@@ -659,15 +665,20 @@ public class Scene3 extends Scene {
         VBox targetContainer = new VBox();
 
         // whole sidebar panel settings
-        targetContainer.setMinWidth(204);
-        targetContainer.setMaxWidth(204);
-        targetContainer.setMinHeight(700);
+//        targetContainer.setMinWidth(204);
+        targetContainer.minWidthProperty().bind(Bindings.divide(Main.width,5.882));
+//        targetContainer.setMaxWidth(204);
+        targetContainer.maxWidthProperty().bind(Bindings.divide(Main.width,5.882));
+//        targetContainer.setMinHeight(700);
+        targetContainer.minHeightProperty().bind(Bindings.divide(Main.height,1.143));
         targetContainer.getStyleClass().add("targetContainer");
 
         // image settings
         Label targetImage = new Label();
-        targetImage.setMinWidth(200);
-        targetImage.setMinHeight(300);
+//        targetImage.setMinWidth(200);
+        targetImage.minWidthProperty().bind(Bindings.divide(Main.width,6));
+//        targetImage.setMinHeight(300);
+        targetImage.minHeightProperty().bind(Bindings.divide(Main.height,2.667));
         targetImage.getStyleClass().add("targetImage");
 
         Text targetName = new Text();
@@ -682,8 +693,10 @@ public class Scene3 extends Scene {
         VBox targetText = new VBox();
         targetText.getStyleClass().add("targetText");
         targetText.setAlignment(Pos.CENTER);
-        targetText.setSpacing(20);
-        targetText.setPadding(new Insets(50, 0, 0, 0));
+//        targetText.setSpacing(20);
+        targetText.spacingProperty().bind(Bindings.divide(Main.height,40));
+//        targetText.setPadding(new Insets(50, 0, 0, 0));
+        targetText.styleProperty().bind(Bindings.concat("-fx-font-size: ", Bindings.divide(Main.width,75), "px; -fx-padding: ", Bindings.divide(Main.height,16), " 0 0 0;"));
 
 
         if (isHovering) {
@@ -742,8 +755,10 @@ public class Scene3 extends Scene {
                 if (hoveredOverCell instanceof CharacterCell) {
                     Character character = ((CharacterCell) hoveredOverCell).getCharacter();
                     if (character instanceof Zombie){
-                        targetText.setSpacing(30);
-                        targetText.setPadding(new Insets(100, 0, 0, 0));
+//                        targetText.setSpacing(30);
+                        targetText.spacingProperty().bind(Bindings.divide(Main.height,26.667));
+//                        targetText.setPadding(new Insets(100, 0, 0, 0));
+                        targetText.styleProperty().bind(Bindings.concat("-fx-padding: ", Bindings.divide(Main.height,8), " 0 0 0;"));
                         targetName.setText("Name : " + character.getName());
                         health.setText("Health : " + character.getCurrentHp() + "/" + character.getMaxHp() + " HP");
                         attackDamage.setText("Attack Damage : " + character.getAttackDmg());
@@ -804,8 +819,10 @@ public class Scene3 extends Scene {
 
             // text to be added as details **** TO BE CHANGED TO BE DYNAMIC (according to currentTarget)
             if (currentTarget instanceof Zombie){
-                targetText.setSpacing(30);
-                targetText.setPadding(new Insets(100, 0, 0, 0));
+//                targetText.setSpacing(30);
+                targetText.spacingProperty().bind(Bindings.divide(Main.height,26.667));
+//                targetText.setPadding(new Insets(100, 0, 0, 0));
+                targetText.styleProperty().bind(Bindings.concat("-fx-padding: ", Bindings.divide(Main.height,8), " 0 0 0;"));
                 targetName.setText("Name : " + currentTarget.getName());
                 health.setText("Health : " + currentTarget.getCurrentHp() + "/" + currentTarget.getMaxHp() + " HP");
                 attackDamage.setText("Attack Damage : " + currentTarget.getAttackDmg());
@@ -818,7 +835,8 @@ public class Scene3 extends Scene {
                 supplies.setText("Supplies in inventory : " + ((Hero) currentTarget).getSupplyInventory().size());
                 vaccines.setText("Vaccines in inventory : " + ((Hero) currentTarget).getVaccineInventory().size());
             } else if (currentTargetCell instanceof TrapCell){
-                targetText.setSpacing(10);
+//                targetText.setSpacing(10);
+                targetText.spacingProperty().bind(Bindings.divide(Main.height,80));
                 targetName.setText("You caught a trap!");
                 attackDamage.setText("Damage inflicted : " + ((TrapCell) currentTargetCell).getTrapDamage());
             } else {
@@ -849,15 +867,21 @@ public class Scene3 extends Scene {
         VBox heroContainer = new VBox();
 
         // container settings
-        heroContainer.setMinWidth(204);
-        heroContainer.setMaxWidth(204);
-        heroContainer.setMinHeight(700);
+
+//        heroContainer.setMinWidth(204);
+        heroContainer.minWidthProperty().bind(Bindings.divide(Main.width,5.882));
+//        heroContainer.setMaxWidth(204);
+        heroContainer.maxWidthProperty().bind(Bindings.divide(Main.width,5.882));
+//        heroContainer.setMinHeight(700);
+        heroContainer.minHeightProperty().bind(Bindings.divide(Main.height,1.143));
         heroContainer.getStyleClass().add("heroContainer");
 
         // image settings
         Label heroImage = new Label();
-        heroImage.setMinWidth(200);
-        heroImage.setMinHeight(300);
+//        heroImage.setMinWidth(200);
+        heroImage.minWidthProperty().bind(Bindings.divide(Main.width,6));
+//        heroImage.setMinHeight(300);
+        heroImage.minHeightProperty().bind(Bindings.divide(Main.height,2.667));
         heroImage.getStyleClass().add("heroImage");
 
         if (currentHero != null) {
@@ -914,8 +938,11 @@ public class Scene3 extends Scene {
         VBox heroText = new VBox();
         heroText.getStyleClass().add("heroText");
         heroText.setAlignment(Pos.CENTER);
-        heroText.setSpacing(20);
-        heroText.setPadding(new Insets(50, 0, 0, 0));
+
+//        heroText.setSpacing(20);
+        heroText.spacingProperty().bind(Bindings.divide(Main.height,40));
+//        heroText.setPadding(new Insets(50, 0, 0, 0));
+        heroText.styleProperty().bind(Bindings.concat("-fx-font-size: ", Bindings.divide(Main.width,75), "px; -fx-padding: ", Bindings.divide(Main.height,16), " 0 0 0;"));
         heroText.getChildren().addAll(heroName, heroType, health, attackDamage, remainingActionPoints, supplies, vaccines);
 
         // add all to container and then add that container to the leftSideBar
@@ -928,15 +955,36 @@ public class Scene3 extends Scene {
         HBox topPanelContainer = new HBox();
 
         // container settings
-        topPanelContainer.getStyleClass().add("topPanelContainer");
-        topPanelContainer.setMinWidth(700);
-        topPanelContainer.setSpacing(100);
+//        topPanelContainer.getStyleClass().add("topPanelContainer");
+        topPanelContainer.styleProperty().bind(Bindings.concat("-fx-font-size: ", Bindings.divide(Main.width,66.667), "px;"));
+//        topPanelContainer.setMinWidth(700);
+        topPanelContainer.minWidthProperty().bind(Bindings.divide(Main.width,1.714));
+//        topPanelContainer.setSpacing(30);
+        topPanelContainer.spacingProperty().bind(Bindings.divide(Main.width,40));
         topPanelContainer.setAlignment(Pos.CENTER);
 
         // element 1 and settings
+        showHeroes = new Button("Toggle Heroes Alive");
+//        showHeroes.setMinHeight(40);
+        showHeroes.minHeightProperty().bind(Bindings.divide(Main.height,20));
+//        showHeroes.setMinWidth(100);
+        showHeroes.minWidthProperty().bind(Bindings.divide(Main.width,12));
+        showHeroes.setOnMouseClicked(e -> {
+            if (root.getChildren().contains(heroesAlive)) {
+                root.getChildren().remove(heroesAlive);
+                heroesAlive.getChildren().clear();
+            } else {
+                showHeroesAlive();
+                root.getChildren().add(heroesAlive);
+            }
+            updateScene();
+        });
+
         endTurnButton = new Button("End Turn");
-        endTurnButton.setMinHeight(40);
-        endTurnButton.setMinWidth(100);
+//        endTurnButton.setMinHeight(40);
+        endTurnButton.minHeightProperty().bind(Bindings.divide(Main.height,20));
+//        endTurnButton.setMinWidth(100);
+        endTurnButton.minWidthProperty().bind(Bindings.divide(Main.width,12));
         endTurnButton.setOnMouseClicked(e -> {
             try {
                 Game.endTurn();
@@ -949,6 +997,7 @@ public class Scene3 extends Scene {
             currentHero = null;
             currentTarget = null;
             currentTargetCell = null;
+            currentHeroCell = null;
 
             // increment round number
             currentRound++;
@@ -959,16 +1008,20 @@ public class Scene3 extends Scene {
 
         // element 2 and settings **** EB2A KHALIH TIMER BEGAD
         Label timer = new Label("Time : " + timeFormat);
-        timer.setMinHeight(40);
-        timer.setMinWidth(100);
+//        timer.setMinHeight(40);
+        timer.minHeightProperty().bind(Bindings.divide(Main.height,20));
+//        timer.setMinWidth(100);
+        timer.minWidthProperty().bind(Bindings.divide(Main.width,12));
 
         // element 3 and settings **** INCREMENTS WITH GAME.ENDTURN()
         Label roundCounter = new Label("Round " + currentRound);
-        roundCounter.setMinHeight(40);
-        roundCounter.setMinWidth(100);
+//        roundCounter.setMinHeight(40);
+        roundCounter.minHeightProperty().bind(Bindings.divide(Main.height,20));
+//        roundCounter.setMinWidth(100);
+        roundCounter.minWidthProperty().bind(Bindings.divide(Main.width,12));
 
         // add kolo lel container then add container to topPane
-        topPanelContainer.getChildren().addAll(roundCounter, timer, endTurnButton);
+        topPanelContainer.getChildren().addAll(roundCounter, timer, showHeroes, endTurnButton);
         topPane.getChildren().clear();
         topPane.getChildren().removeAll();
         topPane.getChildren().add(topPanelContainer);
@@ -981,13 +1034,20 @@ public class Scene3 extends Scene {
         // the close button inside the alert box to force close it (remove it from the root.getChildren().get(1))
         Button xButton = new Button();
         xButton.getStyleClass().add("alertXButton");
-        xButton.setMinWidth(20);
-        xButton.setMaxWidth(20);
-        xButton.setMinHeight(20);
-        xButton.setMaxHeight(20);
+        xButton.minHeightProperty().bind(Bindings.divide(Main.height,20));
+//        xButton.setMinWidth(20);
+        xButton.minWidthProperty().bind(Bindings.divide(Main.width,60));
+//        xButton.setMaxWidth(20);
+        xButton.maxWidthProperty().bind(Bindings.divide(Main.height,40));
+//        xButton.setMinHeight(20);
+        xButton.minHeightProperty().bind(Bindings.divide(Main.width,60));
+//        xButton.setMaxHeight(20);
+        xButton.maxHeightProperty().bind(Bindings.divide(Main.height,40));
         xButton.setAlignment(Pos.TOP_RIGHT);
-        xButton.setTranslateX(135);
-        xButton.setTranslateY(-35);
+//        xButton.setTranslateX(135);
+        xButton.translateXProperty().bind(Bindings.divide(Main.width,8.889));
+//        xButton.setTranslateY(-35);
+        xButton.translateYProperty().bind(Bindings.divide(Main.height,-22.857));
         xButton.setOnMouseClicked(e -> {
             root.getChildren().remove(alertBox);
         });
@@ -1024,20 +1084,28 @@ public class Scene3 extends Scene {
         labelMessage.setAlignment(Pos.CENTER);
         labelMessage.setWrapText(true);
         labelMessage.setTextAlignment(TextAlignment.CENTER);
-        labelMessage.setMaxWidth(280);
+//        labelMessage.setMaxWidth(280);
+        labelMessage.maxWidthProperty().bind(Bindings.divide(Main.width,4.286));
 
         // settings
-        alertBox.setMinWidth(300);
-        alertBox.setMaxWidth(300);
-        alertBox.setMinHeight(100);
-        alertBox.setMaxHeight(100);
+//        alertBox.setMinWidth(300);
+        alertBox.minWidthProperty().bind(Bindings.divide(Main.width,4));
+//        alertBox.setMaxWidth(300);
+        alertBox.maxWidthProperty().bind(Bindings.divide(Main.width,4));
+//        alertBox.setMinHeight(100);
+        alertBox.minHeightProperty().bind(Bindings.divide(Main.height,8));
+//        alertBox.setMaxHeight(100);
+        alertBox.maxHeightProperty().bind(Bindings.divide(Main.height,8));
         alertBox.setAlignment(Pos.CENTER);
         alertBox.getStyleClass().add("alertBox");
+        alertBox.styleProperty().bind(Bindings.concat("-fx-background-radius: ", Bindings.divide(Main.width, 80),"px; -fx-font-size: ", Bindings.divide(Main.width, 66.667),";"));
 
 
         // coordinates
-        alertBox.setTranslateX(-200);
-        alertBox.setTranslateY(-280);
+//        alertBox.setTranslateX(-200);
+        alertBox.translateXProperty().bind(Bindings.divide(Main.width,-6));
+//        alertBox.setTranslateY(-280);
+        alertBox.translateYProperty().bind(Bindings.divide(Main.height,-2.857));
 
         // add kollo lel alertBox w add el alertBox lel root (sheelo bel action listener or be timeout) easy ya3ny isa
         alertBox.getChildren().addAll(labelMessage, xButton);
@@ -1112,6 +1180,7 @@ public class Scene3 extends Scene {
         updateRightSideBar();
 
         //refresh top pane
+        showHeroesAlive();
         setTopPane();
 
         //refresh bottom pane
@@ -1154,57 +1223,87 @@ public class Scene3 extends Scene {
     private EventHandler<KeyEvent> keyListener = new javafx.event.EventHandler<KeyEvent>(){
         @Override
         public void handle(KeyEvent keyEvent) {
+            // wasd - arrows : movement
+            // e: end turn - tab: swap selected hero - esc: remove alertbox - c: cure - q: activate special ability
+            // t: select target mode - enter: select the currently hovered cell to be the target
+            // k: attacks the selected target
+
             // arrow keys : up is right, down is left, left is down, right is up
             KeyCode[] moveKeys = {KeyCode.UP,KeyCode.DOWN,KeyCode.LEFT,KeyCode.RIGHT,KeyCode.W,KeyCode.A,KeyCode.S,KeyCode.D};
 
             if(elementExistsInsideArray(moveKeys ,keyEvent.getCode())) {
-                if (currentHero == null){
-                    setAlertBoxContainer("Select a hero first!");
-                    return;
+                if (!selectingTarget) {
+                    if (currentHero == null) {
+                        setAlertBoxContainer("Select a hero first!");
+                        return;
+                    }
+
+                    Cell oldCell = findCellOfCharacter(currentHero);
+
+                    Cell cellToMoveTo = null;
+                    boolean movedSuccessfully = false;
+
+                    if (keyEvent.getCode() == KeyCode.UP || keyEvent.getCode() == KeyCode.W) {
+                        try {
+                            cellToMoveTo = Game.map[currentHero.getLocation().x][currentHero.getLocation().y + 1];
+                            currentHero.move(Direction.RIGHT);
+                            movedSuccessfully = true;
+                        } catch (MovementException | NotEnoughActionsException ex) {
+                            ex.printStackTrace();
+                        }
+                    } else if (keyEvent.getCode() == KeyCode.DOWN || keyEvent.getCode() == KeyCode.S) {
+                        try {
+                            cellToMoveTo = Game.map[currentHero.getLocation().x][currentHero.getLocation().y - 1];
+                            currentHero.move(Direction.LEFT);
+                            movedSuccessfully = true;
+                        } catch (MovementException | NotEnoughActionsException ex) {
+                            ex.printStackTrace();
+                        }
+                    } else if (keyEvent.getCode() == KeyCode.LEFT || keyEvent.getCode() == KeyCode.A) {
+                        try {
+                            cellToMoveTo = Game.map[currentHero.getLocation().x - 1][currentHero.getLocation().y];
+                            currentHero.move(Direction.DOWN);
+                            movedSuccessfully = true;
+                        } catch (MovementException | NotEnoughActionsException ex) {
+                            ex.printStackTrace();
+                        }
+                    } else if (keyEvent.getCode() == KeyCode.RIGHT || keyEvent.getCode() == KeyCode.D) {
+                        try {
+                            cellToMoveTo = Game.map[currentHero.getLocation().x + 1][currentHero.getLocation().y];
+                            currentHero.move(Direction.UP);
+                            movedSuccessfully = true;
+                        } catch (MovementException | NotEnoughActionsException ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                    currentHeroCell = findCellOfCharacter(currentHero);
+
+                    if (cellToMoveTo instanceof TrapCell && movedSuccessfully) {
+                        currentTargetCell = cellToMoveTo;
+                        updateScene();
+                    }
+                } else {
+                    // selecting target mode is on
+                    int x = getLocationOfCell(hoveredOverCell).x;
+                    int y = getLocationOfCell(hoveredOverCell).y;
+
+                    if (keyEvent.getCode() == KeyCode.UP || keyEvent.getCode() == KeyCode.W) {
+                            y++;
+                    } else if (keyEvent.getCode() == KeyCode.DOWN || keyEvent.getCode() == KeyCode.S) {
+                            y--;
+                    } else if (keyEvent.getCode() == KeyCode.LEFT || keyEvent.getCode() == KeyCode.A) {
+                            x--;
+                    } else if (keyEvent.getCode() == KeyCode.RIGHT || keyEvent.getCode() == KeyCode.D) {
+                            x++;
+                    }
+
+                    if (x > 14 | x < 0 | y > 14 | y < 0) {
+                        // out of map
+                        setAlertBoxContainer("Select a cell within the map!");
+                        return;
+                    }
+                    hoveredOverCell = Game.map[x][y];
                 }
-
-                Cell cellToMoveTo = null;
-                boolean movedSuccessfully = false;
-
-                if(keyEvent.getCode() == KeyCode.UP || keyEvent.getCode() == KeyCode.W){
-                    try {
-                        cellToMoveTo = Game.map[currentHero.getLocation().x][currentHero.getLocation().y+1];
-                        currentHero.move(Direction.RIGHT);
-                        movedSuccessfully = true;
-                    } catch (MovementException | NotEnoughActionsException ex) {
-                        ex.printStackTrace();
-                    }
-                } else if(keyEvent.getCode() == KeyCode.DOWN || keyEvent.getCode() == KeyCode.S) {
-                    try {
-                        cellToMoveTo = Game.map[currentHero.getLocation().x][currentHero.getLocation().y-1];
-                        currentHero.move(Direction.LEFT);
-                        movedSuccessfully = true;
-                    } catch (MovementException | NotEnoughActionsException ex) {
-                        ex.printStackTrace();
-                    }
-                } else if(keyEvent.getCode() == KeyCode.LEFT || keyEvent.getCode() == KeyCode.A) {
-                    try {
-                        cellToMoveTo = Game.map[currentHero.getLocation().x-1][currentHero.getLocation().y];
-                        currentHero.move(Direction.DOWN);
-                        movedSuccessfully = true;
-                    } catch (MovementException | NotEnoughActionsException ex) {
-                        ex.printStackTrace();
-                    }
-                } else if(keyEvent.getCode() == KeyCode.RIGHT || keyEvent.getCode() == KeyCode.D) {
-                    try {
-                        cellToMoveTo = Game.map[currentHero.getLocation().x+1][currentHero.getLocation().y];
-                        currentHero.move(Direction.UP);
-                        movedSuccessfully = true;
-                    } catch (MovementException | NotEnoughActionsException ex) {
-                        ex.printStackTrace();
-                    }
-                }
-
-                if (cellToMoveTo instanceof TrapCell && movedSuccessfully){
-                    currentTargetCell = cellToMoveTo;
-                    updateScene();
-                }
-
             } else if(keyEvent.getCode() == KeyCode.E){
                 try {
                     Game.endTurn();
@@ -1217,12 +1316,14 @@ public class Scene3 extends Scene {
                 currentHero = null;
                 currentTarget = null;
                 currentTargetCell = null;
+                currentHeroCell = null;
 
                 // increment round number
                 currentRound++;
             } else if(keyEvent.getCode() == KeyCode.TAB){
                 if (currentHero == null && Game.heroes.size() > 0) {
                     currentHero = Game.heroes.get(0);
+                    currentHeroCell = findCellOfCharacter(currentHero);
                 } else {
                     int indexOfHero = Game.heroes.indexOf(currentHero);
                     indexOfHero++;
@@ -1230,10 +1331,98 @@ public class Scene3 extends Scene {
                         indexOfHero = 0;
                     }
                     currentHero = Game.heroes.get(indexOfHero);
+                    currentHeroCell = findCellOfCharacter(currentHero);
                 }
             } else if(keyEvent.getCode() == KeyCode.ESCAPE) {
                 if (root.getChildren().size() > 1) {
                     root.getChildren().remove(1);
+                }
+            } else if(keyEvent.getCode() == KeyCode.C) {
+                if (currentHero == null) {
+                    setAlertBoxContainer("Please select a hero!");
+                    return;
+                }
+                if (!(currentTarget instanceof Zombie)){
+                    setAlertBoxContainer("Please select a zombie to cure!");
+                    return;
+                }
+
+                currentHero.setTarget(currentTarget);
+
+                try {
+                    currentHero.cure();
+                } catch (InvalidTargetException e) {
+                    e.printStackTrace();
+                } catch (NoAvailableResourcesException e) {
+                    setAlertBoxContainer("No enough vaccines!");
+                } catch (NotEnoughActionsException e) {
+                    setAlertBoxContainer("No enough action points!");
+                }
+            } else if(keyEvent.getCode() == KeyCode.Q) {
+                if (currentHero == null){
+                    setAlertBoxContainer("Please select a hero!");
+                    return;
+                }
+
+                if (currentHero instanceof Medic) {
+                    if (currentTarget == null) {
+                        setAlertBoxContainer("Please select a target!");
+                        return;
+                    } else {
+                        currentHero.setTarget(currentTarget);
+                    }
+                }
+
+                try {
+                    currentHero.useSpecial();
+                } catch (InvalidTargetException e) {
+                    e.printStackTrace();
+                } catch (NoAvailableResourcesException e) {
+                    e.printStackTrace();
+                }
+            } else if(keyEvent.getCode() == KeyCode.T) {
+                // toggle select target mode
+                selectingTarget = !selectingTarget;
+                isHovering = selectingTarget;
+                if (selectingTarget) {
+                    if (currentHero == null) {
+                        // initially cell is 0,0 if no hero is currently selected
+                        hoveredOverCell = Game.map[0][0];
+                    } else {
+                        // initial cell selected is the hero
+                        hoveredOverCell = currentHeroCell;
+                    }
+                } else {
+                    hoveredOverCell = null;
+                }
+            } else if (keyEvent.getCode() == KeyCode.ENTER) {
+                if (selectingTarget) {
+                    selectingTarget = false;
+                    isHovering = false;
+                    currentTargetCell = hoveredOverCell;
+                    if (currentTargetCell instanceof CharacterCell) {
+                        currentTarget = ((CharacterCell) currentTargetCell).getCharacter();
+                    }
+                    hoveredOverCell = null;
+                }
+            } else if (keyEvent.getCode() == KeyCode.K) {
+                if (currentHero == null) {
+                    setAlertBoxContainer("Please select a hero!");
+                    return;
+                }
+
+                if (currentTarget == null) {
+                    setAlertBoxContainer("Please select a target to attack!");
+                    return;
+                }
+
+                currentHero.setTarget(currentTarget);
+                try {
+                    currentHero.attack();
+                } catch (NotEnoughActionsException e) {
+                    e.printStackTrace();
+                } catch (InvalidTargetException e) {
+                    e.printStackTrace();
                 }
             }
             // else if () {}
@@ -1241,6 +1430,27 @@ public class Scene3 extends Scene {
 
         }
     };
+
+    private Cell findCellOfCharacter(Character character) {
+        for (int i=0; i<15; i++) {
+            for (int j=0; j<15; j++) {
+                Cell currentCell = Game.map[i][j];
+                if (currentCell instanceof CharacterCell && ((CharacterCell) currentCell).getCharacter() == character)
+                    return currentCell;
+            }
+        }
+        return null;
+    }
+
+    private Point getLocationOfCell(Cell cell) {
+        for (int i = 0; i<15; i++) {
+            for (int j=0; j<15; j++) {
+                if (Game.map[i][j] == cell)
+                    return new Point(i,j);
+            }
+        }
+        return new Point(-1,-1);
+    }
 
     private boolean elementExistsInsideArray(KeyCode[] array, KeyCode object){
         for (int i=0; i<array.length; i++) {
@@ -1265,5 +1475,101 @@ public class Scene3 extends Scene {
 //        cureButton.setFocusTraversable(bool);
 //        endTurnButton.setFocusTraversable(bool);
     }
+
+    private static void showHeroesAlive() {
+
+        // refresh the heroesAlive array
+//        heroesAlive.clear();
+//        for (int i = 0; i < Game.heroes.size(); i++) {
+//            heroesAlive.add(Game.heroes.get(i));
+//        }
+        VBox heroesAliveContainer = new VBox();
+
+        for (int i = 0; i<Game.heroes.size(); i++) {
+            VBox currentHeroAliveContainer = new VBox();
+            Hero currentHeroAlive = Game.heroes.get(i);
+            Label name = new Label(currentHeroAlive.getName());
+            Label type = new Label(currentHeroAlive.getType());
+            Label currentHp = new Label("Current HP : " + currentHeroAlive.getCurrentHp());
+            Label attackDmg = new Label("Attack Damage : " + currentHeroAlive.getAttackDmg());
+            Label maxActions = new Label("Max actions per turn : " + currentHeroAlive.getMaxActions());
+
+            name.getStyleClass().add("heroes-alive-details");
+            type.getStyleClass().add("heroes-alive-details");
+            currentHp.getStyleClass().add("heroes-alive-details");
+            attackDmg.getStyleClass().add("heroes-alive-details");
+            maxActions.getStyleClass().add("heroes-alive-details");
+
+            name.styleProperty().bind(Bindings.concat("-fx-font-size: ", Bindings.divide(Main.width,100), "px;"));
+            type.styleProperty().bind(Bindings.concat("-fx-font-size: ", Bindings.divide(Main.width,100), "px;"));
+            currentHp.styleProperty().bind(Bindings.concat("-fx-font-size: ", Bindings.divide(Main.width,100), "px;"));
+            attackDmg.styleProperty().bind(Bindings.concat("-fx-font-size: ", Bindings.divide(Main.width,100), "px;"));
+            maxActions.styleProperty().bind(Bindings.concat("-fx-font-size: ", Bindings.divide(Main.width,100), "px;"));
+
+            name.setTextAlignment(TextAlignment.CENTER);
+            type.setTextAlignment(TextAlignment.CENTER);
+            currentHp.setTextAlignment(TextAlignment.CENTER);
+            attackDmg.setTextAlignment(TextAlignment.CENTER);
+            maxActions.setTextAlignment(TextAlignment.CENTER);
+
+            name.setAlignment(Pos.CENTER);
+            type.setAlignment(Pos.CENTER);
+            currentHp.setAlignment(Pos.CENTER);
+            attackDmg.setAlignment(Pos.CENTER);
+            maxActions.setAlignment(Pos.CENTER);
+
+//            currentHeroAliveContainer.setMaxWidth(194);
+            currentHeroAliveContainer.maxWidthProperty().bind(Bindings.divide(Main.width, 6.185));
+//            currentHeroAliveContainer.setMaxHeight(100);
+            currentHeroAliveContainer.maxHeightProperty().bind(Bindings.divide(Main.height, 8));
+            currentHeroAliveContainer.setAlignment(Pos.CENTER);
+            currentHeroAliveContainer.getStyleClass().add("heroes-alive-container");
+            currentHeroAliveContainer.styleProperty().bind(Bindings.concat("-fx-border-radius: ", Bindings.divide(Main.width,48),"px;"));
+            currentHeroAliveContainer.getChildren().addAll(name, type, currentHp, attackDmg, maxActions);
+            heroesAliveContainer.getChildren().add(currentHeroAliveContainer);
+
+        }
+
+        heroesAliveContainer.setStyle("-fx-background-color:white;");
+//        heroesAliveContainer.setSpacing(5);
+        heroesAliveContainer.spacingProperty().bind(Bindings.divide(Main.height,160));
+//        heroesAliveContainer.maxWidth(204);
+        heroesAliveContainer.maxWidthProperty().bind(Bindings.divide(Main.width,5.882));
+//        heroesAliveContainer.maxHeight(800);
+        heroesAliveContainer.maxHeightProperty().bind(Bindings.divide(Main.height,1));
+        heroesAliveContainer.setAlignment(Pos.TOP_CENTER);
+
+        heroesAlive.getChildren().clear();
+//        heroesAlive.setMaxWidth(204);
+        heroesAlive.maxWidthProperty().bind(Bindings.divide(Main.width,5.882));
+//        heroesAlive.setMaxHeight(800);
+        heroesAlive.maxWidthProperty().bind(Bindings.divide(Main.width,5.882));
+        heroesAlive.setMouseTransparent(true);
+        heroesAlive.setAlignment(Pos.TOP_CENTER);
+//        heroesAlive.setTranslateY(-300);
+//        heroesAlive.setTranslateX(-400);
+//        heroesAlive.setTranslateY(50);
+        heroesAlive.translateYProperty().bind(Bindings.divide(Main.height, 16));
+//        heroesAlive.setTranslateX(-477);
+        heroesAlive.translateXProperty().bind(Bindings.divide(Main.width, -2.516));
+        heroesAlive.getChildren().add(heroesAliveContainer);
+    }
+
+    private void setWindowResizeableListener() {
+        Main.height.bind(this.heightProperty());
+        Main.width.bind(this.widthProperty());
+
+        ChangeListener<Number> changeListener = new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
+                Main.WINDOW_WIDTH = Main.s2.getWidth();
+                Main.WINDOW_HEIGHT = Main.s2.getHeight();
+            }
+        };
+
+        this.widthProperty().addListener(changeListener);
+        this.heightProperty().addListener(changeListener);
+    }
+
 
 }

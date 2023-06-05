@@ -110,7 +110,7 @@
 }
 
 .heroText {
-    -fx-font-size: 16px;
+/*    -fx-font-size: 16px;*/
     -fx-font-weight: bold;
 }
 
@@ -162,18 +162,18 @@
 }
 
 .targetText {
-    -fx-font-size: 16px;
+/*    -fx-font-size: 16px; */
     -fx-font-weight: bold;
 }
 
 .topPanelContainer{
-    -fx-font-size: 24;
+    -fx-font-size: 18;
 }
 
 .alertBox {
     -fx-background-color: linear-gradient(to top, rgba(218, 19, 58, 0.8), rgba(209, 19, 3, 0.8));
-    -fx-background-radius: 15px;
-    -fx-font-size: 18;
+/*    -fx-background-radius: 15px;
+    -fx-font-size: 18;*/
     -fx-font-weight: bold;
     -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.8), 10, 0, 0, 0);
 
@@ -224,5 +224,25 @@
     -fx-background-size: stretch;
 }
 
+.heroes-alive-details {
+/*    -fx-font-size: 12px;*/
+    -fx-text-fill: white;
+}
 
+.heroes-alive-container {
+    -fx-background-color: black;
+    -fx-border-color: black;
+/*    -fx-border-radius: 25px;*/
+    -fx-border-style: solid;
+    -fx-border-width: 3px;
+}
 
+.currentHeroCell {
+    -fx-effect: dropshadow(three-pass-box, #05AB4E, 10, 0.6, 0.5, 0.5);
+}
+.hoveredOverCell {
+    -fx-effect: dropshadow(three-pass-box, #E59E22, 10, 0.6, 0.5, 0.5);
+}
+.currentTargetCell {
+    -fx-effect: dropshadow(three-pass-box, #00F7F7, 10, 0.6, 0.5, 0.5);
+}
