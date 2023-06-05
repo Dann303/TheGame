@@ -6,9 +6,13 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import model.characters.Hero;
@@ -25,6 +29,7 @@ public class Main extends Application {
     public static DoubleProperty height = new SimpleDoubleProperty(800);
 
     public static Stage currentStage = new Stage();
+    public static Scene myScene = new Scene(new BorderPane(), WINDOW_WIDTH, WINDOW_HEIGHT);
     public static HowToPlayScene howToPlayScene;
     public static Scene1 s1;
     public static Scene2 s2;
@@ -55,13 +60,22 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) throws Exception {
 
+        myScene.getStylesheets().addAll(
+                Scene1.class.getResource("styles/scene1.css").toExternalForm(),
+                HowToPlayScene.class.getResource("styles/howToPlay.css").toExternalForm(),
+                Scene2.class.getResource("styles/scene2.css").toExternalForm(),
+                Scene3.class.getResource("styles/scene3.css").toExternalForm(),
+                GameOverScene.class.getResource("styles/gameOverScene.css").toExternalForm(),
+                GameWinScene.class.getResource("styles/gameWinScene.css").toExternalForm()
+        );
+
         assignImageToHeroes();
         createAllHeroesArray();
 
 //        howToPlayScene = new HowToPlayScene();
 
         s1 = new Scene1();
-        s2 = new Scene2();
+//        s2 = new Scene2();
 //        s3 = new Scene3();
         gameWin = new GameWinScene();
         gameOver = new GameOverScene();
@@ -72,23 +86,41 @@ public class Main extends Application {
 
         currentStage.setTitle("The Last of MRD");
         currentStage.getIcons().add(icon);
-        setUpSceneWindowResizeDetector(null, s2); //should be s1
-        currentStage.setScene(s2); //should be s1
+        setUpSceneWindowResizeDetector(null, s1); //should be s1
+        currentStage.setScene(myScene); //should be s1
+        currentStage.getScene().setRoot(Scene1.root);
+
+        currentStage.setFullScreenExitHint("Press F11 to toggle fullscreen!");
+        currentStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
+
+        currentStage.setFullScreen(true);
+
         currentStage.show();
-//        currentStage.setFullScreen(true);
-//        currentStage.widthProperty().addListener((obs, oldVal, newVal) -> {
-//            WINDOW_WIDTH = currentStage.getScene().getWidth();
-//            WINDOW_HEIGHT = currentStage.getScene().getHeight();
-//        });
 
-//        currentStage.setOnCloseRequest(e -> {
-//            Platform.exit();
-//            System.out.println("e2fel el zeft dah!");
-//        });
 
+        WINDOW_WIDTH = myScene.widthProperty().getValue();
+        WINDOW_HEIGHT = myScene.heightProperty().getValue();
+
+        height.bind(myScene.heightProperty());
+        width.bind(myScene.widthProperty());
+
+        myScene.addEventFilter(KeyEvent.KEY_PRESSED, keyListener);
     }
 
-    private void assignImageToHeroes() throws Exception {
+    private EventHandler<KeyEvent> keyListener = new javafx.event.EventHandler<KeyEvent>(){
+        @Override
+        public void handle(KeyEvent keyEvent) {
+            if (keyEvent.getCode() == KeyCode.F11) {
+                currentStage.setFullScreen(!currentStage.isFullScreen());
+                WINDOW_WIDTH = myScene.widthProperty().getValue();
+                WINDOW_HEIGHT = myScene.heightProperty().getValue();
+                height.bind(myScene.heightProperty());
+                width.bind(myScene.widthProperty());
+            }
+        }
+    };
+
+            private void assignImageToHeroes() throws Exception {
         Game.loadHeroes("src/shared files/Heros.csv");
 
         Game.availableHeroes.get(0).setImagePath("src/views/images/scene3/fighters/1.jpeg");
@@ -119,4 +151,8 @@ public class Main extends Application {
         }
     }
 
+    public static void clearListeners() {
+        myScene.setOnKeyPressed(null);
+        myScene.setOnMouseClicked(null);
+    }
 }
