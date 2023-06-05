@@ -2,6 +2,9 @@ package views;
 
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -9,8 +12,12 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.util.Duration;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -20,9 +27,14 @@ public class HowToPlayScene extends Scene {
     private static FadeTransition fadeEffect = new FadeTransition();
     public static Timer timer = new Timer();
 
+    private static Label title = new Label("How To Play");
+    private static Label instructionsText = new Label();
+
+    private static Label pressAnyKeyToContinueLabel = new Label("Press any key to continue ...");
+
 
     public HowToPlayScene() {
-        super(root, 1200, 800, Color.rgb(34, 56, 78));
+        super(root, Main.WINDOW_WIDTH, Main.WINDOW_HEIGHT, Color.rgb(34, 56, 78));
 
         this.getStylesheets().add(Scene1.class.getResource("styles/howToPlay.css").toExternalForm());
 
@@ -30,21 +42,19 @@ public class HowToPlayScene extends Scene {
 
         instructions.getStyleClass().add("instructions");
 
-        instructions.setPadding(new Insets(0,0,0,85));
+        instructions.setPadding(new Insets(0,0,0,Main.WINDOW_WIDTH/14.118));
         instructions.setAlignment(Pos.CENTER);
-        instructions.setMaxWidth(1000);
-        instructions.setSpacing(30);
-        instructions.setTranslateY(-50);
+        instructions.setMaxWidth(Main.WINDOW_WIDTH/1.2);
+        instructions.setSpacing(Main.WINDOW_HEIGHT/26.667);
+        instructions.setTranslateY(-Main.WINDOW_HEIGHT/16);
 
-        Label title = new Label("How To Play");
         title.getStyleClass().add("instructions-title");
-        title.setTranslateX(-150);
+        title.setTranslateX(-Main.WINDOW_WIDTH/8);
 
-        Label instructionsText = new Label();
-        instructionsText.setMaxWidth(1000);
-        instructionsText.setTranslateY(50);
+        instructionsText.setMaxWidth(Main.WINDOW_WIDTH/1.2);
+        instructionsText.setTranslateY(Main.WINDOW_HEIGHT/16);
         instructionsText.getStyleClass().add("instructions-text");
-        instructionsText.setLineSpacing(10);
+        instructionsText.setLineSpacing(Main.WINDOW_HEIGHT/80);
         instructionsText.setWrapText(true);
         instructionsText.setText("After picking the hero you are to play with, you'll be \npresented to a grid. " +
                 "To start playing, you will select the \nhero you want to use by clicking on his corresponding hero \nicon on the grid. " +
@@ -65,6 +75,8 @@ public class HowToPlayScene extends Scene {
         instructions.getChildren().addAll(title, instructionsText);
         root.getChildren().add(instructions);
 
+        setWindowResizeableListener();
+
     }
 
     public void startAllowContinue() {
@@ -82,17 +94,36 @@ public class HowToPlayScene extends Scene {
     }
 
     private void addPressAnyKeyToContinue() {
-        Label label = new Label("Press any key to continue ...");
-        label.getStyleClass().add("press-any-key");
-        label.setTranslateX(380);
-        label.setTranslateY(315);
+        pressAnyKeyToContinueLabel.getStyleClass().add("press-any-key");
+        pressAnyKeyToContinueLabel.setTranslateX(Main.WINDOW_WIDTH/3.158);
+        pressAnyKeyToContinueLabel.setTranslateY(Main.WINDOW_HEIGHT/2.540);
 
         this.setOnMouseClicked(e -> {
+            try {
+                Main.s2 = new Scene2();
+            } catch (FileNotFoundException ex) {
+                ex.printStackTrace();
+            }
+            Main.setUpSceneWindowResizeDetector(Main.howToPlayScene, null);
+            boolean wasFullScreen = Main.currentStage.isFullScreen();
             Main.currentStage.setScene(Main.s2);
+            if (wasFullScreen)
+                Main.currentStage.setFullScreen(true);
+            Main.setUpSceneWindowResizeDetector(null, Main.s2);
         });
 
         this.setOnKeyPressed(e -> {
+            try {
+                Main.s2 = new Scene2();
+            } catch (FileNotFoundException ex) {
+                ex.printStackTrace();
+            }
+            Main.setUpSceneWindowResizeDetector(Main.howToPlayScene, null);
+            boolean wasFullScreen = Main.currentStage.isFullScreen();
             Main.currentStage.setScene(Main.s2);
+            if (wasFullScreen)
+                Main.currentStage.setFullScreen(true);
+            Main.setUpSceneWindowResizeDetector(null, Main.s2);
         });
 
         fadeEffect.setDuration(Duration.millis(2000));
@@ -100,10 +131,47 @@ public class HowToPlayScene extends Scene {
         fadeEffect.setToValue(0.8);
         fadeEffect.setCycleCount(1000); // rakam kebeeer
         fadeEffect.setAutoReverse(true);
-        fadeEffect.setNode(label);
+        fadeEffect.setNode(pressAnyKeyToContinueLabel);
 
-        root.getChildren().add(label);
+        root.getChildren().add(pressAnyKeyToContinueLabel);
         fadeEffect.play();
+    }
+
+    private void setWindowResizeableListener() {
+        Main.height.bind(this.heightProperty());
+        Main.width.bind(this.widthProperty());
+        title.styleProperty().bind(Bindings.concat("-fx-font-size: " + Main.WINDOW_WIDTH/25 + "px;"));
+        instructionsText.styleProperty().bind(Bindings.concat("-fx-font-size: " + Main.WINDOW_WIDTH/60 + "px;"));
+        pressAnyKeyToContinueLabel.styleProperty().bind(Bindings.concat("-fx-font-size: " + Main.WINDOW_WIDTH/33.333 + "px;"));
+
+        ChangeListener<Number> changeListener = new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
+                Main.WINDOW_HEIGHT = Main.howToPlayScene.getHeight();
+                Main.WINDOW_WIDTH = Main.howToPlayScene.getWidth();
+
+                instructions.setPadding(new Insets(0,0,0,Main.WINDOW_WIDTH/14.118));
+                instructions.setMaxWidth(Main.WINDOW_WIDTH/1.2);
+                instructions.setSpacing(Main.WINDOW_HEIGHT/26.667);
+                instructions.setTranslateY(-Main.WINDOW_HEIGHT/16);
+
+                title.setTranslateX(-Main.WINDOW_WIDTH/8);
+                title.styleProperty().bind(Bindings.concat("-fx-font-size: " + Main.WINDOW_WIDTH/25 + "px;"));
+
+                instructionsText.setMaxWidth(Main.WINDOW_WIDTH/1.2);
+                instructionsText.setTranslateY(Main.WINDOW_HEIGHT/16);
+                instructionsText.setLineSpacing(Main.WINDOW_HEIGHT/80);
+                instructionsText.styleProperty().bind(Bindings.concat("-fx-font-size: ", Bindings.divide(Main.width, 60), "px;"));
+
+                pressAnyKeyToContinueLabel.setTranslateX(Main.WINDOW_WIDTH/3.158);
+                pressAnyKeyToContinueLabel.setTranslateY(Main.WINDOW_HEIGHT/2.540);
+                pressAnyKeyToContinueLabel.styleProperty().bind(Bindings.concat("-fx-font-size: " + Main.WINDOW_WIDTH/33.333 + "px;"));
+
+            }
+        };
+
+        this.widthProperty().addListener(changeListener);
+        this.heightProperty().addListener(changeListener);
     }
 
 }

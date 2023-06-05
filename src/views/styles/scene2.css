@@ -1,49 +1,36 @@
 .root{
-    -fx-max-width: 2000px;
     -fx-background-image: url("./../images/scene2/selection_background.jpeg");
     -fx-background-position: center center;
     -fx-background-size: stretch;
     -fx-text-fill: white;
 }
-.label{
-    -fx-font-size: 60px;
-    -fx-max-width: 2000px;
-    -fx-text-alignment: center;
-    -fx-alignment: center;
-}
 
-.heroDescription{
+/*.heroDescription{
     -fx-max-height: 150px;
-}
+}*/
 
 .heroDescriptionText {
-    -fx-font-size: 36px;
+/*    -fx-font-size: 36px;*/
     -fx-text-fill: #202928; /* mesh sha8al fa e3melo fel .java file */
     -fx-effect: dropshadow(three-pass-box, rgba(31, 35, 36, 0.8), 1.5, 1, 0, 0);
     -fx-font-weight: bold;
 }
 
-.heroStats{
+/*.heroStats{
     -fx-max-height: 150px;
-}
+}*/
 
 .heroStatsText {
-    -fx-font-size: 40px;
+/*    -fx-font-size: 40px;*/
     -fx-text-fill: rgb(247, 208, 0); /* mesh sha8al fa e3melo fel .java file */
     -fx-effect: dropshadow(three-pass-box, rgba(175, 140, 23, 0.8), 1.5, 1, 0, 0);
 }
 
 .back-button {
     -fx-background-color: #123456;
-    -fx-background-radius: 25px;
-    -fx-border-radius: 25px;
     -fx-text-fill: rgb(247, 208, 0);
-    -fx-font-size: 24px;
+/*    -fx-background-radius: 25px;
+    -fx-border-radius: 25px;
+    -fx-font-size: 24px;*/
     -fx-font-weight: bold;
-}
-
-.imageView {
-    -fx-border-color: black;
-    -fx-border-style: solid;
-    -fx-border-width: 10;
 }
