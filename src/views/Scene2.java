@@ -52,10 +52,12 @@ public class Scene2 extends Scene {
 
 
     public Scene2() throws FileNotFoundException {
-        super(root, Main.WINDOW_WIDTH, Main.WINDOW_HEIGHT, Color.rgb(34, 56, 78));
+//        super(root, Main.WINDOW_WIDTH, Main.WINDOW_HEIGHT, Color.rgb(34, 56, 78));
+        super(new BorderPane(), Main.WINDOW_WIDTH, Main.WINDOW_HEIGHT, Color.rgb(34, 56, 78));
+        Main.clearListeners();
 
         setWindowResizeableListener();
-
+        root.getStyleClass().add("root3");
         root.getChildren().add(everything);
         root.setAlignment(Pos.CENTER);
 
@@ -207,7 +209,8 @@ public class Scene2 extends Scene {
                     Main.s3 = new Scene3();
                     Main.setUpSceneWindowResizeDetector(Main.s2, null);
                     boolean wasFullScreen = Main.currentStage.isFullScreen();
-                    Main.currentStage.setScene(Main.s3);
+                    Main.currentStage.getScene().setRoot(Scene3.root);
+//                    Main.currentStage.setScene(Main.s3);
                     if (wasFullScreen)
                         Main.currentStage.setFullScreen(true);
                     Main.setUpSceneWindowResizeDetector(null, Main.s3);
@@ -385,19 +388,19 @@ public class Scene2 extends Scene {
     }
 
     private void setWindowResizeableListener() {
-        Main.height.bind(this.heightProperty());
-        Main.width.bind(this.widthProperty());
+        Main.height.bind(Main.myScene.heightProperty());
+        Main.width.bind(Main.myScene.widthProperty());
 
         ChangeListener<Number> changeListener = new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
-                Main.WINDOW_WIDTH = Main.s2.getWidth();
-                Main.WINDOW_HEIGHT = Main.s2.getHeight();
+                Main.WINDOW_WIDTH = Main.myScene.getWidth();
+                Main.WINDOW_HEIGHT = Main.myScene.getHeight();
             }
         };
 
-        this.widthProperty().addListener(changeListener);
-        this.heightProperty().addListener(changeListener);
+        Main.myScene.widthProperty().addListener(changeListener);
+        Main.myScene.heightProperty().addListener(changeListener);
     }
 
 }

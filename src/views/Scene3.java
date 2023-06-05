@@ -84,7 +84,12 @@ public class Scene3 extends Scene {
     private static Button endTurnButton;
 
     public Scene3(){
-        super(root, Main.WINDOW_WIDTH, Main.WINDOW_HEIGHT, Color.rgb(34,56,78));
+//        super(root, Main.WINDOW_WIDTH, Main.WINDOW_HEIGHT, Color.rgb(34,56,78));
+        super(new BorderPane(), Main.WINDOW_WIDTH, Main.WINDOW_HEIGHT, Color.rgb(34,56,78));
+
+        Main.clearListeners();
+
+        root.getStyleClass().add("root4");
 
         setWindowResizeableListener();
 
@@ -228,26 +233,30 @@ public class Scene3 extends Scene {
                 // create event listener for el grid cells (to extract el coordinates)
                 // hover
                 cell.setOnMouseEntered(e -> {
-                    isHovering = true;
-                    selectingTarget = false;
-                    hoveredOverCell = Game.map[finalI][finalJ];
-                    cell.getStyleClass().add("hoveredOverCell");
-                    if (hoveredOverCell instanceof CharacterCell && ((CharacterCell) hoveredOverCell).getCharacter() instanceof Zombie){
-                        Zombie zombie = ((Zombie) ((CharacterCell) hoveredOverCell).getCharacter());
-                        if (zombie.getZombieImageIndex() == -1) {
-                            int randomZombieIndex = (int) (Math.random() * 3) + 1;
-                            zombie.setZombieImageIndex(randomZombieIndex);
+                    if (!selectingTarget) {
+                        isHovering = true;
+                        selectingTarget = false;
+                        hoveredOverCell = Game.map[finalI][finalJ];
+                        cell.getStyleClass().add("hoveredOverCell");
+                        if (hoveredOverCell instanceof CharacterCell && ((CharacterCell) hoveredOverCell).getCharacter() instanceof Zombie){
+                            Zombie zombie = ((Zombie) ((CharacterCell) hoveredOverCell).getCharacter());
+                            if (zombie.getZombieImageIndex() == -1) {
+                                int randomZombieIndex = (int) (Math.random() * 3) + 1;
+                                zombie.setZombieImageIndex(randomZombieIndex);
+                            }
                         }
+                        setRightSideBar();
                     }
-                    setRightSideBar();
                 });
 
                 cell.setOnMouseExited(e -> {
-                    hoveredOverCell = null;
-                    selectingTarget = false;
-                    isHovering = false;
-                    cell.getStyleClass().remove("hoveredOverCell");
-                    setRightSideBar();
+                    if (!selectingTarget) {
+                        hoveredOverCell = null;
+                        selectingTarget = false;
+                        isHovering = false;
+                        cell.getStyleClass().remove("hoveredOverCell");
+                        setRightSideBar();
+                    }
                 });
 
                 // click
@@ -262,6 +271,8 @@ public class Scene3 extends Scene {
 
                             try {
                                 currentHero.useSpecial();
+                                addEffectOnScreen("heal");
+
                             } catch (InvalidTargetException e2) {
                                 e2.printStackTrace();
                             } catch (NoAvailableResourcesException e2) {
@@ -609,6 +620,12 @@ public class Scene3 extends Scene {
                     // not medic ya3ny fighter aw explorer
                     try {
                         currentHero.useSpecial();
+
+                        if (currentHero instanceof Fighter)
+                            addEffectOnScreen("berserk");
+                        else
+                            addEffectOnScreen("light");
+
                     } catch (InvalidTargetException e) {
                         e.printStackTrace();
                     } catch (NoAvailableResourcesException e) {
@@ -1145,7 +1162,8 @@ public class Scene3 extends Scene {
                 @Override
                 public void run() {
                     Platform.runLater(() -> {
-                        Main.currentStage.setScene(Main.gameWin);
+//                        Main.currentStage.setScene(Main.gameWin);
+                        Main.currentStage.getScene().setRoot(GameWinScene.root);
                         Main.gameWin.startTimer();
                     });
                 }
@@ -1160,7 +1178,8 @@ public class Scene3 extends Scene {
                 @Override
                 public void run() {
                     Platform.runLater(() -> {
-                        Main.currentStage.setScene(Main.gameOver);
+//                        Main.currentStage.setScene(Main.gameOver);
+                        Main.currentStage.getScene().setRoot(GameOverScene.root);
                         Main.gameOver.startTimer();
 
                     });
@@ -1375,6 +1394,12 @@ public class Scene3 extends Scene {
 
                 try {
                     currentHero.useSpecial();
+                    if (currentHero instanceof Medic)
+                        addEffectOnScreen("heal");
+                    else if (currentHero instanceof Fighter)
+                        addEffectOnScreen("berserk");
+                    else
+                        addEffectOnScreen("light");
                 } catch (InvalidTargetException e) {
                     e.printStackTrace();
                 } catch (NoAvailableResourcesException e) {
@@ -1462,7 +1487,7 @@ public class Scene3 extends Scene {
     }
 
     private void createKeysActionsListeners() {
-        this.addEventFilter(KeyEvent.KEY_PRESSED, keyListener);
+        Main.myScene.addEventFilter(KeyEvent.KEY_PRESSED, keyListener);
     }
 
     private void setButtonsFocusable(boolean bool) {
@@ -1556,19 +1581,58 @@ public class Scene3 extends Scene {
     }
 
     private void setWindowResizeableListener() {
-        Main.height.bind(this.heightProperty());
-        Main.width.bind(this.widthProperty());
+        Main.height.bind(Main.myScene.heightProperty());
+        Main.width.bind(Main.myScene.widthProperty());
 
         ChangeListener<Number> changeListener = new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
-                Main.WINDOW_WIDTH = Main.s2.getWidth();
-                Main.WINDOW_HEIGHT = Main.s2.getHeight();
+                Main.WINDOW_WIDTH = Main.myScene.getWidth();
+                Main.WINDOW_HEIGHT = Main.myScene.getHeight();
             }
         };
 
-        this.widthProperty().addListener(changeListener);
-        this.heightProperty().addListener(changeListener);
+        Main.myScene.widthProperty().addListener(changeListener);
+        Main.myScene.heightProperty().addListener(changeListener);
+    }
+
+    private static void addEffectOnScreen(String effectName) {
+        Label label = new Label ();
+        label.setMinHeight(Main.height.getValue());
+        label.setMinWidth(Main.width.getValue());
+        label.setMouseTransparent(true);
+        if (effectName == "heal") {
+            label.setStyle("-fx-background-color: green;");
+        } else if (effectName == "berserk") {
+            label.setStyle("-fx-background-color: orange;");
+        } else if (effectName == "light") {
+            label.setStyle("-fx-background-color: lightblue;");
+        } else {
+            label.setStyle("-fx-background-color: black;");
+        }
+
+        FadeTransition transition = new FadeTransition();
+        transition.setAutoReverse(false);
+        transition.setDuration(Duration.millis(2000));
+        transition.setFromValue(0.5);
+        transition.setToValue(0.0);
+        transition.setNode(label);
+
+        root.getChildren().add(label);
+        transition.play();
+
+        Timer ScreenEffectTimer = new Timer();
+        TimerTask removeEffectTask = new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(() -> {
+                    root.getChildren().remove(label);
+                });
+            }
+        };
+
+        ScreenEffectTimer.schedule(removeEffectTask, 2000);
+
     }
 
 

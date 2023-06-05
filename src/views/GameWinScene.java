@@ -1,6 +1,7 @@
 package views;
 
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -24,13 +25,23 @@ public class GameWinScene extends Scene {
 
 
     public GameWinScene(){
-        super(root, 1200, 800, Color.rgb(34, 56, 78));
+//        super(root, 1200, 800, Color.rgb(34, 56, 78));
+        super(new BorderPane(), 1200, 800, Color.rgb(34, 56, 78));
         this.getStylesheets().add(GameOverScene.class.getResource("styles/gameWinScene.css").toExternalForm());
+
+        Main.clearListeners();
+
+        Main.height.bind(Main.myScene.heightProperty());
+        Main.width.bind(Main.myScene.widthProperty());
+
+        root.getStyleClass().add("root5");
+
 
         Label message1 = new Label("You won the game!");
         message1.getStyleClass().add("message");
         message1.setAlignment(Pos.CENTER);
-        message1.setTranslateY(-75);
+//        message1.setTranslateY(-75);
+        message1.translateYProperty().bind(Bindings.divide(Main.height,-10.667));
 
         root.setCenter(message1);
 
@@ -91,12 +102,12 @@ public class GameWinScene extends Scene {
 
     private void createActionListeners() {
         // dost bel mouse close the window bas e3melhom be time delay 3shan maye2felsh bel 8alat awel mal screen tigy
-        this.setOnMouseClicked(e -> {
+        Main.myScene.setOnMouseClicked(e -> {
             Main.currentStage.close();
         });
 
         // dost ay zorar close the window bas e3melhom be time delay 3shan maye2felsh bel 8alat awel mal screen tigy
-        this.setOnKeyPressed(e -> {
+        Main.myScene.setOnKeyPressed(e -> {
             Main.currentStage.close();
         });
     }

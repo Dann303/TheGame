@@ -9,8 +9,11 @@ import javafx.beans.property.Property;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -22,7 +25,14 @@ public class Scene1 extends Scene {
     private static Text text = new Text();
 
     public Scene1() throws FileNotFoundException {
-        super(root, Main.WINDOW_WIDTH, Main.WINDOW_HEIGHT, Color.rgb(34, 56, 78));
+        super(new BorderPane());
+//        super(root, Main.WINDOW_WIDTH, Main.WINDOW_HEIGHT, Color.rgb(34, 56, 78));
+
+        this.getStylesheets().add(Scene1.class.getResource("styles/scene1.css").toExternalForm());
+
+        root.getStyleClass().add("root1");
+        root.minWidthProperty().bind(Main.width);
+        root.minHeightProperty().bind(Main.height);
 
         // get text to be displayed and add its settings
         setText();
@@ -32,19 +42,19 @@ public class Scene1 extends Scene {
             Main.howToPlayScene = new HowToPlayScene();
             Main.setUpSceneWindowResizeDetector(Main.s1, null);
             boolean wasFullScreen = Main.currentStage.isFullScreen();
-            Main.currentStage.setScene(Main.howToPlayScene);
+            Main.myScene.setRoot(HowToPlayScene.root);
+//            Main.currentStage.setScene(Main.howToPlayScene);
             if (wasFullScreen)
                 Main.currentStage.setFullScreen(true);
 //            Main.howToPlayScene.setRoot(new BorderPane());
 //            Main.currentStage.getScene().setRoot(Main.howToPlayScene.root);
             Main.setUpSceneWindowResizeDetector(null, Main.howToPlayScene);
-            Main.howToPlayScene.startAllowContinue();
+//            Main.howToPlayScene.startAllowContinue();
 
         });
 
         root.setCenter(text);
 
-        this.getStylesheets().add(Scene1.class.getResource("styles/scene1.css").toExternalForm());
         setWindowResizeableListener();
     }
 
@@ -62,8 +72,6 @@ public class Scene1 extends Scene {
         text.setEffect(shadow);
     }
 
-    private static boolean onceAlready = false;
-
     private void setWindowResizeableListener() {
         Main.height.bind(this.heightProperty());
         Main.width.bind(this.widthProperty());
@@ -74,8 +82,8 @@ public class Scene1 extends Scene {
             @Override
             public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
 
-                Main.WINDOW_WIDTH = Main.s1.getWidth();
-                Main.WINDOW_HEIGHT = Main.s1.getHeight();
+                Main.WINDOW_WIDTH = Main.myScene.getWidth();
+                Main.WINDOW_HEIGHT = Main.myScene.getHeight();
 
                 try {
                     text.setFont(Font.loadFont(new FileInputStream(new File("src/resources/fonts/DemonSker-zyzD.ttf")), Main.WINDOW_WIDTH/15));
@@ -89,8 +97,8 @@ public class Scene1 extends Scene {
             }
         };
 
-        this.widthProperty().addListener(changeListener);
-        this.heightProperty().addListener(changeListener);
+        Main.myScene.widthProperty().addListener(changeListener);
+        Main.myScene.heightProperty().addListener(changeListener);
     }
 
 }
