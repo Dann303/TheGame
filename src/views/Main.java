@@ -92,11 +92,11 @@ public class Main extends Application {
         currentStage.getIcons().add(icon);
         setUpSceneWindowResizeDetector(null, s1); //should be s1
         currentStage.getScene().setRoot(Scene1.root);
-//        currentStage.getScene().setRoot(GameWinScene.root);
+//        currentStage.getScene().setRoot(Scene2.root);
         currentStage.setFullScreenExitHint("Press F11 to toggle fullscreen!");
         currentStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
 
-//        currentStage.setFullScreen(true);
+        currentStage.setFullScreen(true);
 
         currentStage.show();
 

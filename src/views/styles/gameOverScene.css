@@ -1,5 +1,6 @@
 .root6 {
-    -fx-background-image: url("./../images/lose_background.jpeg");
+/*    -fx-background-image: url("./../images/lose_background.jpeg");*/
+    -fx-background-image: url("./../images/game_lose_background.jpg");
     -fx-background-position: center center;
     -fx-background-size: stretch;
 }
@@ -12,6 +13,20 @@
     -fx-border-radius: 50px;
 }
 
+.loseMessage {
+/*    -fx-font-size: 64px; */
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(three-pass-box, black, 3.5, 1, 0, 0);
+}
+
 .media {
     -fx-background-image: url("./../images/tree_guy.gif");
+}
+
+.press-any-key {
+    -fx-text-fill: #123456;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(three-pass-box, #6789AB, 2.5, 1, 0, 0);
+/*    -fx-font-size: 36px; */
 }

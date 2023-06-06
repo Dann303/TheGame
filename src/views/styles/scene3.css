@@ -246,3 +246,45 @@
 .currentTargetCell {
     -fx-effect: dropshadow(three-pass-box, #00F7F7, 10, 0.6, 0.5, 0.5);
 }
+
+.attackButtonIcon {
+    -fx-background-position: center center;
+    -fx-background-size: stretch;
+    -fx-background-image: url("./../images/scene3/icons/attack.png");
+    -fx-background-color: linear-gradient(to top, rgba(183,0,0,0.7), rgba(155,0,0,0.7));
+}
+
+.healButtonIcon {
+    -fx-background-position: center center;
+    -fx-background-size: stretch;
+    -fx-background-image: url("./../images/scene3/icons/heal.jpeg");
+    -fx-background-color: radial-gradient(center 50% 50%, radius 100%, lightgreen, green)
+}
+
+.illuminateButtonIcon {
+    -fx-background-position: center center;
+    -fx-background-size: stretch;
+    -fx-background-image: url("./../images/scene3/icons/illuminate.png");
+    -fx-background-color: radial-gradient(center 50% 50%, radius 100%, cyan, lightblue)
+}
+
+.cureButtonIcon {
+    -fx-background-position: center center;
+    -fx-background-size: stretch;
+    -fx-background-image: url("./../images/scene3/icons/cure.jpg");
+    -fx-background-color: transparent;
+}
+
+.berserkButtonIcon {
+    -fx-background-position: center center;
+    -fx-background-size: stretch;
+    -fx-background-image: url("./../images/scene3/icons/berserk.png");
+    -fx-background-color: radial-gradient(center 50% 50%, radius 100%, orange, red)
+}
+
+.normalSpecialButtonIcon {
+    -fx-background-position: center center;
+    -fx-background-size: stretch;
+    -fx-background-image: url("./../images/scene3/icons/default_special.jpg");
+    -fx-background-color: transparent;
+}
