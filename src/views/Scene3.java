@@ -706,6 +706,8 @@ public class Scene3 extends Scene {
         targetContainer.maxWidthProperty().bind(Bindings.divide(Main.width,5.882));
 //        targetContainer.setMinHeight(700);
         targetContainer.minHeightProperty().bind(Bindings.divide(Main.height,1.143));
+//        targetContainer.setMaxHeight(700);
+        targetContainer.maxHeightProperty().bind(Bindings.divide(Main.height,1.143));
         targetContainer.getStyleClass().add("targetContainer");
 
         // image settings
@@ -793,7 +795,7 @@ public class Scene3 extends Scene {
 //                        targetText.setSpacing(30);
                         targetText.spacingProperty().bind(Bindings.divide(Main.height,26.667));
 //                        targetText.setPadding(new Insets(100, 0, 0, 0));
-                        targetText.styleProperty().bind(Bindings.concat("-fx-padding: ", Bindings.divide(Main.height,8), " 0 0 0;"));
+                        targetText.styleProperty().bind(Bindings.concat("-fx-font-size: ", Bindings.divide(Main.width,75), "px; -fx-padding: ", Bindings.divide(Main.height,8), " 0 0 0;"));
                         targetName.setText("Name : " + character.getName());
                         health.setText("Health : " + character.getCurrentHp() + "/" + character.getMaxHp() + " HP");
                         attackDamage.setText("Attack Damage : " + character.getAttackDmg());
@@ -802,7 +804,7 @@ public class Scene3 extends Scene {
                         targetType.setText(((Hero) character).getType());
                         health.setText("Health : " + character.getCurrentHp() + "/" + character.getMaxHp() + " HP");
                         attackDamage.setText("Attack Damage : " + character.getAttackDmg());
-                        remainingActionPoints.setText("Moves left : " + ((Hero) character).getActionsAvailable());
+                        remainingActionPoints.setText("Moves left : " + ((Hero) character).getActionsAvailable() + " moves");
                         supplies.setText("Supplies in inventory : " + ((Hero) character).getSupplyInventory().size());
                         vaccines.setText("Vaccines in inventory : " + ((Hero) character).getVaccineInventory().size());
                     }
@@ -857,7 +859,7 @@ public class Scene3 extends Scene {
 //                targetText.setSpacing(30);
                 targetText.spacingProperty().bind(Bindings.divide(Main.height,26.667));
 //                targetText.setPadding(new Insets(100, 0, 0, 0));
-                targetText.styleProperty().bind(Bindings.concat("-fx-padding: ", Bindings.divide(Main.height,8), " 0 0 0;"));
+                targetText.styleProperty().bind(Bindings.concat("-fx-font-size: ", Bindings.divide(Main.width,75), "px; -fx-padding: ", Bindings.divide(Main.height,8), " 0 0 0;"));
                 targetName.setText("Name : " + currentTarget.getName());
                 health.setText("Health : " + currentTarget.getCurrentHp() + "/" + currentTarget.getMaxHp() + " HP");
                 attackDamage.setText("Attack Damage : " + currentTarget.getAttackDmg());
@@ -871,7 +873,7 @@ public class Scene3 extends Scene {
                 vaccines.setText("Vaccines in inventory : " + ((Hero) currentTarget).getVaccineInventory().size());
             } else if (currentTargetCell instanceof TrapCell){
 //                targetText.setSpacing(10);
-                targetText.spacingProperty().bind(Bindings.divide(Main.height,80));
+                targetText.spacingProperty().bind(Bindings.divide(Main.height,26.667));
                 targetName.setText("You caught a trap!");
                 attackDamage.setText("Damage inflicted : " + ((TrapCell) currentTargetCell).getTrapDamage());
             } else {
@@ -954,7 +956,7 @@ public class Scene3 extends Scene {
             heroName = new Text("Name : " + currentHero.getName());
             heroType = new Text(currentHero.getType()); //getType is a new method fe Hero class bet return type ka string zay getName
             health = new Text("Health : " + currentHero.getCurrentHp() + "/" + currentHero.getMaxHp() + " HP");
-            attackDamage = new Text("Attack Damage : " + currentHero.getAttackDmg() + " Points");
+            attackDamage = new Text("Attack Damage : " + currentHero.getAttackDmg());
             remainingActionPoints = new Text("Moves left : " + currentHero.getActionsAvailable() + " moves");
             supplies = new Text("Supplies in inventory : " + currentHero.getSupplyInventory().size());
             vaccines = new Text("Vaccines in inventory : " + currentHero.getVaccineInventory().size());
@@ -1350,6 +1352,14 @@ public class Scene3 extends Scene {
                         return;
                     }
                     hoveredOverCell = Game.map[x][y];
+                    if (hoveredOverCell instanceof CharacterCell && ((CharacterCell) hoveredOverCell).getCharacter() instanceof Zombie){
+                        Zombie zombie = ((Zombie) ((CharacterCell) hoveredOverCell).getCharacter());
+                        if (zombie.getZombieImageIndex() == -1) {
+                            int randomZombieIndex = (int) (Math.random() * 3) + 1;
+                            zombie.setZombieImageIndex(randomZombieIndex);
+                        }
+                    }
+
                 }
             } else if(keyEvent.getCode() == KeyCode.E){
                 try {
@@ -1405,6 +1415,8 @@ public class Scene3 extends Scene {
                 } catch (NotEnoughActionsException e) {
                     setAlertBoxContainer("No enough action points!");
                 }
+
+
             } else if(keyEvent.getCode() == KeyCode.Q) {
                 if (currentHero == null){
                     setAlertBoxContainer("Please select a hero!");

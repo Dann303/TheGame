@@ -186,6 +186,10 @@ public abstract class Hero extends Character {
 			Vaccine vaccineUsed = this.getVaccineInventory().get(index);
 			vaccineUsed.use(this);
 
+			if (this.hasHeroAdjacent(this.getTarget().getLocation().x, this.getTarget().getLocation().y))
+				Game.map[this.getTarget().getLocation().x][this.getTarget().getLocation().y].setVisible(true);
+
+
 			this.setTarget(null);
 		} else {
 			throw new InvalidTargetException("Cannot cure!");

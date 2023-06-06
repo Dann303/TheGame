@@ -3,6 +3,7 @@ package model.characters;
 import engine.Game;
 import exceptions.InvalidTargetException;
 import exceptions.NotEnoughActionsException;
+import model.world.Cell;
 import model.world.CharacterCell;
 
 import java.awt.Point;
@@ -106,12 +107,31 @@ public abstract class Character {
 	public void onCharacterDeath(){
 		Point location = this.getLocation();
 		Game.map[location.x][location.y] = new CharacterCell(null);
+		Game.map[location.x][location.y].setIcon("nothing");
+
+		if (hasHeroAdjacent(location.x, location.y))
+			Game.map[location.x][location.y].setVisible(true);
+
 		if (this instanceof Hero) {
 			Game.heroes.remove(this);
 		} else if (this instanceof Zombie) {
 			Game.zombies.remove(this);
 			Game.spawnZombie();
+			if (((CharacterCell)Game.map[location.x][location.y]).getCharacter() instanceof Zombie)
+				Game.map[location.x][location.y].setIcon("zombie");
 		}
+	}
+
+	public boolean hasHeroAdjacent(int x, int y) {
+		for (int i = x-1; i<=x+1; i++){
+			for (int j = y-1; j<=y+1; j++) {
+				if (!isOutGrid(new Point(i,j))) {
+					if (Game.map[i][j] instanceof CharacterCell && ((CharacterCell) Game.map[i][j]).getCharacter() instanceof Hero)
+						return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	public boolean isTargetAdjacent() {
