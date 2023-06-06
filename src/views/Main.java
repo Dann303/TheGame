@@ -69,6 +69,11 @@ public class Main extends Application {
                 GameWinScene.class.getResource("styles/gameWinScene.css").toExternalForm()
         );
 
+        currentStage.setScene(myScene);
+
+        WINDOW_WIDTH = myScene.widthProperty().getValue();
+        WINDOW_HEIGHT = myScene.heightProperty().getValue();
+
         assignImageToHeroes();
         createAllHeroesArray();
 
@@ -77,26 +82,23 @@ public class Main extends Application {
         s1 = new Scene1();
 //        s2 = new Scene2();
 //        s3 = new Scene3();
-        gameWin = new GameWinScene();
-        gameOver = new GameOverScene();
+//        gameWin = new GameWinScene();
+//        gameOver = new GameOverScene();
 
         currentStage.setResizable(true);
 
         Image icon = new Image("views/images/the_last_of_us_icon.jpg");
-
         currentStage.setTitle("The Last of MRD");
         currentStage.getIcons().add(icon);
         setUpSceneWindowResizeDetector(null, s1); //should be s1
-        currentStage.setScene(myScene); //should be s1
         currentStage.getScene().setRoot(Scene1.root);
-
+//        currentStage.getScene().setRoot(GameWinScene.root);
         currentStage.setFullScreenExitHint("Press F11 to toggle fullscreen!");
         currentStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
 
-        currentStage.setFullScreen(true);
+//        currentStage.setFullScreen(true);
 
         currentStage.show();
-
 
         WINDOW_WIDTH = myScene.widthProperty().getValue();
         WINDOW_HEIGHT = myScene.heightProperty().getValue();
@@ -105,6 +107,7 @@ public class Main extends Application {
         width.bind(myScene.widthProperty());
 
         myScene.addEventFilter(KeyEvent.KEY_PRESSED, keyListener);
+
     }
 
     private EventHandler<KeyEvent> keyListener = new javafx.event.EventHandler<KeyEvent>(){

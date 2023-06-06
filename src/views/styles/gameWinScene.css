@@ -1,19 +1,25 @@
 .root5 {
-    -fx-background-image: url("./../images/win_background.jpeg");
+/*    -fx-background-image: url("./../images/win_background.jpeg");*/
+    -fx-background-image: url("./../images/game_win_background.jpg");
     -fx-background-position: center center;
     -fx-background-size: stretch;
 }
 
 .message {
-    -fx-font-size: 64px;
-    -fx-font-color: green;
+/*    -fx-font-size: 64px; */
+    -fx-text-fill: white;
     -fx-font-weight: bold;
-    -fx-effect: dropshadow(three-pass-box, darkgreen, 1.5, 1, 0, 0);
+    -fx-effect: dropshadow(three-pass-box, green, 2.5, 1, 0, 0);
 }
 
 .messages {
-    -fx-font-size: 48px;
-    -fx-font-color: green;
+/*    -fx-font-size: 48px; */
+    -fx-text-fill: lightgray;
     -fx-font-weight: bold;
-    -fx-effect: dropshadow(three-pass-box, darkgreen, 1.5, 1, 0, 0);
+    -fx-effect: dropshadow(three-pass-box, green, 3.5, 1, 0, 0);
+}
+
+.press-any-key {
+    -fx-text-fill: #123456;
+/*    -fx-font-size: 36px; */
 }

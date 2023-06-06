@@ -19,6 +19,7 @@ import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 
 import java.io.FileNotFoundException;
+import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -45,6 +46,8 @@ public class HowToPlayScene extends Scene {
     public HowToPlayScene() {
 //        super(root, Main.WINDOW_WIDTH, Main.WINDOW_HEIGHT, Color.rgb(34, 56, 78));
         super(new BorderPane(), Main.WINDOW_WIDTH, Main.WINDOW_HEIGHT, Color.rgb(34, 56, 78));
+
+        Main.clearListeners();
 
         this.getStylesheets().add(Scene1.class.getResource("styles/howToPlay.css").toExternalForm());
 
@@ -147,7 +150,7 @@ public class HowToPlayScene extends Scene {
         });
 
         Main.myScene.setOnKeyPressed(e -> {
-            if (e.getCode() != KeyCode.F11) {
+            if (e.getCode() != KeyCode.F11 && e.getCode() != KeyCode.LEFT && e.getCode() != KeyCode.RIGHT && e.getCode() != KeyCode.A && e.getCode() != KeyCode.D) {
                 try {
                     Main.s2 = new Scene2();
                 } catch (FileNotFoundException ex) {
@@ -160,6 +163,10 @@ public class HowToPlayScene extends Scene {
                 if (wasFullScreen)
                     Main.currentStage.setFullScreen(true);
                 Main.setUpSceneWindowResizeDetector(null, Main.s2);
+            } else if (e.getCode() == KeyCode.LEFT || e.getCode() == KeyCode.A) {
+                slideLeftOrRight("Left");
+            } else if (e.getCode() == KeyCode.RIGHT || e.getCode() == KeyCode.D) {
+                slideLeftOrRight("Right");
             }
         });
 
@@ -287,135 +294,95 @@ public class HowToPlayScene extends Scene {
         toControlsButton.minWidthProperty().bind(Bindings.divide(Main.width,24));
         toControlsButton.minHeightProperty().bind(Bindings.divide(Main.height,16));
         toControlsButton.getStyleClass().addAll("arrow", "toControls");
-        toControlsButton.setOnMouseClicked(e -> {
-            if (!startedTimer) {
-                startAllowContinue();
-                startedTimer = true;
-            }
-
-            isControlsPage = !isControlsPage;
-            TranslateTransition controlsTransition = new TranslateTransition();
-            controlsTransition.setDuration(Duration.millis(1000));
-            controlsTransition.setAutoReverse(false);
-            controlsTransition.setNode(controlsPage);
-
-            TranslateTransition objectiveTransition = new TranslateTransition();
-            objectiveTransition.setDuration(Duration.millis(1000));
-            objectiveTransition.setAutoReverse(false);
-            objectiveTransition.setNode(instructions);
-
-            TranslateTransition toObjectiveButtonTransition = new TranslateTransition();
-            toObjectiveButtonTransition.setDuration(Duration.millis(1000));
-            toObjectiveButtonTransition.setAutoReverse(false);
-            toObjectiveButtonTransition.setNode(toObjectiveButton);
-
-            TranslateTransition toControlsButtonTransition = new TranslateTransition();
-            toControlsButtonTransition.setDuration(Duration.millis(1000));
-            toControlsButtonTransition.setAutoReverse(false);
-            toControlsButtonTransition.setNode(toControlsButton);
-
-            if (isControlsPage) {
-                // roo7 controls page
-                controlsTransition.setFromX(Main.WINDOW_WIDTH);
-                controlsTransition.setToX(0);
-                controlsTransition.play();
-
-                objectiveTransition.setFromX(0);
-                objectiveTransition.setToX(-Main.WINDOW_WIDTH);
-                objectiveTransition.play();
-
-                toObjectiveButtonTransition.setFromX(toObjectiveButton.getTranslateX());
-                toObjectiveButtonTransition.setToX(toObjectiveButton.getTranslateX() - Main.WINDOW_WIDTH);
-                toObjectiveButtonTransition.play();
-
-                toControlsButtonTransition.setFromX(10);
-                toControlsButtonTransition.setToX(-Main.WINDOW_WIDTH);
-                toControlsButtonTransition.play();
-//                controlsPage.translateXProperty().bind(Bindings.divide(new SimpleDoubleProperty(0),1));
-            } else {
-                // erga3 lel objective page
-                objectiveTransition.setFromX(-Main.WINDOW_WIDTH);
-                objectiveTransition.setToX(0);
-                objectiveTransition.play();
-
-                controlsTransition.setFromX(0);
-                controlsTransition.setToX(Main.WINDOW_WIDTH);
-                controlsTransition.play();
-
-                toObjectiveButtonTransition.setFromX(toObjectiveButton.getTranslateX());
-                toObjectiveButtonTransition.setToX(Main.WINDOW_WIDTH + toObjectiveButton.getTranslateX());
-                toObjectiveButtonTransition.play();
-
-                toControlsButtonTransition.setFromX(-Main.WINDOW_WIDTH);
-                toControlsButtonTransition.setToX(10);
-                toControlsButtonTransition.play();
-            }
-        });
+        toControlsButton.setOnMouseClicked(e -> slideLeftOrRight(null));
 
         toObjectiveButton.minWidthProperty().bind(Bindings.divide(Main.width,24));
         toObjectiveButton.minHeightProperty().bind(Bindings.divide(Main.height,16));
         toObjectiveButton.setTranslateX(2*Main.WINDOW_WIDTH - toObjectiveButton.getMinWidth() - 10);
         toObjectiveButton.getStyleClass().addAll("arrow", "toObjective");
-        toObjectiveButton.setOnMouseClicked(e -> {
-            isControlsPage = !isControlsPage;
-            TranslateTransition controlsTransition = new TranslateTransition();
-            controlsTransition.setDuration(Duration.millis(1000));
-            controlsTransition.setAutoReverse(false);
-            controlsTransition.setNode(controlsPage);
-
-            TranslateTransition objectiveTransition = new TranslateTransition();
-            objectiveTransition.setDuration(Duration.millis(1000));
-            objectiveTransition.setAutoReverse(false);
-            objectiveTransition.setNode(instructions);
-
-            TranslateTransition toObjectiveButtonTransition = new TranslateTransition();
-            toObjectiveButtonTransition.setDuration(Duration.millis(1000));
-            toObjectiveButtonTransition.setAutoReverse(false);
-            toObjectiveButtonTransition.setNode(toObjectiveButton);
-
-            TranslateTransition toControlsButtonTransition = new TranslateTransition();
-            toControlsButtonTransition.setDuration(Duration.millis(1000));
-            toControlsButtonTransition.setAutoReverse(false);
-            toControlsButtonTransition.setNode(toControlsButton);
-
-            if (isControlsPage) {
-                // roo7 controls page
-                controlsTransition.setFromX(Main.WINDOW_WIDTH);
-                controlsTransition.setToX(0);
-                controlsTransition.play();
-
-                objectiveTransition.setFromX(0);
-                objectiveTransition.setToX(-Main.WINDOW_WIDTH);
-                objectiveTransition.play();
-
-                toObjectiveButtonTransition.setFromX(toObjectiveButton.getTranslateX());
-                toObjectiveButtonTransition.setToX(toObjectiveButton.getTranslateX() - Main.WINDOW_WIDTH);
-                toObjectiveButtonTransition.play();
-
-                toControlsButtonTransition.setFromX(0);
-                toControlsButtonTransition.setToX(-Main.WINDOW_WIDTH);
-                toControlsButtonTransition.play();
-//                controlsPage.translateXProperty().bind(Bindings.divide(new SimpleDoubleProperty(0),1));
-            } else {
-                // erga3 lel objective page
-                objectiveTransition.setFromX(-Main.WINDOW_WIDTH);
-                objectiveTransition.setToX(0);
-                objectiveTransition.play();
-
-                controlsTransition.setFromX(0);
-                controlsTransition.setToX(Main.WINDOW_WIDTH);
-                controlsTransition.play();
-
-                toObjectiveButtonTransition.setFromX(toObjectiveButton.getTranslateX());
-                toObjectiveButtonTransition.setToX(Main.WINDOW_WIDTH + toObjectiveButton.getTranslateX());
-                toObjectiveButtonTransition.play();
-
-                toControlsButtonTransition.setFromX(-Main.WINDOW_WIDTH);
-                toControlsButtonTransition.setToX(10);
-                toControlsButtonTransition.play();
+        toObjectiveButton.setOnMouseClicked(e -> slideLeftOrRight(null));
+        Main.myScene.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.LEFT || e.getCode() == KeyCode.A) {
+                slideLeftOrRight("Left");
+            } else if (e.getCode() == KeyCode.RIGHT || e.getCode() == KeyCode.D) {
+                slideLeftOrRight("Right");
             }
         });
-
         root.getChildren().addAll(toControlsButton, toObjectiveButton);
+    }
+
+    private static void slideLeftOrRight(String d) {
+        Optional optionalDirection = Optional.ofNullable(d);
+        String direction = optionalDirection.isPresent() ? (String) optionalDirection.get() : "null";
+
+        if (!direction.equals("null")) {
+            if (direction.equals("Left") && !isControlsPage)
+                return;
+            else if (direction.equals("Right") && isControlsPage)
+                return;
+        }
+
+        if (!startedTimer) {
+            startAllowContinue();
+            startedTimer = true;
+        }
+
+        isControlsPage = !isControlsPage;
+        TranslateTransition controlsTransition = new TranslateTransition();
+        controlsTransition.setDuration(Duration.millis(1000));
+        controlsTransition.setAutoReverse(false);
+        controlsTransition.setNode(controlsPage);
+
+        TranslateTransition objectiveTransition = new TranslateTransition();
+        objectiveTransition.setDuration(Duration.millis(1000));
+        objectiveTransition.setAutoReverse(false);
+        objectiveTransition.setNode(instructions);
+
+        TranslateTransition toObjectiveButtonTransition = new TranslateTransition();
+        toObjectiveButtonTransition.setDuration(Duration.millis(1000));
+        toObjectiveButtonTransition.setAutoReverse(false);
+        toObjectiveButtonTransition.setNode(toObjectiveButton);
+
+        TranslateTransition toControlsButtonTransition = new TranslateTransition();
+        toControlsButtonTransition.setDuration(Duration.millis(1000));
+        toControlsButtonTransition.setAutoReverse(false);
+        toControlsButtonTransition.setNode(toControlsButton);
+
+        if (isControlsPage) {
+            // roo7 controls page
+            controlsTransition.setFromX(controlsPage.getTranslateX());
+            controlsTransition.setToX(0);
+            controlsTransition.play();
+
+            objectiveTransition.setFromX(instructions.getTranslateX());
+            objectiveTransition.setToX(-Main.WINDOW_WIDTH);
+            objectiveTransition.play();
+
+            toObjectiveButtonTransition.setFromX(toObjectiveButton.getTranslateX());
+            toObjectiveButtonTransition.setToX(Main.WINDOW_WIDTH - toObjectiveButton.getMinWidth() - 10);
+            toObjectiveButtonTransition.play();
+
+            toControlsButtonTransition.setFromX(toControlsButton.getTranslateX());
+            toControlsButtonTransition.setToX(-Main.WINDOW_WIDTH);
+            toControlsButtonTransition.play();
+//                controlsPage.translateXProperty().bind(Bindings.divide(new SimpleDoubleProperty(0),1));
+        } else {
+            // erga3 lel objective page
+            objectiveTransition.setFromX(instructions.getTranslateX());
+            objectiveTransition.setToX(0);
+            objectiveTransition.play();
+
+            controlsTransition.setFromX(controlsPage.getTranslateX());
+            controlsTransition.setToX(Main.WINDOW_WIDTH);
+            controlsTransition.play();
+
+            toObjectiveButtonTransition.setFromX(toObjectiveButton.getTranslateX());
+            toObjectiveButtonTransition.setToX(2*Main.WINDOW_WIDTH - toObjectiveButton.getMinWidth() - 10);
+            toObjectiveButtonTransition.play();
+
+            toControlsButtonTransition.setFromX(toControlsButton.getTranslateX());
+            toControlsButtonTransition.setToX(10);
+            toControlsButtonTransition.play();
+        }
     }
 }

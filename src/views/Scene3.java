@@ -32,6 +32,7 @@ import model.world.CollectibleCell;
 import model.world.TrapCell;
 
 import java.awt.*;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -1153,6 +1154,8 @@ public class Scene3 extends Scene {
 
     public static void updateScene() {
         if(Game.checkWin() && !gameDone){
+            Main.gameWin = new GameWinScene();
+
             gameDone = true;
             GameWinScene.timeTaken = timeFormat;
             GameWinScene.roundNumber = currentRound;
@@ -1165,12 +1168,19 @@ public class Scene3 extends Scene {
 //                        Main.currentStage.setScene(Main.gameWin);
                         Main.currentStage.getScene().setRoot(GameWinScene.root);
                         Main.gameWin.startTimer();
+                        Main.gameWin.startAnimationCycle();
                     });
                 }
             };
             timer.schedule(t1,3000);
 
         }else if(Game.checkGameOver() && !gameDone) {
+            try {
+                Main.gameOver = new GameOverScene();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+
             gameDone = true;
             // game over, delay 3 seconds!
             Timer timer = new Timer();

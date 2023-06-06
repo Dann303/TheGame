@@ -50,12 +50,26 @@ public class Scene1 extends Scene {
 //            Main.currentStage.getScene().setRoot(Main.howToPlayScene.root);
             Main.setUpSceneWindowResizeDetector(null, Main.howToPlayScene);
 //            Main.howToPlayScene.startAllowContinue();
+        });
 
+        Main.myScene.setOnKeyPressed(e -> {
+            Main.howToPlayScene = new HowToPlayScene();
+            Main.setUpSceneWindowResizeDetector(Main.s1, null);
+            boolean wasFullScreen = Main.currentStage.isFullScreen();
+            Main.myScene.setRoot(HowToPlayScene.root);
+//            Main.currentStage.setScene(Main.howToPlayScene);
+            if (wasFullScreen)
+                Main.currentStage.setFullScreen(true);
+//            Main.howToPlayScene.setRoot(new BorderPane());
+//            Main.currentStage.getScene().setRoot(Main.howToPlayScene.root);
+            Main.setUpSceneWindowResizeDetector(null, Main.howToPlayScene);
+//            Main.howToPlayScene.startAllowContinue();
         });
 
         root.setCenter(text);
 
         setWindowResizeableListener();
+
     }
 
     private static void setText() throws FileNotFoundException {
