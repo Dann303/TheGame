@@ -29,11 +29,11 @@
 }
 
 .toControls {
-    -fx-rotate: 270;
+    -fx-rotate: 90;
 }
 
 .toObjective {
-    -fx-rotate: 90;
+    -fx-rotate: 270;
 }
 
 .controls-page-background {

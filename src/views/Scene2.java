@@ -41,7 +41,8 @@ public class Scene2 extends Scene {
 //            {"Explorer", "Lights up the map's visibility for 1 turn", "Gifted heroes with the ability to differentiate streets", "of Maadi apart with ease. If you're ever stuck", "somewhere and feel a bit lost get yourself an explorer", "to enlighten you. They're basically Heimdall of the game."}};
     private static String[][] typeDetails = {{"Medic", "Heals a hero around him including himself", "Raised among titans and beasts in the depth of mystical islands, medics found their way supporting those around them excelling as team players."},
             {"Fighter", "Attacks without consuming action points for 1 turn", "Ancient warriors born among monsters of the underworld, fighters' specialty lies at slicing their enemies into pieces over and over with no remorse."},
-            {"Explorer", "Lights up the map's visibility for 1 turn", "Gifted heroes with the ability to differentiate streets of Maadi apart with ease. If you're ever stuck somewhere and feel a bit lost get yourself an explorer to enlighten you. They're basically Heimdall of the game."}};
+//            {"Explorer", "Lights up the map's visibility for 1 turn", "Gifted heroes with the ability to differentiate streets of Maadi apart with ease. If you're ever stuck somewhere and feel a bit lost get yourself an explorer to enlighten you. They're basically Heimdall of the game."},
+            {"Explorer", "Turns on the map's visibility for 1 turn", "Masters of their craft as they come, explorers never get lost. If you're ever sitting in the dark, get yourself an explorer to light things"}};
 
 
     public static HBox availableHeroes = new HBox();
@@ -137,12 +138,12 @@ public class Scene2 extends Scene {
         // settings
         heroType.setAlignment(Pos.CENTER);
 //        heroType.setSpacing(15);
-        heroType.spacingProperty().bind(Bindings.divide(Main.height, 53.333));
+        heroType.spacingProperty().bind(Bindings.divide(Main.height, 30));
 //        heroType.spacingProperty().bind(Bindings.divide(Main.WINDOW_HEIGHT, new 53.333));
         heroType.getStyleClass().add("heroDescription"); // add css class
         heroType.styleProperty().bind(Bindings.concat("-fx-max-height: ", Bindings.divide(Main.height, 5.333), "px;"));
 //        heroType.setTranslateY(30); // translate it 30px downwards relative to its place in its parent container
-        heroType.translateYProperty().bind(Bindings.divide(Main.height, 26.667));
+        heroType.translateYProperty().bind(Bindings.divide(Main.height, 20));
 
         // add the 3 texts to the container
         heroType.getChildren().addAll(heroTypeName,heroTypeAbility,heroTypeDescription);
@@ -151,11 +152,11 @@ public class Scene2 extends Scene {
         for (int i = 0; i < heroType.getChildren().size(); i++) {
             // instead of setting color here, you can add a class and use custom colors with rgb
             heroType.getChildren().get(i).getStyleClass().add("heroDescriptionText");
-            heroType.getChildren().get(i).styleProperty().bind(Bindings.concat("-fx-font-size: ", Bindings.divide(Main.width, 33.333), "px;"));
-            ((Text)heroType.getChildren().get(i)).setFill(Color.rgb(12,21,20));
+            heroType.getChildren().get(i).styleProperty().bind(Bindings.concat("-fx-font-size: ", Bindings.divide(Main.width, 43.5), "px;"));
+            ((Text)heroType.getChildren().get(i)).setFill(Color.rgb(22,41,40));
             ((Text)heroType.getChildren().get(i)).setTextAlignment(TextAlignment.CENTER);
 //            ((Text)heroType.getChildren().get(i)).setWrappingWidth(900);
-            ((Text)heroType.getChildren().get(i)).wrappingWidthProperty().bind(Bindings.divide(Main.width, 1.333));
+            ((Text)heroType.getChildren().get(i)).wrappingWidthProperty().bind(Bindings.divide(Main.width, 1.8));
         }
 
         return heroType;
@@ -270,7 +271,7 @@ public class Scene2 extends Scene {
 
         // settings
 //        heroStats.setSpacing(20);
-        heroStats.spacingProperty().bind(Bindings.divide(Main.height,40));
+        heroStats.spacingProperty().bind(Bindings.divide(Main.height,25));
         heroStats.setAlignment(Pos.CENTER);
         heroStats.maxHeightProperty().bind(Bindings.divide(Main.height,5.333));
 
@@ -284,8 +285,8 @@ public class Scene2 extends Scene {
         for (int i = 0; i < heroStats.getChildren().size(); i++) {
             // nafs el fekra fel color, add for each text individually a class to style their color
             heroStats.getChildren().get(i).getStyleClass().add("heroStatsText");
-            heroStats.getChildren().get(i).styleProperty().bind(Bindings.concat("-fx-font-size: ", Bindings.divide(Main.width, 30), "px;"));
-            ((Text)heroStats.getChildren().get(i)).setFill(Color.rgb(247, 208, 0));
+            heroStats.getChildren().get(i).styleProperty().bind(Bindings.concat("-fx-font-size: ", Bindings.divide(Main.width, 37.5), "px;"));
+            ((Text)heroStats.getChildren().get(i)).setFill(Color.rgb(247, 188, 30));
             ((Text)heroStats.getChildren().get(i)).setTextAlignment(TextAlignment.CENTER);
 //            ((Text)heroStats.getChildren().get(i)).setWrappingWidth(900);
             ((Text)heroStats.getChildren().get(i)).wrappingWidthProperty().bind(Bindings.divide(Main.width,1.333));

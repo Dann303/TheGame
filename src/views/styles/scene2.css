@@ -1,5 +1,6 @@
 .root3{
-    -fx-background-image: url("./../images/scene2/selection_background.jpeg");
+/*    -fx-background-image: url("./../images/scene2/selection_background.jpeg");*/
+    -fx-background-image: url("./../images/scene2/select_heroes_background.jpeg");
     -fx-background-position: center center;
     -fx-background-size: stretch;
     -fx-text-fill: white;

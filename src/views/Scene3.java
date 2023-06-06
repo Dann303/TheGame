@@ -32,6 +32,7 @@ import model.world.CollectibleCell;
 import model.world.TrapCell;
 
 import java.awt.*;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -544,12 +545,29 @@ public class Scene3 extends Scene {
         cureButton = new Button("Cure");
         GridPane moveKeysButtons = getDirectionsButtons(); // the 4 movement button keys
 
-        if (currentHero instanceof Fighter)
-            specialAbilityButton.setText("Berserk Mode");
-        else if (currentHero instanceof Medic)
-            specialAbilityButton.setText("Heal");
-        else if (currentHero instanceof Explorer)
-            specialAbilityButton.setText("Illuminate"); //show map
+        attackButton.getStyleClass().add("attackButtonIcon");
+        cureButton.getStyleClass().add("cureButtonIcon");
+
+        attackButton.setText("");
+        specialAbilityButton.setText("");
+        cureButton.setText("");
+
+        if (currentHero == null) {
+            specialAbilityButton.getStyleClass().add("normalSpecialButtonIcon");
+        } else if (currentHero instanceof Fighter) {
+            specialAbilityButton.getStyleClass().add("berserkButtonIcon");
+        } else if (currentHero instanceof Medic) {
+            specialAbilityButton.getStyleClass().add("healButtonIcon");
+        } else if (currentHero instanceof Explorer) {
+            specialAbilityButton.getStyleClass().add("illuminateButtonIcon");
+        }
+
+//        if (currentHero instanceof Fighter)
+//            specialAbilityButton.setText("Berserk Mode");
+//        else if (currentHero instanceof Medic)
+//            specialAbilityButton.setText("Heal");
+//        else if (currentHero instanceof Explorer)
+//            specialAbilityButton.setText("Illuminate"); //show map
 
         // for each one add the class bottomPaneButton
 //        attackButton.getStyleClass().add("bottomPaneButton");
@@ -1091,8 +1109,8 @@ public class Scene3 extends Scene {
             }
         };
 
-        timer.schedule(t1,5000);
-        timer.schedule(t2,7000);
+        timer.schedule(t1,1000);
+        timer.schedule(t2,3000);
 
         // add xButton actionlistener here (pressed yeb2a remove it from the root
 
@@ -1153,6 +1171,8 @@ public class Scene3 extends Scene {
 
     public static void updateScene() {
         if(Game.checkWin() && !gameDone){
+            Main.gameWin = new GameWinScene();
+
             gameDone = true;
             GameWinScene.timeTaken = timeFormat;
             GameWinScene.roundNumber = currentRound;
@@ -1165,12 +1185,19 @@ public class Scene3 extends Scene {
 //                        Main.currentStage.setScene(Main.gameWin);
                         Main.currentStage.getScene().setRoot(GameWinScene.root);
                         Main.gameWin.startTimer();
+                        Main.gameWin.startAnimationCycle();
                     });
                 }
             };
             timer.schedule(t1,3000);
 
         }else if(Game.checkGameOver() && !gameDone) {
+            try {
+                Main.gameOver = new GameOverScene();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+
             gameDone = true;
             // game over, delay 3 seconds!
             Timer timer = new Timer();
@@ -1181,6 +1208,7 @@ public class Scene3 extends Scene {
 //                        Main.currentStage.setScene(Main.gameOver);
                         Main.currentStage.getScene().setRoot(GameOverScene.root);
                         Main.gameOver.startTimer();
+                        Main.gameOver.startAnimationCycle();
 
                     });
                 }
